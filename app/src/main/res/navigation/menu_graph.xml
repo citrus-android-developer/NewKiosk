@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menu_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.citrus.pottedplantskiosk.ui.menu.MenuFragment"
+        android:label="fragment_menu"
+        tools:layout="@layout/fragment_menu" >
+        <action
+            android:id="@+id/action_menuFragment_to_zoomPageFragment"
+            app:destination="@id/zoomPageFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_goodsViewFragment"
+            app:destination="@id/goodsViewFragment" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/zoomPageFragment"
+        android:name="com.citrus.pottedplantskiosk.ui.menu.ZoomPageFragment"
+        android:label="fragment_zoom_page"
+        tools:layout="@layout/fragment_zoom_page" >
+        <argument
+            android:name="goods"
+            app:argType="com.citrus.pottedplantskiosk.api.remote.dto.Good" />
+    </dialog>
+    <fragment
+        android:id="@+id/goodsViewFragment"
+        android:name="com.citrus.pottedplantskiosk.ui.menu.GoodsViewFragment"
+        android:label="GoodsViewFragment" >
+        <argument
+            android:name="goods"
+            app:argType="com.citrus.pottedplantskiosk.api.remote.dto.Good" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.citrus.pottedplantskiosk.ui.menu.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
+    </fragment>
+</navigation>

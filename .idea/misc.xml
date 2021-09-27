@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="../../.gradle/caches/transforms-3/a47ab49d04759424956f5fa3bebf5de2/transformed/core-1.6.0/res/layout/custom_dialog.xml" value="0.15833333333333333" />
+        <entry key="app/src/main/res/drawable-v24/button_mid_yellow_15.xml" value="0.1703125" />
+        <entry key="app/src/main/res/drawable-v24/button_white_15.xml" value="0.153125" />
+        <entry key="app/src/main/res/drawable/arrow_balloon_library_skydoves.xml" value="0.18489583333333334" />
+        <entry key="app/src/main/res/drawable/button.xml" value="0.18489583333333334" />
+        <entry key="app/src/main/res/drawable/custom_dialog_bg.xml" value="0.18489583333333334" />
+        <entry key="app/src/main/res/drawable/ic_baseline_chevron_left_24.xml" value="0.19907407407407407" />
+        <entry key="app/src/main/res/drawable/ic_baseline_chevron_right_24.xml" value="0.19907407407407407" />
+        <entry key="app/src/main/res/drawable/ic_language_black_24dp.xml" value="0.18489583333333334" />
+        <entry key="app/src/main/res/drawable/layout_bg.xml" value="0.1259259259259259" />
+        <entry key="app/src/main/res/drawable/my_border.xml" value="0.1703125" />
+        <entry key="app/src/main/res/drawable/rounded_dialog.xml" value="0.22962962962962963" />
+        <entry key="app/src/main/res/drawable/shape_sheet_dialog_bg.xml" value="0.19907407407407407" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.22871376811594202" />
+        <entry key="app/src/main/res/layout/activity_menu.xml" value="0.18333333333333332" />
+        <entry key="app/src/main/res/layout/activity_slash.xml" value="0.14351851851851852" />
+        <entry key="app/src/main/res/layout/cart_item_view.xml" value="0.13697916666666668" />
+        <entry key="app/src/main/res/layout/desc_item_view.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/dialog_language.xml" value="0.16875" />
+        <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.20677083333333332" />
+        <entry key="app/src/main/res/layout/fragment_goods_view.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_main.xml" value="0.22871376811594202" />
+        <entry key="app/src/main/res/layout/fragment_menu.xml" value="0.20923913043478262" />
+        <entry key="app/src/main/res/layout/fragment_test.xml" value="0.20677083333333332" />
+        <entry key="app/src/main/res/layout/fragment_zoom_page.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/layout/goods_item_view.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/group_item_view.xml" value="0.20923913043478262" />
+        <entry key="app/src/main/res/layout/item_container_goods.xml" value="0.125" />
+        <entry key="app/src/main/res/layout/layout_motion.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/layout_motion_test.xml" value="0.2222222222222222" />
+        <entry key="app/src/main/res/layout/number_picker_addition.xml" value="0.3250517598343685" />
+        <entry key="app/src/main/res/layout/zoom_item_view.xml" value="0.125" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

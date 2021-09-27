@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/padding_5"
+    android:background="@drawable/button_white_15"
+    android:backgroundTint="@color/colorWhite"
+    android:clipToPadding="false"
+    android:elevation="3dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvItemName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/padding_10"
+        android:paddingEnd="@dimen/padding_10"
+        android:layout_margin="@dimen/padding_5"
+        android:minHeight="@dimen/dp_50"
+        android:gravity="center|start"
+        android:textColor="@color/colorSecondText"
+        android:textSize="@dimen/sp_10"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvAddPrice"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Addition Name" />
+
+    <TextView
+        android:id="@+id/tvAddPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_24"
+        android:layout_marginEnd="@dimen/padding_15"
+        android:gravity="center"
+        android:textColor="@color/colorLightGray"
+        android:textSize="@dimen/sp_10"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/npAdd"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="$0" />
+
+    <com.travijuu.numberpicker.library.NumberPicker
+        android:id="@+id/npAdd"
+        android:layout_width="@dimen/dp_120"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_marginEnd="@dimen/padding_5"
+        tools:visibility="visible"
+        app:custom_layout="@layout/number_picker_addition"
+        app:focusable="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:value="0"
+        app:max="99"
+        app:min="0"
+        app:unit="1" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_50"
+    android:padding="2dp"
+    android:clipToPadding="false"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/decrement"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/button_white_15"
+        android:fontFamily="@font/varela_number"
+        android:gravity="center"
+        android:text="-"
+        android:elevation="2dp"
+        android:textStyle="bold"
+        android:stateListAnimator="@animator/selector_animator"
+        android:textColor="@color/cardBackground"
+        android:textSize="24dp" />
+
+    <EditText
+        android:id="@+id/display"
+        android:layout_width="@dimen/sp_34"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:gravity="center"
+        android:inputType="number"
+        android:text="1"
+        android:fontFamily="@font/montserrat"
+        android:textStyle="bold"
+        android:textIsSelectable="false"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_18" />
+
+    <Button
+        android:id="@+id/increment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/button_white_15"
+        android:fontFamily="@font/varela_number"
+        android:gravity="center"
+        android:elevation="2dp"
+        android:stateListAnimator="@animator/selector_animator"
+        android:text="+"
+        android:textAppearance="@style/TabText"
+        android:textColor="@color/cardBackground"
+        android:textSize="22dp"
+        android:textStyle="bold" />
+
+</LinearLayout>

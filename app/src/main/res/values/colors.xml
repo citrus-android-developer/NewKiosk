@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="overlay">#BF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorSecondText">#75716D</color>
+    <color name="colorPrimary">#648593</color>
+    <color name="cardBackground">#BEFFFFFF</color>
+    <color name="colorPrimaryText">#404750</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorPrimaryDark">#394E5A</color>
+    <color name="lightGreen">#a5d6a7</color>
+    <color name="ic_launcher_background">#D57F46</color>
+</resources>

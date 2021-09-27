@@ -32,7 +32,7 @@ class GoodsViewFragment : BindingFragment<FragmentGoodsViewBinding>() {
     private var goodsList:List<Good> = listOf()
 
     override fun initView() {
-        goodsList = menuViewModel.goods.value
+        goodsList = menuViewModel.kindList.value[0].goods
         currentIndex = goodsList.indexOf(args.goods)
 
         binding.apply {

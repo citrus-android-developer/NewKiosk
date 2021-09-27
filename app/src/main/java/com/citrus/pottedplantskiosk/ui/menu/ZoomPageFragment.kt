@@ -46,9 +46,9 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
         super.onStart()
         val view: FrameLayout = dialog?.findViewById(R.id.design_bottom_sheet)!!
 
-        view.layoutParams.height = resources.getDimension(R.dimen.dp_450).toInt()
+        view.layoutParams.height = resources.getDimension(R.dimen.dp_350).toInt()
         val behavior = BottomSheetBehavior.from(view)
-        behavior.peekHeight = resources.getDimension(R.dimen.dp_450).toInt()
+        behavior.peekHeight = resources.getDimension(R.dimen.dp_350).toInt()
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
 
@@ -78,7 +78,7 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
     }
 
     private fun initAction() {
-        goodsList = menuViewModel.goods.value
+        goodsList = menuViewModel.currentDetailGoodsList
         currentIndex = goodsList.indexOf(args.goods)
         if(currentIndex == 0){
             binding.prev.visibility = View.INVISIBLE

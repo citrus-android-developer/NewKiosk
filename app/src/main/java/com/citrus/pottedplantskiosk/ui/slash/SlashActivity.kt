@@ -26,16 +26,16 @@ class SlashActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         setFullScreen()
-        YoYo.with(Techniques.Landing).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT).duration(1800).playOn(binding.ivLogo)
-        YoYo.with(Techniques.Landing).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT).duration(1800).playOn(binding.tvKiosk)
+        YoYo.with(Techniques.Landing).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT).duration(1500).playOn(binding.ivLogo)
+        YoYo.with(Techniques.Landing).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT).duration(1500).playOn(binding.tvKiosk)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySlashBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel.getMenu()
         initObserve()
+        startTimer()
     }
 
     private fun initObserve() {
@@ -63,21 +63,19 @@ class SlashActivity : AppCompatActivity() {
         }
     }
 
-//    private fun startTimer() {
-//        val timer = object : Thread() {
-//            override fun run() {
-//                try {
-//                    sleep(2000)
-//                } catch (e: InterruptedException) {
-//                    e.printStackTrace()
-//                } finally {
-//                    startActivity<MainActivity>()
-//                    finish()
-//                }
-//            }
-//        }
-//        timer.start()
-//    }
+    private fun startTimer() {
+        val timer = object : Thread() {
+            override fun run() {
+                try {
+                    sleep(1500)
+                    viewModel.getMenu()
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        timer.start()
+    }
 
 
     private fun setFullScreen() {

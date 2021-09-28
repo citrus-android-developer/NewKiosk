@@ -65,7 +65,7 @@
     </androidx.cardview.widget.CardView>
 
 
-    <com.mlsdev.animatedrv.AnimatedRecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itemRv"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -77,7 +77,7 @@
         app:layoutManagerOrientation="vertical"
         app:layoutManagerType="grid"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/cartIconLine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/groupRvArea"
         tools:itemCount="6"
@@ -85,15 +85,68 @@
         tools:listitem="@layout/goods_item_view"
         tools:orientation="horizontal">
 
-    </com.mlsdev.animatedrv.AnimatedRecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/cartArea"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/cardBackground"
+        app:layoutDescription="@xml/fragment_menu_xml_cartarea_scene"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.984"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/groupRvArea"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/cartTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/droidbold"
+            android:text="My Order"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+
+    <Button
+        android:id="@+id/testBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/groupRvArea"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cartIconLine"
+        android:text="click"
+        />
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/topInfoLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.10" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/cartGuildLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/cartIconLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
+
 
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

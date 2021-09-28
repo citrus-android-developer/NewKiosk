@@ -8,8 +8,11 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.GroupItemViewBinding
+import com.citrus.pottedplantskiosk.ui.menu.MenuViewModel
+import com.citrus.pottedplantskiosk.util.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -19,10 +22,10 @@ class GroupItemAdapter @Inject constructor(val context: Context) :
     class GroupItemViewHolder(val binding: GroupItemViewBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    var groupTitles = listOf<String>()
+    var groupTitles = listOf<MenuViewModel.GroupItem>()
     private var kindIndex = 0
 
-    suspend fun updateDataset(newDataset: List<String>) = withContext(Dispatchers.Default) {
+    suspend fun updateDataset(newDataset: List<MenuViewModel.GroupItem>) = withContext(Dispatchers.Default) {
         val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int {
                 return groupTitles.size
@@ -59,17 +62,26 @@ class GroupItemAdapter @Inject constructor(val context: Context) :
     ) {
         val title = groupTitles[position]
         holder.binding.apply {
-            tvTitle.text = title
+
+            title.imgUrl?.let {
+                Glide.with(holder.itemView)
+                    .load(Constants.IMG_URL + it)
+                    .into(itemImage)
+            } ?: run {
+                itemImage.setImageResource(R.drawable.plants1)
+            }
+
+            tvGroupName.text = title.name
             if (kindIndex == position) {
-                tvTitle.background =
+                imgCard.background =
                     ContextCompat.getDrawable(context, R.drawable.button_mid_green_15)
-                tvTitle.setTypeface(tvTitle.typeface, Typeface.BOLD)
-                tvTitle.setTextColor(context.resources.getColor(R.color.colorPrimaryText))
+                tvGroupName.setTypeface(tvGroupName.typeface, Typeface.BOLD)
+                tvGroupName.setTextColor(context.resources.getColor(R.color.colorPrimaryText))
             } else {
-                tvTitle.background =
+                imgCard.background =
                     ContextCompat.getDrawable(context, R.drawable.button_light_45)
-                tvTitle.typeface = null
-                tvTitle.setTextColor(context.resources.getColor(R.color.colorSecondText))
+                tvGroupName.typeface = null
+                tvGroupName.setTextColor(context.resources.getColor(R.color.colorSecondText))
             }
 
             root.setOnClickListener {
@@ -77,7 +89,7 @@ class GroupItemAdapter @Inject constructor(val context: Context) :
                     kindIndex = position
                     notifyDataSetChanged()
                     onKindClickListener?.let { click ->
-                        click(title)
+                        click(title.name)
                     }
                 }
             }

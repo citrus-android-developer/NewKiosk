@@ -78,10 +78,10 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
     override fun initObserve() {
        lifecycleScope.launchWhenStarted {
-           menuViewModel.menuGroupName.collect { groupNameList ->
+           menuViewModel.menuGroupName.collect { groupList ->
                updateGroupItemJob?.cancel()
                updateGroupItemJob = lifecycleScope.launch {
-                   groupItemAdapter.updateDataset(groupNameList)
+                   groupItemAdapter.updateDataset(groupList)
                }
            }
        }

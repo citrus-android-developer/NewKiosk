@@ -130,6 +130,10 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
                 }
             })
 
+            closeBtn.setOnClickListener {
+                
+            }
+
 
 //            backBtn.setOnClickListener { v ->
 //                ElasticAnimation(v)

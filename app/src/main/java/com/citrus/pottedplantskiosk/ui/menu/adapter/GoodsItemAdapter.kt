@@ -1,27 +1,24 @@
 package com.citrus.pottedplantskiosk.ui.menu.adapter
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.ViewCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
-import com.citrus.pottedplantskiosk.api.remote.dto.MockGoods
 import com.citrus.pottedplantskiosk.databinding.GoodsItemViewBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
 import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class GoodsItemAdapter @Inject constructor(val context: Context) :
+class GoodsItemAdapter (val context: Context, private val onItemClick:(Good,List<Good>) -> Unit) :
     RecyclerView.Adapter<GoodsItemAdapter.GoodsItemViewHolder>() {
     class GoodsItemViewHolder(val binding: GoodsItemViewBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -87,10 +84,7 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
                     .setScaleY(0.85f)
                     .setDuration(50)
                     .setOnFinishListener {
-//                        ViewCompat.setTransitionName(itemImage, item.gName)
-                        onItemClickListener?.let { click ->
-                            click(itemImage,item,goods)
-                        }
+                        onItemClick(item,goods)
                     }
                     .doAction()
             }
@@ -101,10 +95,4 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
         return goods.size
     }
 
-
-    private var onItemClickListener: ((View,Good,List<Good>) -> Unit)? = null
-
-    fun setOnItemClickListener(listener: (View,Good,List<Good>) -> Unit) {
-        onItemClickListener = listener
-    }
 }

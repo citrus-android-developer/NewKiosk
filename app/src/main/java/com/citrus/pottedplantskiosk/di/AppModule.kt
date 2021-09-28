@@ -9,11 +9,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.scopes.FragmentScoped
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Scope
 import javax.inject.Singleton
 
 
@@ -60,9 +62,6 @@ object FragmentModule {
     fun provideGroupItemAdapter(fragment: Fragment) =
         GroupItemAdapter(fragment.requireContext())
 
-    @Provides
-    fun provideGoodsItemAdapter(fragment: Fragment) =
-        GoodsItemAdapter(fragment.requireContext())
 
     @Provides
     fun provideCartItemAdapter(fragment: Fragment) =

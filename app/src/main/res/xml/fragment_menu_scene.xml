@@ -6,71 +6,115 @@
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
         motion:duration="1000">
-        <OnClick
-            motion:clickAction="toggle"
-            motion:targetId="@+id/testBtn" />
-        <OnSwipe
-            motion:dragDirection="dragRight"
-            motion:touchAnchorId="@id/testBtn"
-            motion:touchAnchorSide="left" />
         <KeyFrameSet></KeyFrameSet>
     </Transition>
 
+
+
+
     <ConstraintSet android:id="@+id/start">
+
         <Constraint
             android:id="@+id/itemRv"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/dp_10"
             android:layout_marginEnd="@dimen/dp_10"
+            android:layout_marginStart="@dimen/dp_10"
             android:layout_marginBottom="@dimen/dp_5"
-            motion:layout_constraintBottom_toBottomOf="parent"
-            motion:layout_constraintEnd_toStartOf="@+id/cartIconLine"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@+id/groupRvArea" />
-        <Constraint
-            android:id="@+id/cartArea"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintStart_toEndOf="parent"
             motion:layout_constraintTop_toBottomOf="@+id/groupRvArea" />
         <Constraint
-            android:id="@+id/testBtn"
+            android:id="@+id/typeItemRv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_marginStart="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_5"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/groupRvArea" />
+        <Constraint
+            android:id="@+id/groupRvArea"
+            android:elevation="@dimen/dp_10"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toTopOf="@+id/topInfoLine"
+            motion:layout_constraintStart_toStartOf="parent" />
+        <Constraint
+            android:id="@+id/typeName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintBottom_toBottomOf="@+id/groupRvArea"
             motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintStart_toEndOf="@+id/cartIconLine"
-            motion:layout_constraintTop_toBottomOf="@+id/groupRvArea" />
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_5" />
+        <Constraint
+            android:id="@+id/setBack"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginEnd="@dimen/dp_20"
+            motion:layout_constraintBottom_toBottomOf="@+id/groupRvArea"
+            android:layout_marginBottom="@dimen/dp_10" />
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
+
         <Constraint
+            android:visibility="invisible"
             android:id="@+id/itemRv"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/dp_10"
             android:layout_marginEnd="@dimen/dp_10"
+            android:layout_marginStart="@dimen/dp_10"
             android:layout_marginBottom="@dimen/dp_5"
             motion:layout_constraintBottom_toBottomOf="parent"
-            motion:layout_constraintEnd_toEndOf="@+id/cartGuildLine"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@+id/groupRvArea" />
-        <Constraint
-            android:id="@+id/cartArea"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintStart_toEndOf="@id/cartGuildLine"
             motion:layout_constraintTop_toBottomOf="@+id/groupRvArea" />
         <Constraint
-            android:id="@+id/testBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            motion:layout_constraintStart_toEndOf="@+id/cartGuildLine"
+            android:id="@+id/typeItemRv"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_marginStart="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_5"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintTop_toBottomOf="@+id/groupRvArea" />
+        <Constraint
+            android:visibility="invisible"
+            android:id="@+id/groupRvArea"
+            android:elevation="@dimen/dp_10"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toTopOf="@+id/topInfoLine"
+            motion:layout_constraintStart_toStartOf="parent"
+           />
+        <Constraint
+            android:id="@+id/typeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toBottomOf="@+id/groupRvArea"
+            android:layout_marginStart="@dimen/dp_20"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="@dimen/dp_5" />
+        <Constraint
+            android:id="@+id/setBack"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:layout_marginEnd="@dimen/dp_20"
+            motion:layout_constraintBottom_toBottomOf="@+id/groupRvArea"
+            android:layout_marginBottom="@dimen/dp_10" />
     </ConstraintSet>
+
+
+
 </MotionScene>

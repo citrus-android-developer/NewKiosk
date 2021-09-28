@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tvTypeName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_5"
+        android:layout_marginTop="@dimen/dp_5"
+        android:fontFamily="@font/droidbold"
+        android:padding="@dimen/dp_6"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Food" />
+
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/viewMore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View more"
+        android:layout_marginEnd="@dimen/dp_10"
+        android:fontFamily="@font/droidbold"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/sp_10"
+        app:layout_constraintBottom_toTopOf="@+id/goodsRv"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:drawableStart="@drawable/ic_baseline_grid_view_24"
+        android:gravity="center"
+        />
+
+    <com.mlsdev.animatedrv.AnimatedRecyclerView
+        android:id="@+id/goodsRv"
+        app:layoutAnimation="@anim/layout_animation_from_bottom"
+        app:animationDuration="300"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTypeName"
+        android:layout_marginStart="@dimen/dp_5"
+        android:layout_marginBottom="@dimen/dp_5"
+        android:orientation="horizontal"
+        android:splitMotionEvents="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTypeName"
+        tools:itemCount="3"
+        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/goods_item_view" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

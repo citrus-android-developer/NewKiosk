@@ -5,11 +5,12 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.motion.widget.TransitionAdapter
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,21 +18,39 @@ import androidx.viewbinding.ViewBinding
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.FragmentMenuBinding
 import com.citrus.pottedplantskiosk.ui.menu.adapter.*
+import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.Constants.setTransitionExecute
+import com.citrus.pottedplantskiosk.util.Constants.setTransitionReverse
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
 import com.skydoves.elasticviews.ElasticAnimation
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
-import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+sealed interface CurrentId
+object Start : CurrentId
+object End : CurrentId
+
+sealed class CartState {
+    object Raise : CartState()
+    object Fall : CartState()
+}
+
+data class PageState(var currentId: CurrentId = Start, var cartState: CartState = CartState.Fall)
+
+
 @AndroidEntryPoint
 class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private val menuViewModel: MenuViewModel by activityViewModels()
+
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMenuBinding::inflate
+
+    var initState = PageState()
 
     @Inject
     lateinit var groupItemAdapter: GroupItemAdapter
@@ -57,7 +76,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             }
 
             typeItemRv.apply {
-                layoutManager = GridLayoutManager(requireActivity(), 3)
+                layoutManager = GridLayoutManager(requireActivity(), 4)
             }
 
             setBack.setOnClickListener { v ->
@@ -67,8 +86,40 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     .setDuration(50)
                     .setOnFinishListener {
                         root.apply {
-                            setTransitionDuration(500)
-                            transitionToStart()
+                            if (initState.cartState == CartState.Raise) {
+                                setTransitionReverse(R.id.end_raise, 100)
+                                initState.cartState = CartState.Fall
+                            }
+                            setTransitionReverse(R.id.switchPreview, 500)
+                        }
+                    }.doAction()
+            }
+
+            cartIcon.setOnClickListener { v ->
+                ElasticAnimation(v)
+                    .setScaleX(0.85f)
+                    .setScaleY(0.85f)
+                    .setDuration(50)
+                    .setOnFinishListener {
+                        root.apply {
+                            if (initState.currentId == Start) {
+                                setTransition(R.id.start_raise)
+                                setTransitionDuration(500)
+                            } else {
+                                setTransition(R.id.end_raise)
+                                setTransitionDuration(500)
+                            }
+
+                            when (initState.cartState) {
+                                is CartState.Raise -> {
+                                    initState.cartState = CartState.Fall
+                                    transitionToStart()
+                                }
+                                is CartState.Fall -> {
+                                    initState.cartState = CartState.Raise
+                                    transitionToEnd()
+                                }
+                            }
                         }
                     }.doAction()
             }
@@ -81,6 +132,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 updateGroupItemJob?.cancel()
                 updateGroupItemJob = lifecycleScope.launch {
                     groupItemAdapter.updateDataset(groupList)
+                    binding.groupRvArea.isVisible = true
                 }
             }
         }
@@ -105,17 +157,29 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                         binding.typeName.paint.flags = Paint.UNDERLINE_TEXT_FLAG
 
                         binding.root.apply {
-                            setTransitionDuration(500)
-                            transitionToEnd()
+                            setTransitionExecute(R.id.switchPreview, 500)
+                            initState.cartState = CartState.Fall
                         }
 
-                        binding.root.setTransitionListener(object : MotionTransitionAdapter {
+                        binding.root.setTransitionListener(object : TransitionAdapter() {
                             override fun onTransitionCompleted(
                                 motionLayout: MotionLayout?, currentId: Int
                             ) {
-                                lifecycleScope.launch {
-                                    (binding.typeItemRv.adapter as GoodsItemAdapter).updateDataset(goods)
-                                    binding.typeItemRv.scheduleLayoutAnimation()
+                                when (currentId) {
+                                    R.id.start -> {
+                                        initState.currentId = Start
+                                    }
+                                    R.id.end -> {
+                                        if (initState.currentId == Start) {
+                                            lifecycleScope.launch {
+                                                (binding.typeItemRv.adapter as GoodsItemAdapter).updateDataset(
+                                                    goods
+                                                )
+                                                binding.typeItemRv.scheduleLayoutAnimation()
+                                            }
+                                        }
+                                        initState.currentId = End
+                                    }
                                 }
                             }
                         })
@@ -137,11 +201,32 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 )
             }
         }
+
+
+        lifecycleScope.launchWhenStarted {
+            menuViewModel.tikTok.collect { timer ->
+                if (timer == Constants.TWO_MINUTES) {
+                    menuViewModel.stopTimer()
+                    findNavController().popBackStack()
+                }
+            }
+        }
     }
 
     override fun initAction() {
         groupItemAdapter.setOnKindClickListener { groupName ->
             menuViewModel.onGroupChange(groupName)
+            binding.motionLayout.apply {
+                if (initState.cartState == CartState.Raise) {
+                    if (initState.currentId == Start) {
+                        setTransitionReverse(R.id.start_raise, 100)
+                    } else {
+                        setTransitionReverse(R.id.end_raise, 100)
+                    }
+                    initState.cartState = CartState.Fall
+                }
+                setTransitionReverse(R.id.switchPreview, 500)
+            }
         }
     }
 

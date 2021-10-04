@@ -7,45 +7,49 @@
     android:layout_height="match_parent"
     android:background="@color/colorLightGray"
     app:layoutDescription="@xml/fragment_menu_scene"
-    tools:context=".ui.menu.MenuFragment">
+    tools:context=".ui.menu.MenuFragment"
+    >
 
     <TextView
         android:id="@+id/typeName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/groupRvArea"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="@dimen/dp_20"
         android:layout_marginTop="@dimen/dp_5"
         android:fontFamily="@font/droidbold"
         android:padding="@dimen/dp_6"
         android:textColor="@color/black"
-        android:textSize="@dimen/sp_20"
-        />
+        android:textSize="@dimen/sp_15"
+        app:layout_constraintBottom_toBottomOf="@+id/groupRvArea"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <TextView
-        android:visibility="gone"
+    <com.citrus.pottedplantskiosk.util.TextButton
         android:id="@+id/setBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back"
-        android:layout_marginEnd="@dimen/dp_20"
-        android:fontFamily="@font/droidbold"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="@dimen/sp_12"
-        app:layout_constraintBottom_toBottomOf="@+id/groupRvArea"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_10"
+        android:background="@drawable/text_btn_shape"
         android:drawableStart="@drawable/ic_baseline_keyboard_return_24"
+        android:fontFamily="@font/droidbold"
         android:gravity="center"
-        />
+        android:padding="@dimen/dp_5"
+        android:text="back"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/sp_10"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/typeName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/typeName"
+        tools:visibility="visible" />
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/groupRvArea"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dp_10"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginEnd="@dimen/dp_20"
         android:clickable="false"
         android:elevation="@dimen/dp_10"
         android:orientation="horizontal"
@@ -53,64 +57,72 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/topInfoLine">
-        
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/arrowLeft"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_chevron_left_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/colorDarkGray" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/groupRv"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/dp_5"
-                android:layout_marginEnd="@dimen/dp_5"
+                android:layout_marginStart="@dimen/dp_10"
+                android:layout_marginEnd="@dimen/dp_10"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/arrowRight"
-                app:layout_constraintStart_toEndOf="@+id/arrowLeft"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:itemCount="4"
                 tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/group_item_view"
                 tools:orientation="horizontal" />
 
-            <ImageView
-                android:id="@+id/arrowRight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_chevron_right_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/colorDarkGray" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
     </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/arrowLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_1"
+        android:background="@drawable/circle_button_shape"
+        android:elevation="@dimen/dp_12"
+        android:src="@drawable/ic_baseline_chevron_left_24"
+        app:layout_constraintBottom_toBottomOf="@+id/groupRvArea"
+        app:layout_constraintEnd_toStartOf="@id/groupRvArea"
+        app:layout_constraintStart_toStartOf="@id/groupRvArea"
+        app:layout_constraintTop_toTopOf="@+id/groupRvArea"
+        app:tint="@color/colorSecondText" />
+
+    <ImageView
+        android:id="@+id/arrowRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circle_button_shape"
+        android:elevation="@dimen/dp_12"
+        android:src="@drawable/ic_baseline_chevron_right_24"
+        app:layout_constraintBottom_toBottomOf="@+id/groupRvArea"
+        app:layout_constraintEnd_toEndOf="@id/groupRvArea"
+        app:layout_constraintStart_toEndOf="@id/groupRvArea"
+        app:layout_constraintTop_toTopOf="@+id/groupRvArea"
+        app:tint="@color/colorSecondText" />
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itemRv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_10"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginEnd="@dimen/dp_20"
         android:layout_marginBottom="@dimen/dp_5"
         app:layoutAnimation="@anim/layout_animation_from_bottom"
         app:layoutManagerOrientation="vertical"
         app:layoutManagerType="grid"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/cartArea"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/groupRvArea"
@@ -128,11 +140,11 @@
         android:layout_marginStart="@dimen/dp_10"
         android:layout_marginEnd="@dimen/dp_10"
         android:layout_marginBottom="@dimen/dp_5"
-        app:layoutAnimation="@anim/layout_animation_from_bottom"
         app:animationDuration="300"
+        app:layoutAnimation="@anim/layout_animation_from_bottom"
         app:layoutManagerOrientation="vertical"
         app:layoutManagerType="grid"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/cartArea"
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/groupRvArea"
@@ -150,6 +162,48 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.10" />
+
+
+    <ImageView
+        android:id="@+id/cartIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circle_button_shape"
+        android:elevation="@dimen/dp_10"
+        android:padding="@dimen/dp_6"
+        android:src="@drawable/ic_round_shopping_cart_24"
+        app:layout_constraintBottom_toTopOf="@+id/cartArea"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cartArea" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cartArea"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/constraint_shape"
+        android:elevation="@dimen/dp_5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/BottomLine">
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/BottomLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.97" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/cartTopLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+       app:layout_constraintGuide_percent="0.8" />
 
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

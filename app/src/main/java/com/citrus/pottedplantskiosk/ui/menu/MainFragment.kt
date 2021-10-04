@@ -31,12 +31,14 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.Button
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.citrus.pottedplantskiosk.di.prefs
 
 
 @AndroidEntryPoint
 class MainFragment : BindingFragment<FragmentMainBinding>() {
+    private val menuViewModel: MenuViewModel by activityViewModels()
     lateinit var balloon: Balloon
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
@@ -121,8 +123,9 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
 
     }
 
-    private fun intentToMenu(){
-      findNavController().navigate(R.id.action_mainFragment_to_menuFragment)
+    private fun intentToMenu() {
+        menuViewModel.intentNavigateToMenu()
+        findNavController().navigate(R.id.action_mainFragment_to_menuFragment)
     }
 
     private fun showBanner(

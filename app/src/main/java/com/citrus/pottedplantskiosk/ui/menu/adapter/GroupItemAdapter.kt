@@ -68,7 +68,7 @@ class GroupItemAdapter @Inject constructor(val context: Context) :
                     .load(Constants.IMG_URL + it)
                     .into(itemImage)
             } ?: run {
-                itemImage.setImageResource(R.drawable.plants1)
+                itemImage.setImageResource(R.drawable.ic_image_gallery__2_)
             }
 
             tvGroupName.text = title.name

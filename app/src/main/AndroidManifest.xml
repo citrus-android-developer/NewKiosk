@@ -16,17 +16,15 @@
         android:theme="@style/Theme.PottedPlantsKiosk">
         <activity
             android:name=".ui.menu.MenuActivity"
-            android:exported="true" />
-        <activity android:name=".ui.slash.SlashActivity">
+            android:exported="true"
+          />
+        <activity android:name=".ui.slash.SlashActivity"
+            android:exported = "true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.main.MainActivity"
-            android:exported="true">
         </activity>
     </application>
 

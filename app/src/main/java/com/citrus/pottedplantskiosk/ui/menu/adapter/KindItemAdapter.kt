@@ -87,8 +87,12 @@ class KindItemAdapter(
                 goodsRv.scheduleLayoutAnimation()
                 tvTypeName.text = kind.desc
                 tvTypeName.paint.flags = Paint.UNDERLINE_TEXT_FLAG
+                tvTypeName.isVisible = true
                 viewMore.isVisible = true
 
+                if(position != kindList.size -1){
+                    divider.isVisible = true
+                }
             }
 
             viewMore.setOnClickListener { v ->

@@ -1,15 +1,12 @@
 package com.citrus.pottedplantskiosk.ui.menu.adapter
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.GoodsItemViewBinding
 import com.citrus.pottedplantskiosk.di.prefs
@@ -69,10 +66,8 @@ class GoodsItemAdapter (val context: Context, private val onItemClick:(Good,List
 
             if(prefs.languagePos == 1){
                 tvItemName.text = item.gName2.substring(3,item.gName2.length)
-                tvItemName.textSize = context.resources.getDimension(R.dimen.sp_6)
             }else{
                 tvItemName.text = item.gName.substring(3,item.gName.length)
-                tvItemName.textSize = context.resources.getDimension(R.dimen.sp_5)
             }
 
 

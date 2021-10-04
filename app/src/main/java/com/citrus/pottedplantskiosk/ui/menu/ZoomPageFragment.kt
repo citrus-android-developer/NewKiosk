@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -131,20 +132,9 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
             })
 
             closeBtn.setOnClickListener {
-                
+                findNavController().popBackStack()
             }
 
-
-//            backBtn.setOnClickListener { v ->
-//                ElasticAnimation(v)
-//                    .setScaleX(0.85f)
-//                    .setScaleY(0.85f)
-//                    .setDuration(50)
-//                    .setOnFinishListener {
-//                        dismiss()
-//                    }
-//                    .doAction()
-//            }
 
 
         }

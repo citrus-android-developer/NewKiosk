@@ -1,6 +1,8 @@
 package com.citrus.pottedplantskiosk.util
 
 
+import androidx.constraintlayout.motion.widget.MotionLayout
+import com.citrus.pottedplantskiosk.R
 import com.skydoves.balloon.Balloon
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -12,6 +14,7 @@ object Constants {
     const val IMG_URL = "http://cms.citrus.tw/soramenLAB/images/"
     const val GET_MENU = "POSServer/UploadDataWS/Service1.asmx/getAllKindGoods_KIOSK"
     const val SHARED_PREFERENCES_NAME = "sharedPref"
+    const val TWO_MINUTES = 120
 
 
     /**Prefs*/
@@ -27,5 +30,17 @@ object Constants {
              delay(duration)
          }
          this.dismiss()
+    }
+
+    fun MotionLayout.setTransitionExecute(transitionId:Int,milliseconds:Int) {
+        setTransition(transitionId)
+        setTransitionDuration(milliseconds)
+        transitionToEnd()
+    }
+
+    fun MotionLayout.setTransitionReverse(transitionId:Int,milliseconds:Int) {
+        setTransition(transitionId)
+        setTransitionDuration(milliseconds)
+        transitionToStart()
     }
 }

@@ -3,7 +3,10 @@ package com.citrus.pottedplantskiosk.ui.menu
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.widget.AutoCompleteTextView
+import android.widget.EditText
 import androidx.activity.viewModels
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.databinding.ActivityMenuBinding
@@ -55,5 +58,10 @@ class MenuActivity : AppCompatActivity() {
 
         decorView.systemUiVisibility = options
         return decorView
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        menuViewModel.timeCount = 0
+        return super.dispatchTouchEvent(ev)
     }
 }

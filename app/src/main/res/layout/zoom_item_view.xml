@@ -6,7 +6,6 @@
     app:layoutDescription="@xml/zoom_item_view_scene">
 
 
-
     <ImageView
         android:id="@+id/photo"
         android:layout_width="@dimen/dp_200"
@@ -17,6 +16,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/closeBtn" />
+
+    <TextView
+        android:id="@+id/tvDescribe"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fontFamily="@font/droidbold"
+        android:gravity="center"
+        android:text="商品描述商品描述商品描述商品描述商品描述商品描述商品描述商品描述商品描述商品描述"
+        android:textSize="@dimen/sp_10"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/photo"
+        app:layout_constraintTop_toTopOf="@+id/photo" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/photoBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="photo,tvDescribe"/>
+
+
 
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

@@ -1,64 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:id="@+id/transformationLayout"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/padding_5"
-    android:background="@drawable/button_white_15"
-    android:backgroundTint="@color/colorWhite"
-    android:clipToPadding="false"
-    android:elevation="3dp"
-    android:orientation="vertical">
+    app:cardCornerRadius="@dimen/dp_5"
+    app:cardElevation="@dimen/dp_3"
+    android:layout_marginStart="@dimen/dp_10"
+    >
 
-    <TextView
-        android:id="@+id/tvItemName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/padding_10"
-        android:paddingEnd="@dimen/padding_10"
-        android:layout_margin="@dimen/padding_5"
-        android:minHeight="@dimen/dp_50"
-        android:gravity="center|start"
-        android:textColor="@color/colorSecondText"
-        android:textSize="@dimen/sp_10"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tvAddPrice"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Addition Name" />
-
-    <TextView
-        android:id="@+id/tvAddPrice"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootView"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp_24"
-        android:layout_marginEnd="@dimen/padding_15"
-        android:gravity="center"
-        android:textColor="@color/colorLightGray"
-        android:textSize="@dimen/sp_10"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/npAdd"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="$0" />
-
-    <com.travijuu.numberpicker.library.NumberPicker
-        android:id="@+id/npAdd"
-        android:layout_width="@dimen/dp_120"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:layout_marginEnd="@dimen/padding_5"
-        tools:visibility="visible"
-        app:custom_layout="@layout/number_picker_addition"
-        app:focusable="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:value="0"
-        app:max="99"
-        app:min="0"
-        app:unit="1" />
+        android:layout_margin="@dimen/dp_8">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/imgCard"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_35"
+            android:layout_marginTop="@dimen/dp_2"
+            app:cardCornerRadius="@dimen/dp_2"
+            app:cardElevation="@dimen/dp_5"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/itemImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/plants1" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tvItemName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_2"
+            android:fontFamily="@font/droidbold"
+            android:textSize="@dimen/sp_6"
+            android:gravity="center"
+            android:maxLines="2"
+            android:minLines="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgCard"
+            tools:text="Product name" />
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/droidbold"
+            android:textSize="@dimen/sp_8"
+            app:layout_constraintEnd_toEndOf="@+id/imgCard"
+            app:layout_constraintStart_toStartOf="@+id/imgCard"
+            app:layout_constraintTop_toBottomOf="@+id/tvItemName"
+            tools:text="$300" />
+
+        <com.citrus.pottedplantskiosk.util.CustomNumberPicker
+            android:layout_marginTop="@dimen/dp_2"
+            android:id="@+id/numberPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_14"
+            app:layout_constraintTop_toBottomOf="@id/tvPrice"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
 

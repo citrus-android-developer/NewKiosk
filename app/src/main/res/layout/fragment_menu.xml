@@ -77,7 +77,9 @@
                 tools:itemCount="4"
                 tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/group_item_view"
-                tools:orientation="horizontal" />
+                tools:orientation="horizontal"
+                android:requiresFadingEdge="horizontal"
+                android:fadingEdgeLength="@dimen/dp_30"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -129,9 +131,11 @@
         tools:itemCount="6"
         tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:listitem="@layout/goods_item_view"
-        tools:orientation="horizontal">
-
+        tools:orientation="horizontal"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="@dimen/dp_50">
     </androidx.recyclerview.widget.RecyclerView>
+
 
     <com.mlsdev.animatedrv.AnimatedRecyclerView
         android:id="@+id/typeItemRv"
@@ -151,7 +155,9 @@
         tools:itemCount="6"
         tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:listitem="@layout/goods_item_view"
-        tools:orientation="horizontal">
+        tools:orientation="horizontal"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="@dimen/dp_50">
 
     </com.mlsdev.animatedrv.AnimatedRecyclerView>
 
@@ -164,14 +170,18 @@
         app:layout_constraintGuide_percent="0.10" />
 
 
-    <ImageView
+    <TextView
         android:id="@+id/cartIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/circle_button_shape"
         android:elevation="@dimen/dp_10"
         android:padding="@dimen/dp_6"
-        android:src="@drawable/ic_round_shopping_cart_24"
+        android:drawableStart="@drawable/ic_round_shopping_cart_24"
+        android:text="My Order"
+        android:fontFamily="@font/droidbold"
+        android:textSize="@dimen/sp_11"
+        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/cartArea"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -180,14 +190,52 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cartArea"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/constraint_shape"
-        android:elevation="@dimen/dp_5"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:elevation="@dimen/dp_10"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/BottomLine">
 
+        <com.mlsdev.animatedrv.AnimatedRecyclerView
+            android:id="@+id/cartRv"
+            app:animationDuration="300"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginStart="@dimen/dp_10"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:fadingEdgeLength="@dimen/dp_50"
+            android:requiresFadingEdge="horizontal"
+            app:layoutAnimation="@anim/layout_animation_from_bottom"
+            app:layoutManagerOrientation="vertical"
+            app:layoutManagerType="linear"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/payBtn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/cart_item_view"
+            tools:orientation="horizontal"></com.mlsdev.animatedrv.AnimatedRecyclerView>
+
+
+        <TextView
+            android:visibility="invisible"
+            android:id="@+id/payBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_24"
+            android:layout_marginBottom="@dimen/dp_24"
+            android:background="@drawable/text_btn_shape"
+            android:fontFamily="@font/droidbold"
+            android:gravity="center"
+            android:text="Done"
+            android:padding="@dimen/dp_5"
+            android:textSize="@dimen/sp_12"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

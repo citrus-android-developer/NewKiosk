@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:clipToPadding="false"
+    android:padding="@dimen/padding_5">
+
+    <TextView
+        android:id="@+id/tvSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_light_15"
+        android:elevation="3dp"
+        android:fontFamily="@font/varela_number"
+        android:gravity="center"
+        android:minWidth="@dimen/dp_40"
+        android:paddingLeft="@dimen/padding_10"
+        android:paddingTop="@dimen/padding_10"
+        android:paddingRight="@dimen/padding_10"
+        android:paddingBottom="@dimen/padding_10"
+        android:textStyle="bold"
+        android:stateListAnimator="@animator/selector_animator"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="@dimen/sp_10"
+        tools:text="L" />
+
+</RelativeLayout>

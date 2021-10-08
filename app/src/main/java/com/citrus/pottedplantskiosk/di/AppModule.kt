@@ -68,10 +68,6 @@ object FragmentModule {
         CartItemAdapter(fragment.requireContext())
 
     @Provides
-    fun provideZoomItemAdapter(fragment: Fragment) =
-        ZoomAdapter(fragment.requireContext())
-
-    @Provides
     fun provideDescItemAdapter(fragment: Fragment) =
         DescItemAdapter(fragment.requireContext())
 

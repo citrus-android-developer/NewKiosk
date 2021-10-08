@@ -47,6 +47,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initBalloon()
+        menuViewModel.stopTimer()
     }
 
     override fun initView() {

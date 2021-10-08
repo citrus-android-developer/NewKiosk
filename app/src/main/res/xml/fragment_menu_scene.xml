@@ -17,6 +17,7 @@
 
     <Transition
         android:id="@+id/start_raise"
+        motion:layoutDuringTransition="honorRequest"
         motion:constraintSetEnd="@+id/startCartAreaRaise"
         motion:constraintSetStart="@id/start"
         motion:duration="1000"></Transition>
@@ -81,17 +82,32 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_20"
             android:layout_marginBottom="@dimen/dp_10"
-            android:visibility="visible" />
+            android:visibility="visible" >
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
 
         <Constraint
             android:id="@+id/cartArea"
-            motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="@+id/BottomLine"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:elevation="@dimen/dp_5" />
+        <Constraint
+            android:id="@+id/cartIcon"
+            android:elevation="@dimen/dp_10"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="@dimen/dp_24"
+            android:layout_height="@dimen/dp_24"
+            motion:layout_constraintBottom_toTopOf="@+id/cartArea"
+            motion:layout_constraintTop_toTopOf="@+id/cartArea"
+            motion:layout_constraintStart_toStartOf="parent" >
+
+<!--            <CustomAttribute-->
+<!--                motion:attributeName="Text"-->
+<!--                motion:customStringValue=""/>-->
+        </Constraint>
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -151,27 +167,26 @@
             android:visibility="visible" />
         <Constraint
             android:id="@+id/cartArea"
-            motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="@+id/BottomLine"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:elevation="@dimen/dp_5" />
-    </ConstraintSet>
-
-
-    <ConstraintSet android:id="@+id/cartAreaFall">
         <Constraint
-            android:id="@+id/cartArea"
-            motion:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/cartIcon"
+            android:elevation="@dimen/dp_10"
             motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="@+id/BottomLine"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:elevation="@dimen/dp_5" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toTopOf="@+id/cartArea"
+            motion:layout_constraintTop_toTopOf="@+id/cartArea"
+            motion:layout_constraintStart_toStartOf="parent" >
+
+        </Constraint>
     </ConstraintSet>
+
+
 
     <ConstraintSet
         android:id="@+id/startCartAreaRaise"
@@ -185,6 +200,21 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:elevation="@dimen/dp_5" />
+
+        <Constraint
+            android:id="@+id/cartIcon"
+            android:elevation="@dimen/dp_10"
+            android:layout_marginStart="@dimen/dp_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toTopOf="@+id/cartArea"
+            motion:layout_constraintTop_toTopOf="@+id/cartArea"
+            motion:layout_constraintStart_toStartOf="parent" >
+
+<!--            <CustomAttribute-->
+<!--                motion:attributeName="Text"-->
+<!--                motion:customStringValue="My Order"/>-->
+        </Constraint>
     </ConstraintSet>
 
     <ConstraintSet

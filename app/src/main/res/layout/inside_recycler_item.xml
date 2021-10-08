@@ -61,7 +61,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:itemCount="3"
         tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/goods_item_view" />
+        tools:listitem="@layout/goods_item_view"
+        android:requiresFadingEdge="horizontal"
+        android:fadingEdgeLength="@dimen/dp_24"/>
 
     <View
         android:visibility="invisible"

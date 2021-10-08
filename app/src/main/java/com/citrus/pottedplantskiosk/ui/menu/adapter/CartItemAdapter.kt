@@ -6,8 +6,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.citrus.pottedplantskiosk.api.remote.dto.MockGoods
+import com.bumptech.glide.Glide
+import com.citrus.pottedplantskiosk.R
+import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.CartItemViewBinding
+import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.Constants.df
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -17,9 +21,9 @@ class CartItemAdapter @Inject constructor(val context: Context):
     class CartItemViewHolder(val binding: CartItemViewBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    var cartGoods = listOf<MockGoods>()
+    var cartGoods = listOf<Good>()
 
-    suspend fun updateDataset(newDataset: List<MockGoods>) = withContext(Dispatchers.Default) {
+    suspend fun updateDataset(newDataset: List<Good>) = withContext(Dispatchers.Default) {
         val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int {
                 return cartGoods.size
@@ -58,7 +62,17 @@ class CartItemAdapter @Inject constructor(val context: Context):
     ) {
         val item = cartGoods[position]
         holder.binding.apply {
-            tvItemName.text = item.ItemName
+            tvItemName.text = item.gName
+
+            Glide.with(holder.itemView)
+                .load(Constants.IMG_URL + item.picName)
+                .into(itemImage)
+
+            tvPrice.text = "$" + df.format(item.price * item.qty)
+
+            numberPicker.setValue(item.qty)
+            numberPicker.setTextSize(R.dimen.sp_4)
+
         }
     }
 

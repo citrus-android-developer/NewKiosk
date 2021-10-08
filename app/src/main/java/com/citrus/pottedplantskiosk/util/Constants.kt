@@ -7,6 +7,7 @@ import com.skydoves.balloon.Balloon
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
 
 object Constants {
@@ -15,6 +16,7 @@ object Constants {
     const val GET_MENU = "POSServer/UploadDataWS/Service1.asmx/getAllKindGoods_KIOSK"
     const val SHARED_PREFERENCES_NAME = "sharedPref"
     const val TWO_MINUTES = 120
+    var df = DecimalFormat("#,###,##0.###")
 
 
     /**Prefs*/
@@ -31,6 +33,7 @@ object Constants {
          }
          this.dismiss()
     }
+
 
     fun MotionLayout.setTransitionExecute(transitionId:Int,milliseconds:Int) {
         setTransition(transitionId)

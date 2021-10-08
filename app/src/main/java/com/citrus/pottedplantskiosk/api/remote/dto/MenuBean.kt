@@ -44,7 +44,7 @@ data class Good(
     @SerializedName("flavor")
     val flavor: List<Flavor>,
     @SerializedName("GID")
-    val gID: String,
+    var gID: String,
     @SerializedName("GKID")
     val gKID: String,
     @SerializedName("GName")
@@ -58,18 +58,30 @@ data class Good(
     @SerializedName("picname")
     val picName: String,
     @SerializedName("Price")
-    val price: Double,
+    var price: Double,
     @SerializedName("PrintGroup")
     val printGroup: String,
     @SerializedName("Size")
-    val size: List<Size>,
+    var size: List<Size>,
     @SerializedName("Stock")
     val stock: Int,
     @SerializedName("Tax")
     val tax: Int,
     @SerializedName("TaxID")
-    val taxID: String
-) : Serializable
+    val taxID: String,
+    var isEdit: Boolean = false,
+    var qty: Int = 0,
+    var sPrice: Double = 0.0,
+) : Serializable {
+
+    /**avoid shallow copy*/
+    fun deepCopy(
+        add: List<Add> = this.add.map { it?.copy() },
+        flavor: List<Flavor> = this.flavor.map { it.copy() },
+        size: List<Size> = this.size.map { it.copy() },
+    ) = this.copy(add= add, flavor= flavor, size= size)
+
+}
 
 
 data class Add(
@@ -106,5 +118,6 @@ data class Size(
     @SerializedName("SName2")
     val sName2: String,
     @SerializedName("Stock")
-    val stock: Int
+    val stock: String,
+    var isCheck: Boolean = false
 ) : Serializable

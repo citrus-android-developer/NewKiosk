@@ -62,7 +62,7 @@ data class Good(
     @SerializedName("PrintGroup")
     val printGroup: String,
     @SerializedName("Size")
-    var size: List<Size>,
+    var size: List<Size>?,
     @SerializedName("Stock")
     val stock: Int,
     @SerializedName("Tax")
@@ -78,7 +78,7 @@ data class Good(
     fun deepCopy(
         add: List<Add> = this.add.map { it?.copy() },
         flavor: List<Flavor> = this.flavor.map { it.copy() },
-        size: List<Size> = this.size.map { it.copy() },
+        size: List<Size>? = this.size?.map { it.copy() } ?: null,
     ) = this.copy(add= add, flavor= flavor, size= size)
 
 }

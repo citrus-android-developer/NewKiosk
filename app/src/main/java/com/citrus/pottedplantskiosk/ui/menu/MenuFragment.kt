@@ -34,26 +34,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-sealed interface CurrentId
-object Start : CurrentId
-object End : CurrentId
-
-sealed class CartState {
-    object Raise : CartState()
-    object Fall : CartState()
-}
-
-data class PageState(var currentId: CurrentId = Start, var cartState: CartState = CartState.Fall)
-
-
 @AndroidEntryPoint
 class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private val menuViewModel: MenuViewModel by activityViewModels()
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMenuBinding::inflate
-
-    var initState = PageState()
 
     private var detailPageGoods: List<Good>? = null
     private var currentCartGoods: List<Good>? = null
@@ -75,6 +61,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
     override fun initView() {
         binding.apply {
+            cartMotionLayout.registerLifecycleOwner(lifecycle)
             groupRv.apply {
                 layoutManager =
                     LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)
@@ -89,11 +76,11 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 layoutManager = GridLayoutManager(requireActivity(), 4)
             }
 
-            cartRv.apply {
-                layoutManager =
-                    LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)
-                adapter = cartItemAdapter
-            }
+//            cartRv.apply {
+//                layoutManager =
+//                    LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)
+//                adapter = cartItemAdapter
+//            }
 
             setBack.setOnClickListener { v ->
                 ElasticAnimation(v)
@@ -102,40 +89,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     .setDuration(50)
                     .setOnFinishListener {
                         root.apply {
-                            if (initState.cartState == CartState.Raise) {
-                                setTransitionReverse(R.id.end_raise, 100)
-                                initState.cartState = CartState.Fall
-                            }
                             setTransitionReverse(R.id.switchPreview, 500)
-                        }
-                    }.doAction()
-            }
-
-            cartIcon.setOnClickListener { v ->
-                ElasticAnimation(v)
-                    .setScaleX(0.85f)
-                    .setScaleY(0.85f)
-                    .setDuration(50)
-                    .setOnFinishListener {
-                        root.apply {
-                            if (initState.currentId == Start) {
-                                setTransition(R.id.start_raise)
-                                setTransitionDuration(500)
-                            } else {
-                                setTransition(R.id.end_raise)
-                                setTransitionDuration(500)
-                            }
-
-                            when (initState.cartState) {
-                                is CartState.Raise -> {
-                                    initState.cartState = CartState.Fall
-                                    transitionToStart()
-                                }
-                                is CartState.Fall -> {
-                                    initState.cartState = CartState.Raise
-                                    transitionToEnd()
-                                }
-                            }
                         }
                     }.doAction()
             }
@@ -185,7 +139,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
                         binding.root.apply {
                             setTransitionExecute(R.id.switchPreview, 500)
-                            initState.cartState = CartState.Fall
                         }
                     }
                 )
@@ -221,14 +174,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         groupItemAdapter.setOnKindClickListener { groupName ->
             menuViewModel.onGroupChange(groupName)
             binding.motionLayout.apply {
-                if (initState.cartState == CartState.Raise) {
-                    if (initState.currentId == Start) {
-                        setTransitionReverse(R.id.start_raise, 100)
-                    } else {
-                        setTransitionReverse(R.id.end_raise, 100)
-                    }
-                    initState.cartState = CartState.Fall
-                }
                 setTransitionReverse(R.id.switchPreview, 500)
             }
         }
@@ -239,26 +184,19 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             ) {
                 when (currentId) {
                     R.id.start -> {
-                        initState.currentId = Start
-                        binding.payBtn.visibility = View.INVISIBLE
+
                     }
                     R.id.end -> {
-                        if (initState.currentId == Start) {
-                            detailPageGoods?.let {
-                                lifecycleScope.launch {
-                                    (binding.typeItemRv.adapter as GoodsItemAdapter).updateDataset(
-                                        it
-                                    )
-                                    binding.typeItemRv.scheduleLayoutAnimation()
-                                }
+                        detailPageGoods?.let {
+                            lifecycleScope.launch {
+                                (binding.typeItemRv.adapter as GoodsItemAdapter).updateDataset(
+                                    it
+                                )
+                                binding.typeItemRv.scheduleLayoutAnimation()
                             }
                         }
-                        initState.currentId = End
+
                         binding.setBack.isVisible = true
-                    }
-                    R.id.startCartAreaRaise -> {
-                        cartItemAdapter.notifyDataSetChanged()
-                        binding.payBtn.isVisible = true
                     }
                 }
             }

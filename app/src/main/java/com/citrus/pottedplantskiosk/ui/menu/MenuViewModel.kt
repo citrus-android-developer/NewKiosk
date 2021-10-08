@@ -65,7 +65,8 @@ class MenuViewModel @Inject constructor(
 
     fun showData(data: Data) = viewModelScope.launch {
         _menuData.emit(data.mainGroup)
-        var groupList = data.mainGroup.map { GroupItem(it.groupName, if(it.kind.isNotEmpty()) it.kind[0].goods[0].picName else null) }
+       // var groupList = data.mainGroup.map { GroupItem(it.groupName, if(it.kind.isNotEmpty()) it.kind[0].goods[0].picName else null) }
+        var groupList = data.mainGroup.map { GroupItem(it.groupName,  null) }
 
         _menuGroupName.emit(groupList)
         onGroupChange(groupList[0].name)
@@ -73,7 +74,7 @@ class MenuViewModel @Inject constructor(
 
     fun onGroupChange(groupName: String) = viewModelScope.launch {
         var data = _menuData.value
-        var kindList = data.first { it.groupName == groupName }.kind + data[1].kind + data[2].kind
+        var kindList = data.first { it.groupName == groupName }.kind
 
         /**MockSize*/
 //        val size1 = Size("Bottle","101",4500.0,"107","Bottle","")

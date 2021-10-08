@@ -25,6 +25,11 @@ import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.graphics.drawable.Drawable
+
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+
 
 class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutineScope) :
     RecyclerView.Adapter<ZoomAdapter.ZoomViewHolder>() {
@@ -77,17 +82,20 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
             rvSize.isVisible = false
             numberPicker.isVisible = false
             if (prefs.languagePos == 1) {
-                tvName.text = item.gName2.substring(3, item.gName2.length)
+                tvName.text = item.gName2
             } else {
-                tvName.text = item.gName.substring(3, item.gName.length)
+                tvName.text = item.gName
             }
 
             tvPrice.text = "$" + item.price
 
             Glide.with(root)
-                .load(
-                    Constants.IMG_URL + item.picName
+                .applyDefaultRequestOptions(
+                    RequestOptions()
+                        .placeholder(R.drawable.ic_image_gallery__2_)
+                        .error(R.drawable.ic_image_gallery__2_)
                 )
+                .load(Constants.IMG_URL + item.picName)
                 .into(photo)
 
             addCart.setOnClickListener { v ->
@@ -117,15 +125,15 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
                                 adapter = sizeAdapter
                             }
                             lifecycle.launch {
-                                sizeAdapter.updateDataset(item.size)
+                                sizeAdapter.updateDataset(item.size!!)
                                 numberPicker.isVisible = true
                             }
 
                             sizeAdapter.setOnSizeClickListener { choseSize ->
                                 item.gID = choseSize.gID
                                 item.price = choseSize.price
-                                sumPriceCount(tvPrice,item.qty,item.price)
-                                item.size.forEach { size ->
+                                sumPriceCount(tvPrice, item.qty, item.price)
+                                item.size?.forEach { size ->
                                     size.isCheck = size.desc == choseSize.desc
                                 }
                             }
@@ -140,14 +148,14 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
 
             numberPicker.setOnBtnClickListener {
                 item.qty = it
-                sumPriceCount(tvPrice,item.qty,item.price)
+                sumPriceCount(tvPrice, item.qty, item.price)
             }
         }
     }
 
-    fun sumPriceCount(tvPrice:TextView,qty:Int,price:Double):Double{
+    fun sumPriceCount(tvPrice: TextView, qty: Int, price: Double): Double {
         val sumPrice = price * qty
-        setPriceText(sumPrice,tvPrice)
+        setPriceText(sumPrice, tvPrice)
         return sumPrice
     }
 
@@ -160,16 +168,16 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
     }
 
     private fun ifNeedSize(goods: Good): Boolean {
-        if (goods.size.isNotEmpty()) {
-            return if (goods.size.size == 1 && goods.size[0].desc == ".") {
+        if (goods.size?.isNotEmpty() == true) {
+            return if (goods.size?.size == 1 && goods.size?.get(0)?.desc == ".") {
                 false
             } else {
                 if (!goods.isEdit) {
-                    goods.size[0].isCheck = true
+                    goods.size?.get(0)?.isCheck = true
                 } else {
-                    val checkSize = goods.size.first { it.isCheck }
-                    goods.gID = checkSize.gID
-                    goods.price = checkSize.price
+                    val checkSize = goods.size?.first { it.isCheck }
+                    goods.gID = checkSize!!.gID
+                    goods.price = checkSize!!.price
                 }
                 true
             }

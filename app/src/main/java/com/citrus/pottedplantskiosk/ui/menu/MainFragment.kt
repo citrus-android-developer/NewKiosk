@@ -170,4 +170,9 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
             CircleIndicator(requireContext())
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+    }
+
 }

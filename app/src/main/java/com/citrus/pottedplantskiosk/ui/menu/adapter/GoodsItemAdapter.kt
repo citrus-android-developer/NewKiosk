@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.GoodsItemViewBinding
 import com.citrus.pottedplantskiosk.di.prefs
@@ -15,7 +17,7 @@ import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GoodsItemAdapter (val context: Context, private val onItemClick:(Good,List<Good>) -> Unit) :
+class GoodsItemAdapter(val context: Context, private val onItemClick: (Good, List<Good>) -> Unit) :
     RecyclerView.Adapter<GoodsItemAdapter.GoodsItemViewHolder>() {
     class GoodsItemViewHolder(val binding: GoodsItemViewBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -42,7 +44,7 @@ class GoodsItemAdapter (val context: Context, private val onItemClick:(Good,List
 
         })
         withContext(Dispatchers.Main) {
-            goods = newDataset.map { it.copy() }
+            goods = newDataset.map { it.deepCopy() }
             diff.dispatchUpdatesTo(this@GoodsItemAdapter)
         }
     }
@@ -60,14 +62,19 @@ class GoodsItemAdapter (val context: Context, private val onItemClick:(Good,List
         val item = goods[position]
         holder.binding.apply {
 
-            Glide.with(holder.itemView)
+            Glide.with(root)
+                .applyDefaultRequestOptions(
+                    RequestOptions()
+                        .placeholder(R.drawable.ic_image_gallery__2_)
+                        .error(R.drawable.ic_image_gallery__2_)
+                )
                 .load(Constants.IMG_URL + item.picName)
                 .into(itemImage)
 
-            if(prefs.languagePos == 1){
-                tvItemName.text = item.gName2.substring(3,item.gName2.length)
-            }else{
-                tvItemName.text = item.gName.substring(3,item.gName.length)
+            if (prefs.languagePos == 1) {
+                tvItemName.text = item.gName2
+            } else {
+                tvItemName.text = item.gName
             }
 
 
@@ -79,7 +86,7 @@ class GoodsItemAdapter (val context: Context, private val onItemClick:(Good,List
                     .setScaleY(0.85f)
                     .setDuration(50)
                     .setOnFinishListener {
-                        onItemClick(item,goods)
+                        onItemClick(item, goods)
                     }
                     .doAction()
             }

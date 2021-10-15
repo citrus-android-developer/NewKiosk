@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import androidx.activity.viewModels
+import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.databinding.ActivityMenuBinding
 import com.citrus.pottedplantskiosk.util.i18n.LocaleHelper
@@ -34,9 +35,14 @@ class MenuActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         val data = bundle?.getSerializable("data")
+        val banner = bundle?.getSerializable("banner")
 
         data?.let {
             menuViewModel.showData(it as Data)
+        }
+
+        banner?.let{
+            menuViewModel.showBanner(it as BannerResponse)
         }
     }
 

@@ -32,8 +32,12 @@ import android.view.animation.Animation
 import android.widget.Button
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.di.prefs
+import com.citrus.pottedplantskiosk.util.Constants
+import kotlinx.coroutines.flow.collect
 
 
 @AndroidEntryPoint
@@ -55,15 +59,9 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
         binding.apply {
             val anim: Animation = AlphaAnimation(0.0f, 1.0f)
             anim.duration = 1000
-            anim.startOffset = 20
             anim.repeatMode = Animation.REVERSE
             anim.repeatCount = Animation.INFINITE
             tvStart.startAnimation(anim)
-
-            showBanner(
-                binding.banner as Banner<DataBean, BannerImageAdapter<DataBean>>,
-                DataBean.testData
-            )
 
             touchStart.setOnClickListener { v ->
                 ElasticAnimation(v)
@@ -82,6 +80,14 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
 
     override fun initObserve() {
         Log.e("initObserve", "notDefine")
+        lifecycleScope.launchWhenStarted {
+            menuViewModel.showBannerData.collect { banners ->
+                showBanner(
+                    binding.banner as Banner<BannerData, BannerImageAdapter<BannerData>>,
+                    banners
+                )
+            }
+        }
     }
 
     override fun initAction() {
@@ -130,29 +136,23 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
     }
 
     private fun showBanner(
-        myBanner: Banner<DataBean, BannerImageAdapter<DataBean>>,
-        imgList: List<DataBean>
+        myBanner: Banner<BannerData, BannerImageAdapter<BannerData>>,
+        imgList: List<BannerData>
     ) {
         myBanner.scrollTime = 300
         myBanner.setLoopTime(5000)
-        var banner: Banner<DataBean, BannerImageAdapter<DataBean>> = myBanner
-        banner.setAdapter(object : BannerImageAdapter<DataBean>(imgList) {
+        var banner: Banner<BannerData, BannerImageAdapter<BannerData>> = myBanner
+        banner.setAdapter(object : BannerImageAdapter<BannerData>(imgList) {
             override fun onBindView(
                 holder: BannerImageHolder,
-                data: DataBean,
+                data: BannerData,
                 position: Int,
                 size: Int
             ) {
-                holder.imageView.scaleType = ImageView.ScaleType.FIT_XY
+                holder.imageView.scaleType = ImageView.ScaleType.FIT_CENTER
 
                 Glide.with(holder.itemView)
-                    .load(
-                        ResourcesCompat.getDrawable(
-                            requireContext().resources,
-                            data.imageRes!!,
-                            null
-                        )
-                    )
+                    .load(Constants.IMG_URL + data.pic)
                     .into(holder.imageView)
 
                 holder.imageView.setOnClickListener {

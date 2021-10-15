@@ -10,7 +10,7 @@
     <TextView
         android:visibility="invisible"
         android:id="@+id/tvTypeName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_5"
         android:layout_marginTop="@dimen/dp_5"
@@ -18,9 +18,12 @@
         android:padding="@dimen/dp_3"
         android:textColor="@color/black"
         android:textSize="@dimen/sp_15"
+        android:gravity="center|start"
         android:drawableStart="@drawable/ic_tag"
+        android:paddingStart="@dimen/dp_7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/viewMore"
         tools:text="Food" />
 
 

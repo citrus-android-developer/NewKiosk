@@ -42,6 +42,10 @@ class CustomNumberPicker @JvmOverloads constructor(
                     if (currentValue > 1) {
                         currentValue--
                         updateDisplayValue()
+                    }else{
+                        onRemoveItemListener?.let{ call ->
+                            call(0)
+                        }
                     }
                 }.doAction()
         }
@@ -81,4 +85,9 @@ class CustomNumberPicker @JvmOverloads constructor(
         onBtnClickListener = listener
     }
 
+    private var onRemoveItemListener: ((Int) -> Unit)? = null
+
+    fun setOnRemoveItemListener(listener: (Int) -> Unit) {
+        onRemoveItemListener = listener
+    }
 }

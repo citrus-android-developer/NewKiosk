@@ -1,13 +1,14 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
 
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.constraintlayout.motion.widget.TransitionAdapter
+import android.widget.Button
+import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -22,13 +23,13 @@ import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.FragmentMenuBinding
 import com.citrus.pottedplantskiosk.ui.menu.adapter.*
 import com.citrus.pottedplantskiosk.util.Constants
-import com.citrus.pottedplantskiosk.util.Constants.setTransitionExecute
-import com.citrus.pottedplantskiosk.util.Constants.setTransitionReverse
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
+import com.google.android.material.snackbar.Snackbar
 import com.skydoves.elasticviews.ElasticAnimation
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,8 +42,10 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMenuBinding::inflate
 
-    private var detailPageGoods: List<Good>? = null
     private var currentCartGoods: List<Good>? = null
+
+    private var snackbar: Snackbar? = null
+    private var updateTimerJob: Job? = null
 
     @Inject
     lateinit var groupItemAdapter: GroupItemAdapter
@@ -50,7 +53,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
     @Inject
     lateinit var cartItemAdapter: CartItemAdapter
-    private var updateCartItemJob: Job? = null
 
     private var updateKindItemJob: Job? = null
 
@@ -62,6 +64,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     override fun initView() {
         binding.apply {
             cartMotionLayout.registerLifecycleOwner(lifecycle)
+            cartMotionLayout.setAdapter(cartItemAdapter)
+
             groupRv.apply {
                 layoutManager =
                     LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)
@@ -89,7 +93,13 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     .setDuration(50)
                     .setOnFinishListener {
                         root.apply {
-                            setTransitionReverse(R.id.switchPreview, 500)
+                            lifecycleScope.launchWhenStarted {
+                                if (currentState == R.id.end_with_cart_open) {
+                                    binding.cartMotionLayout.setCloseSheet()
+                                }
+                                transitionToState(R.id.start)
+                                awaitTransitionComplete(R.id.start)
+                            }
                         }
                     }.doAction()
             }
@@ -99,10 +109,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     override fun initObserve() {
         lifecycleScope.launchWhenStarted {
             menuViewModel.currentCartGoods.collect { cartGoods ->
-                updateCartItemJob?.cancel()
-                updateCartItemJob = lifecycleScope.launch {
-                    cartItemAdapter.updateDataset(cartGoods)
-                }
+                binding.cartMotionLayout.addCartGoods(cartGoods)
             }
         }
 
@@ -133,12 +140,20 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                             }
                         )
 
-                        detailPageGoods = goods
                         binding.typeName.text = title
                         binding.typeName.paint.flags = Paint.UNDERLINE_TEXT_FLAG
 
                         binding.root.apply {
-                            setTransitionExecute(R.id.switchPreview, 500)
+                            lifecycleScope.launchWhenStarted {
+                                if (currentState == R.id.start_with_cart_open) {
+                                    binding.cartMotionLayout.setCloseSheet()
+                                }
+                                transitionToState(R.id.end)
+                                awaitTransitionComplete(R.id.end)
+                                (binding.typeItemRv.adapter as GoodsItemAdapter).updateDataset(goods)
+                                binding.typeItemRv.scheduleLayoutAnimation()
+                                binding.setBack.isVisible = true
+                            }
                         }
                     }
                 )
@@ -162,6 +177,36 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
         lifecycleScope.launchWhenStarted {
             menuViewModel.tikTok.collect { timer ->
+                if (timer == 0) {
+                    /**If click anywhere except continue button*/
+                    releaseSnack()
+                }
+
+                if (timer == 100) {
+                    var temp = 100
+                    snackbar = Snackbar.make(requireView(), "", 20000)
+                    val customSnackView: View =
+                        layoutInflater.inflate(R.layout.custom_snackbar_view, null)
+                    snackbar!!.view.setBackgroundColor(Color.TRANSPARENT)
+                    val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
+                    snackbarLayout.setPadding(0, 0, 0, 0)
+                    val bGotoWebsite: Button = customSnackView.findViewById(R.id.gotoWebsiteButton)
+                    val timerHint: TextView = customSnackView.findViewById(R.id.textView2)
+                    updateTimerJob = lifecycleScope.launch {
+                        while (temp < 120) {
+                            delay(1000)
+                            temp++
+                            timerHint.text = (120 - temp).toString() + "秒後將返回主畫面"
+                        }
+                    }
+
+                    bGotoWebsite.setOnClickListener {
+                        releaseSnack()
+                    }
+                    snackbarLayout.addView(customSnackView, 0)
+                    snackbar!!.show()
+                }
+
                 if (timer == Constants.TWO_MINUTES) {
                     menuViewModel.stopTimer()
                     findNavController().popBackStack(R.id.mainFragment, false)
@@ -174,33 +219,79 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         groupItemAdapter.setOnKindClickListener { groupName ->
             menuViewModel.onGroupChange(groupName)
             binding.motionLayout.apply {
-                setTransitionReverse(R.id.switchPreview, 500)
-            }
-        }
-
-        binding.root.setTransitionListener(object : TransitionAdapter() {
-            override fun onTransitionCompleted(
-                motionLayout: MotionLayout?, currentId: Int
-            ) {
-                when (currentId) {
-                    R.id.start -> {
-
+                when (binding.root.currentState) {
+                    R.id.end_with_cart_open -> {
+                        binding.cartMotionLayout.setCloseSheet()
+                        binding.root.transitionToState(R.id.start)
                     }
+                    R.id.start_with_cart_open -> {
+                        binding.cartMotionLayout.setCloseSheet()
+                    }
+                    R.id.start -> Unit
                     R.id.end -> {
-                        detailPageGoods?.let {
-                            lifecycleScope.launch {
-                                (binding.typeItemRv.adapter as GoodsItemAdapter).updateDataset(
-                                    it
-                                )
-                                binding.typeItemRv.scheduleLayoutAnimation()
-                            }
-                        }
-
-                        binding.setBack.isVisible = true
+                        binding.root.transitionToState(R.id.start)
                     }
                 }
             }
-        })
+        }
+
+        binding.cartMotionLayout.setOnOpenSheetListener {
+            when (binding.root.currentState) {
+                R.id.start -> {
+                    lifecycleScope.launchWhenStarted {
+                        binding.root.transitionToState(R.id.start_with_cart_open)
+                        binding.root.awaitTransitionComplete(R.id.start_with_cart_open)
+                    }
+                }
+                R.id.end -> {
+                    lifecycleScope.launchWhenStarted {
+                        binding.root.transitionToState(R.id.end_with_cart_open)
+                        binding.root.awaitTransitionComplete(R.id.end_with_cart_open)
+                    }
+                }
+            }
+        }
+
+        binding.cartMotionLayout.setOnCloseSheetListener {
+            lifecycleScope.launchWhenStarted {
+                when (binding.root.currentState) {
+                    R.id.start_with_cart_open -> {
+                        binding.root.transitionToState(R.id.start)
+                        binding.root.awaitTransitionComplete(R.id.start)
+                    }
+                    R.id.end_with_cart_open -> {
+                        binding.root.transitionToState(R.id.end)
+                        binding.root.awaitTransitionComplete(R.id.end)
+                    }
+                }
+            }
+        }
+
+        binding.cartMotionLayout.setOnCloseSheetWhenSwitchListener {
+            when (binding.root.currentState) {
+                R.id.start -> {
+                    binding.root.transitionToState(R.id.end)
+                }
+                R.id.end -> {
+                    binding.root.transitionToState(R.id.start)
+                }
+            }
+        }
+
+        binding.cartMotionLayout.setOnPayButtonClickListener { list ->
+            Log.e("list",list.toString())
+        }
+
+        cartItemAdapter.setOnItemDeleteListener { good ->
+            binding.cartMotionLayout.removeGoods(good)
+        }
+    }
+
+    private fun releaseSnack(){
+        updateTimerJob?.cancel()
+        updateTimerJob = null
+        snackbar?.dismiss()
+        snackbar = null
     }
 
 }

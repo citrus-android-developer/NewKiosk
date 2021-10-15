@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.citrus.pottedplantskiosk.util.MultiListenerMotionLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/motionLayout"
@@ -7,8 +8,22 @@
     android:layout_height="match_parent"
     android:background="@color/colorLightGray"
     app:layoutDescription="@xml/fragment_menu_scene"
-    tools:context=".ui.menu.MenuFragment"
-    >
+    tools:context=".ui.menu.MenuFragment">
+
+    <ImageView
+        android:padding="@dimen/dp_10"
+        android:id="@+id/logo"
+        android:layout_width="@dimen/dp_100"
+        android:layout_height="0dp"
+        android:scaleType="centerInside"
+        app:layout_constraintDimensionRatio="1:0.5"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/groupRvArea"
+        app:layout_constraintBottom_toTopOf="@+id/topInfoLine"
+        android:src="@drawable/citrus_logo"
+        app:tint="@color/ic_launcher_background"
+        />
+
 
     <TextView
         android:id="@+id/typeName"
@@ -70,6 +85,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/dp_10"
                 android:layout_marginEnd="@dimen/dp_10"
+                android:fadingEdgeLength="@dimen/dp_30"
+                android:requiresFadingEdge="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -77,9 +94,7 @@
                 tools:itemCount="4"
                 tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/group_item_view"
-                tools:orientation="horizontal"
-                android:requiresFadingEdge="horizontal"
-                android:fadingEdgeLength="@dimen/dp_30"/>
+                tools:orientation="horizontal" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -121,6 +136,8 @@
         android:layout_marginStart="@dimen/dp_20"
         android:layout_marginEnd="@dimen/dp_20"
         android:layout_marginBottom="@dimen/dp_5"
+        android:fadingEdgeLength="@dimen/dp_50"
+        android:requiresFadingEdge="vertical"
         app:layoutAnimation="@anim/layout_animation_from_bottom"
         app:layoutManagerOrientation="vertical"
         app:layoutManagerType="grid"
@@ -131,10 +148,7 @@
         tools:itemCount="6"
         tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:listitem="@layout/goods_item_view"
-        tools:orientation="horizontal"
-        android:requiresFadingEdge="vertical"
-        android:fadingEdgeLength="@dimen/dp_50">
-    </androidx.recyclerview.widget.RecyclerView>
+        tools:orientation="horizontal"></androidx.recyclerview.widget.RecyclerView>
 
 
     <com.mlsdev.animatedrv.AnimatedRecyclerView
@@ -144,6 +158,8 @@
         android:layout_marginStart="@dimen/dp_10"
         android:layout_marginEnd="@dimen/dp_10"
         android:layout_marginBottom="@dimen/dp_5"
+        android:fadingEdgeLength="@dimen/dp_50"
+        android:requiresFadingEdge="vertical"
         app:animationDuration="300"
         app:layoutAnimation="@anim/layout_animation_from_bottom"
         app:layoutManagerOrientation="vertical"
@@ -155,9 +171,7 @@
         tools:itemCount="6"
         tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:listitem="@layout/goods_item_view"
-        tools:orientation="horizontal"
-        android:requiresFadingEdge="vertical"
-        android:fadingEdgeLength="@dimen/dp_50">
+        tools:orientation="horizontal">
 
     </com.mlsdev.animatedrv.AnimatedRecyclerView>
 
@@ -170,7 +184,7 @@
         app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -193,7 +207,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-       app:layout_constraintGuide_percent="0.8" />
+        app:layout_constraintGuide_percent="0.8" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/cart_sheet_guideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7" />
 
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+</com.citrus.pottedplantskiosk.util.MultiListenerMotionLayout>

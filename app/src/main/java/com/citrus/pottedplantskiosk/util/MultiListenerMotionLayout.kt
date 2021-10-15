@@ -2,7 +2,6 @@ package com.citrus.pottedplantskiosk.util
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.TransitionAdapter
 import kotlinx.coroutines.CancellationException
@@ -38,19 +37,6 @@ open class MultiListenerMotionLayout @JvmOverloads constructor(context: Context,
             }
 
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
-                var name = ""
-                when (currentId){
-                    2131231097 -> {
-                        name = "set1 To set2"
-                    }
-                    2131231099 -> {
-                        name = "set2 To set3"
-                    }
-                    2131231100 -> {
-                        name = "set3 To set4"
-                    }
-                }
-                Log.e("Transition Completed",name)
                 listeners.forEach {
                     it.onTransitionCompleted(motionLayout, currentId)
                 }

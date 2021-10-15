@@ -86,8 +86,8 @@
     <com.citrus.pottedplantskiosk.util.CustomNumberPicker
         android:id="@+id/numberPicker"
         android:layout_marginTop="@dimen/dp_5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dp_70"
+        android:layout_height="@dimen/dp_40"
         app:layout_constraintTop_toBottomOf="@+id/rv_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -103,13 +103,15 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dp_20"
         android:background="@drawable/text_btn_shape"
+        android:drawablePadding="@dimen/dp_3"
         android:drawableStart="@drawable/ic_baseline_add_shopping_cart_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:text="加入購物車"
+        android:textStyle="bold"
         android:fontFamily="@font/droidbold"
-        android:padding="@dimen/dp_5"
+        android:padding="@dimen/dp_13"
         android:gravity="center"
         android:textSize="@dimen/sp_10"/>
 

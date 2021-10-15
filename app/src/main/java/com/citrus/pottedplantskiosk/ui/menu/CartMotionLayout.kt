@@ -3,10 +3,20 @@ package com.citrus.pottedplantskiosk.ui.menu
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.lifecycle.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.R
+import com.citrus.pottedplantskiosk.api.remote.dto.Good
+import com.citrus.pottedplantskiosk.ui.menu.adapter.CartItemAdapter
 import com.citrus.pottedplantskiosk.util.MultiListenerMotionLayout
+import com.skydoves.elasticviews.ElasticAnimation
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 /**
@@ -15,19 +25,37 @@ import kotlinx.coroutines.launch
  *
  * Code in this class contains mostly only choreographing the transitions.
  */
-class CartMotionLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    : MultiListenerMotionLayout(context, attrs, defStyleAttr), LifecycleObserver {
+class CartMotionLayout @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : MultiListenerMotionLayout(context, attrs, defStyleAttr), LifecycleObserver {
 
 
     private val closeIcon: ImageView
     private val filterIcon: ImageView
+    private val shoppingBag: ImageView
+    private val shoppingHint: TextView
+    private val shoppingBagHint: LinearLayout
+    private val cartRv: RecyclerView
+    private var updateCartItemJob: Job? = null
     lateinit var scope: LifecycleCoroutineScope
+    private var list: List<Good> = listOf()
 
 
     init {
         inflate(context, R.layout.layout_cart_sheet, this)
         closeIcon = findViewById(R.id.close_icon)
         filterIcon = findViewById(R.id.filter_icon)
+        shoppingBag = findViewById(R.id.shoppingBag)
+        cartRv = findViewById(R.id.cartRv)
+        shoppingHint = findViewById(R.id.shoppingHint)
+        shoppingBagHint = findViewById(R.id.shoppingBagHint)
+
+        cartRv.apply {
+            layoutManager =
+                LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        }
         enableClicks()
     }
 
@@ -38,8 +66,11 @@ class CartMotionLayout @JvmOverloads constructor(context: Context, attrs: Attrib
      * set1_base -> set2_path -> set3_reveal -> set4_settle
      */
     private fun openSheet(): Unit = performAnimation {
-        setTransition(R.id.set1_base, R.id.set2_path)
+        onOpenSheetListener?.let { open ->
+            open()
+        }
 
+        setTransition(R.id.set1_base, R.id.set2_path)
         // 1) set1_base -> set2_path
         // (Start scale down animation simultaneously)
         transitionToState(R.id.set2_path)
@@ -53,6 +84,11 @@ class CartMotionLayout @JvmOverloads constructor(context: Context, attrs: Attrib
         // 3) set3_reveal -> set4_settle
         transitionToState(R.id.set4_settle)
         awaitTransitionComplete(R.id.set4_settle)
+
+        (cartRv.adapter as (CartItemAdapter)).notifyDataSetChanged()
+        cartRv.isVisible = true
+        shoppingBagHint.visibility =
+            if ((cartRv.adapter as (CartItemAdapter)).itemCount > 0) View.INVISIBLE else View.VISIBLE
     }
 
     /**
@@ -65,6 +101,8 @@ class CartMotionLayout @JvmOverloads constructor(context: Context, attrs: Attrib
      * set4_settle -> set3_reveal -> set2_path -> set1_base
      */
     private fun closeSheet(): Unit = performAnimation {
+        cartRv.isVisible = false
+        shoppingBagHint.visibility = View.INVISIBLE
         // 1) set4_settle -> set3_reveal
         transitionToStart()
         awaitTransitionComplete(R.id.set3_reveal)
@@ -75,6 +113,10 @@ class CartMotionLayout @JvmOverloads constructor(context: Context, attrs: Attrib
         transitionToStart()
         awaitTransitionComplete(R.id.set2_path)
 
+        onCloseSheetListener?.let { close ->
+            close()
+        }
+
         // 3) set2_path -> set1_base
         // (Start scale 'up' animator simultaneously)
         setTransition(R.id.set1_base, R.id.set2_path)
@@ -83,11 +125,7 @@ class CartMotionLayout @JvmOverloads constructor(context: Context, attrs: Attrib
         awaitTransitionComplete(R.id.set1_base)
 
         // Remove adapters after closing filter sheet
-
     }
-
-
-
 
 
     /**
@@ -96,17 +134,23 @@ class CartMotionLayout @JvmOverloads constructor(context: Context, attrs: Attrib
      */
     private fun enableClicks() = when (currentState) {
         R.id.set1_base -> {
-            Log.e("currentState","set1_base")
             filterIcon.setImageResource(R.drawable.ic_round_shopping_cart_24)
             filterIcon.setOnClickListener { openSheet() }
             closeIcon.setOnClickListener(null)
         }
 
         R.id.set4_settle -> {
-            Log.e("currentState","set4_settle")
             filterIcon.setImageResource(R.drawable.ic_baseline_payment_24)
-            filterIcon.setOnClickListener { null }
-            closeIcon.setOnClickListener { closeSheet() }
+            filterIcon.setOnClickListener { v ->
+                clickAnimation({
+                    onPayButtonClickListener?.let { call ->
+                        call(list)
+                    }
+                }, v)
+            }
+            closeIcon.setOnClickListener { v ->
+                clickAnimation({ closeSheet() }, v)
+            }
         }
         else -> throw IllegalStateException("Can be called only for the permitted 3 currentStates")
     }
@@ -121,11 +165,39 @@ class CartMotionLayout @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
 
-    fun registerLifecycleOwner(lifecycle: Lifecycle){
+    fun registerLifecycleOwner(lifecycle: Lifecycle) {
         lifecycle.addObserver(this)
-         scope = lifecycle.coroutineScope
+        scope = lifecycle.coroutineScope
     }
 
+    fun setCloseSheet() {
+        closeSheet()
+    }
+
+    fun setAdapter(cartItemAdapter: CartItemAdapter) {
+        cartRv.adapter = cartItemAdapter
+    }
+
+    private fun updateRvData() {
+        updateCartItemJob?.cancel()
+        updateCartItemJob = scope.launch {
+            (cartRv.adapter as (CartItemAdapter)).updateDataset(list)
+        }
+    }
+
+    fun addCartGoods(cartGoods: Good?) {
+        cartGoods?.let {
+            list = list + it
+        } ?: run {
+            list = listOf()
+        }
+        updateRvData()
+    }
+
+    fun removeGoods(good: Good) {
+        list = list - good
+        updateRvData()
+    }
 
     /**
      * Convenience method to launch a coroutine in MainActivity's lifecycleScope
@@ -143,6 +215,39 @@ class CartMotionLayout @JvmOverloads constructor(context: Context, attrs: Attrib
             block()
             enableClicks()
         }
+    }
+
+    private inline fun clickAnimation(crossinline block: suspend () -> Unit, view: View) {
+        ElasticAnimation(view)
+            .setScaleX(0.85f)
+            .setScaleY(0.85f)
+            .setDuration(50)
+            .setOnFinishListener {
+                scope.launch {
+                    block()
+                }
+            }.doAction()
+    }
+
+
+    private var onOpenSheetListener: (() -> Unit)? = null
+    fun setOnOpenSheetListener(listener: () -> Unit) {
+        onOpenSheetListener = listener
+    }
+
+    private var onCloseSheetListener: (() -> Unit)? = null
+    fun setOnCloseSheetListener(listener: () -> Unit) {
+        onCloseSheetListener = listener
+    }
+
+    private var onCloseSheetWhenSwitchListener: (() -> Unit)? = null
+    fun setOnCloseSheetWhenSwitchListener(listener: () -> Unit) {
+        onCloseSheetWhenSwitchListener = listener
+    }
+
+    private var onPayButtonClickListener: ((List<Good>) -> Unit)? = null
+    fun setOnPayButtonClickListener(listener: (List<Good>) -> Unit) {
+        onPayButtonClickListener = listener
     }
 
 }

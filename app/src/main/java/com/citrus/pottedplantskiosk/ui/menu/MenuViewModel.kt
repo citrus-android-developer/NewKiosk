@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.citrus.pottedplantskiosk.api.remote.RemoteRepository
@@ -36,10 +37,13 @@ class MenuViewModel @Inject constructor(
     private val _showDetailEvent = MutableSharedFlow<Good>()
     val showDetailEvent: SharedFlow<Good> = _showDetailEvent
 
+    private val _showBannerData = MutableStateFlow<List<BannerData>>(listOf())
+    val showBannerData: StateFlow<List<BannerData>> = _showBannerData
+
     var currentDetailGoodsList: List<Good> = listOf()
 
-    private var _currentCartGoods = MutableStateFlow<List<Good>>(listOf())
-    val currentCartGoods: StateFlow<List<Good>> = _currentCartGoods
+    private var _currentCartGoods = MutableStateFlow<Good?>(null)
+    val currentCartGoods: StateFlow<Good?> = _currentCartGoods
 
     data class GroupItem(val name:String, val imgUrl:String?)
 
@@ -60,7 +64,7 @@ class MenuViewModel @Inject constructor(
 
     fun stopTimer()= viewModelScope.launch{
         timerJob?.cancel()
-        _currentCartGoods.emit(listOf())
+        _currentCartGoods.emit(null)
     }
 
     fun showData(data: Data) = viewModelScope.launch {
@@ -77,24 +81,24 @@ class MenuViewModel @Inject constructor(
         var kindList = data.first { it.groupName == groupName }.kind
 
         /**MockSize*/
-//        val size1 = Size("Bottle","101",4500.0,"107","Bottle","")
-//        val size2 = Size("Glass","123",780.0,"103","Glass","")
-//        var sizeList = listOf<Size>()
-//        sizeList = sizeList + size1
-//        sizeList = sizeList + size2
-//        kindList[0].goods[0].size = sizeList
+        val size1 = Size("Bottle","101",4500.0,"107","Bottle","")
+        val size2 = Size("Glass","123",780.0,"103","Glass","")
+        var sizeList = listOf<Size>()
+        sizeList = sizeList + size1
+        sizeList = sizeList + size2
+        kindList[0].goods[0].size = sizeList
 
 
         /**MockSize*/
-//        val size3 = Size("Small","101",8.9,"107","Small","")
-//        val size4 = Size("Middle","123",10.7,"103","Middle","")
-//        val size5 = Size("Big","123",12.9,"103","Big","")
-//        var sizeList2 = listOf<Size>()
-//        sizeList2 = sizeList2 + size3
-//        sizeList2 = sizeList2 + size4
-//        sizeList2 = sizeList2 + size5
-//
-//        kindList[0].goods[1].size = sizeList2
+        val size3 = Size("Small","101",8.9,"107","Small","")
+        val size4 = Size("Middle","123",10.7,"103","Middle","")
+        val size5 = Size("Big","123",12.9,"103","Big","")
+        var sizeList2 = listOf<Size>()
+        sizeList2 = sizeList2 + size3
+        sizeList2 = sizeList2 + size4
+        sizeList2 = sizeList2 + size5
+
+        kindList[0].goods[1].size = sizeList2
 
         _kindList.emit(kindList)
     }
@@ -109,9 +113,12 @@ class MenuViewModel @Inject constructor(
     }
 
     fun setCartGoods(good:Good) = viewModelScope.launch{
-        var list = _currentCartGoods.value
-        list = list + good
-        _currentCartGoods.emit(list)
+        _currentCartGoods.emit(good)
+    }
+
+    fun showBanner(bannerResponse: BannerResponse) = viewModelScope.launch{
+        Log.e("showBanner",bannerResponse.toString())
+        _showBannerData.emit(bannerResponse.data)
     }
 
 

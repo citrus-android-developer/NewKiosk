@@ -65,8 +65,8 @@
             motion:layout_constraintTop_toBottomOf="@+id/tvName" />
         <Constraint
             android:id="@+id/numberPicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/dp_70"
+            android:layout_height="@dimen/dp_40"
             android:layout_marginTop="@dimen/dp_10"
             android:visibility="invisible"
             motion:layout_constraintBottom_toTopOf="@+id/addCart"
@@ -121,7 +121,7 @@
         <Constraint
             android:id="@+id/numberPicker"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/dp_30"
             android:layout_marginTop="@dimen/dp_10"
             android:visibility="invisible"
             motion:layout_constraintBottom_toTopOf="@+id/addCart"

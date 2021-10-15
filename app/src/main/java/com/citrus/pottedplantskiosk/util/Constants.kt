@@ -14,6 +14,7 @@ object Constants {
     const val BASE_URL = "http://cms.citrus.tw/soramenLAB/"
     const val IMG_URL = "http://cms.citrus.tw/soramenLAB/images/"
     const val GET_MENU = "POSServer/UploadDataWS/Service1.asmx/getAllKindGoods_KIOSK"
+    const val GET_BANNER = "POSServer/UploadDataWS/Service1.asmx/GetAdvertise_KIOSK"
     const val SHARED_PREFERENCES_NAME = "sharedPref"
     const val TWO_MINUTES = 120
     var df = DecimalFormat("#,###,##0.###")

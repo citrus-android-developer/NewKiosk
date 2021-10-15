@@ -29,6 +29,7 @@ import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.di.prefs
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.skydoves.elasticviews.ElasticAnimation
+import kotlinx.coroutines.delay
 
 
 @AndroidEntryPoint
@@ -40,11 +41,12 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private var currentIndex: Int = 0
-    private var goodsList:List<Good> = listOf()
+    private var goodsList: List<Good> = listOf()
 
 
-    lateinit var  zoomItemAdapter: ZoomAdapter
+    lateinit var zoomItemAdapter: ZoomAdapter
     private var updateZoomItemJob: Job? = null
+
 
 
     override fun onStart() {
@@ -60,8 +62,6 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
     }
 
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.BottomSheetDialog)
@@ -69,7 +69,7 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): BottomSheetDialog {
-        return object :  BottomSheetDialog(requireContext(), theme) {
+        return object : BottomSheetDialog(requireContext(), theme) {
             override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
                 menuViewModel.timeCount = 0
                 return super.dispatchTouchEvent(ev)
@@ -92,13 +92,12 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
         initView()
         initAction()
 
-
     }
 
     private fun initAction() {
         goodsList = menuViewModel.currentDetailGoodsList.map { it.deepCopy() }
         currentIndex = goodsList.indexOf(args.goods)
-        if(currentIndex == 0){
+        if (currentIndex == 0) {
             binding.prev.visibility = View.INVISIBLE
         }
         updateZoomItemJob?.cancel()
@@ -107,7 +106,7 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
             binding.zoomRv.scrollToPosition(currentIndex)
         }
 
-        zoomItemAdapter.setOnItemClickListener {  goods ->
+        zoomItemAdapter.setOnItemClickListener { goods ->
             menuViewModel.setCartGoods(goods)
             findNavController().popBackStack()
         }
@@ -129,7 +128,7 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
 
     private fun initView() {
         binding.apply {
-            zoomItemAdapter =  ZoomAdapter(requireContext(),lifecycleScope)
+            zoomItemAdapter = ZoomAdapter(requireContext(), lifecycleScope)
 
             val linearLayoutManager = ZoomRecyclerLayout(requireContext())
             linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
@@ -151,7 +150,6 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
                             recyclerView.layoutManager as LinearLayoutManager
                         var pos = layoutManager.findFirstVisibleItemPosition()
                         currentIndex = pos
-
                         setArrowVisible(currentIndex)
                     }
                 }
@@ -178,12 +176,15 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
-    private fun setArrowVisible(pos:Int){
-        when(pos){
+
+    private fun setArrowVisible(pos: Int) {
+        when (pos) {
             0 -> {
                 binding.prev.visibility = View.INVISIBLE
+                binding.next.visibility = View.VISIBLE
             }
-            goodsList.size -1 -> {
+            goodsList.size - 1 -> {
+                binding.prev.visibility = View.VISIBLE
                 binding.next.visibility = View.INVISIBLE
             }
             else -> {

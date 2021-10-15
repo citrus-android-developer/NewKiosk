@@ -25,10 +25,9 @@ import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import android.graphics.drawable.Drawable
 
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
+
 
 
 class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutineScope) :
@@ -147,6 +146,9 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
             })
 
             numberPicker.setOnBtnClickListener {
+                if(it == 0){
+                    return@setOnBtnClickListener
+                }
                 item.qty = it
                 sumPriceCount(tvPrice, item.qty, item.price)
             }

@@ -8,19 +8,30 @@
     tools:context=".ui.menu.ZoomPageFragment">
 
 
-    <ImageView
-        android:elevation="@dimen/dp_10"
-        android:layout_marginTop="@dimen/dp_10"
+    <LinearLayout
         android:id="@+id/closeBtn"
+        android:background="@drawable/bg_x_btn"
+        android:layout_width="@dimen/dp_55"
+        android:layout_height="@dimen/dp_35"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/ic_baseline_close_24"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:tint="@color/colorSecondText"
-        android:background="@drawable/circle_button_shape"
-        />
+        android:gravity="center"
+        >
+
+        <ImageView
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_baseline_close_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tint="@color/black"
+            />
+
+    </LinearLayout>
+
+
 
 
 

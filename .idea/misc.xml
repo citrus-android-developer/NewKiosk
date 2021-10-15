@@ -5,11 +5,13 @@
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.29635416666666664" />
         <entry key="../../.gradle/caches/transforms-3/a47ab49d04759424956f5fa3bebf5de2/transformed/core-1.6.0/res/layout/custom_dialog.xml" value="0.15833333333333333" />
+        <entry key="app/src/main/res/drawable-v24/bg_x_btn.xml" value="0.1425925925925926" />
         <entry key="app/src/main/res/drawable-v24/button_light_15.xml" value="0.18981481481481483" />
         <entry key="app/src/main/res/drawable-v24/button_light_45.xml" value="0.19537037037037036" />
         <entry key="app/src/main/res/drawable-v24/button_mid_green_15.xml" value="0.19537037037037036" />
         <entry key="app/src/main/res/drawable-v24/button_mid_yellow_15.xml" value="0.1703125" />
         <entry key="app/src/main/res/drawable-v24/button_white_15.xml" value="0.153125" />
+        <entry key="app/src/main/res/drawable-v24/ic_baseline_contact_support_24.xml" value="0.22592592592592592" />
         <entry key="app/src/main/res/drawable-v24/selector_text.xml" value="0.18981481481481483" />
         <entry key="app/src/main/res/drawable/arrow_balloon_library_skydoves.xml" value="0.18489583333333334" />
         <entry key="app/src/main/res/drawable/bg_screen.xml" value="0.262037037037037" />
@@ -31,10 +33,13 @@
         <entry key="app/src/main/res/drawable/ic_baseline_remove_24.xml" value="0.15185185185185185" />
         <entry key="app/src/main/res/drawable/ic_language_black_24dp.xml" value="0.18489583333333334" />
         <entry key="app/src/main/res/drawable/ic_round_shopping_cart_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_shopping_bag.xml" value="0.10601851851851851" />
         <entry key="app/src/main/res/drawable/ic_tag.xml" value="0.19953703703703704" />
         <entry key="app/src/main/res/drawable/layout_bg.xml" value="0.1259259259259259" />
         <entry key="app/src/main/res/drawable/my_border.xml" value="0.1703125" />
         <entry key="app/src/main/res/drawable/number_picker_bg.xml" value="0.15185185185185185" />
+        <entry key="app/src/main/res/drawable/number_picker_decrement.xml" value="0.1425925925925926" />
+        <entry key="app/src/main/res/drawable/number_picker_increment.xml" value="0.10601851851851851" />
         <entry key="app/src/main/res/drawable/rounded_dialog.xml" value="0.22962962962962963" />
         <entry key="app/src/main/res/drawable/shape_sheet_dialog_bg.xml" value="0.19907407407407407" />
         <entry key="app/src/main/res/drawable/text_btn_shape.xml" value="0.23657407407407408" />
@@ -44,14 +49,15 @@
         <entry key="app/src/main/res/layout/activity_slash.xml" value="0.14351851851851852" />
         <entry key="app/src/main/res/layout/cart_item_view.xml" value="0.5" />
         <entry key="app/src/main/res/layout/custom_number_picker.xml" value="0.625" />
+        <entry key="app/src/main/res/layout/custom_snackbar_view.xml" value="0.335" />
         <entry key="app/src/main/res/layout/desc_item_view.xml" value="0.335" />
         <entry key="app/src/main/res/layout/dialog_language.xml" value="0.16875" />
         <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.20677083333333332" />
         <entry key="app/src/main/res/layout/fragment_goods_view.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_main.xml" value="0.22871376811594202" />
-        <entry key="app/src/main/res/layout/fragment_menu.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_menu.xml" value="0.17291666666666666" />
         <entry key="app/src/main/res/layout/fragment_test.xml" value="0.20677083333333332" />
-        <entry key="app/src/main/res/layout/fragment_zoom_page.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/layout/fragment_zoom_page.xml" value="0.335" />
         <entry key="app/src/main/res/layout/goods_header_view.xml" value="0.27546296296296297" />
         <entry key="app/src/main/res/layout/goods_item_view.xml" value="0.25" />
         <entry key="app/src/main/res/layout/group_item_view.xml" value="0.335" />
@@ -62,7 +68,7 @@
         <entry key="app/src/main/res/layout/layout_motion.xml" value="0.25" />
         <entry key="app/src/main/res/layout/layout_motion_test.xml" value="0.2222222222222222" />
         <entry key="app/src/main/res/layout/number_picker_addition.xml" value="0.3250517598343685" />
-        <entry key="app/src/main/res/layout/zoom_item_view.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/zoom_item_view.xml" value="0.45" />
       </map>
     </option>
   </component>

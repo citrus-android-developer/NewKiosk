@@ -6,7 +6,7 @@
         android:id="@+id/switchPreview"
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:duration="1000">
+        motion:duration="500">
         <KeyFrameSet>
             <KeyAttribute
                 motion:framePosition="50"
@@ -15,6 +15,19 @@
         </KeyFrameSet>
     </Transition>
 
+    <Transition
+        android:id="@+id/start_with_cart_open_transition"
+        motion:constraintSetEnd="@+id/start_with_cart_open"
+        motion:constraintSetStart="@id/start"
+        motion:duration="500">
+    </Transition>
+
+    <Transition
+        android:id="@+id/end_with_cart_open_transition"
+        motion:constraintSetEnd="@+id/end_with_cart_open"
+        motion:constraintSetStart="@id/end"
+        motion:duration="500">
+    </Transition>
 
 
     <ConstraintSet android:id="@+id/start">
@@ -76,6 +89,24 @@
         </Constraint>
     </ConstraintSet>
 
+
+    <ConstraintSet android:id="@+id/start_with_cart_open"
+        motion:deriveConstraintsFrom="@+id/start">
+        <Constraint
+            android:id="@+id/itemRv"
+            motion:layout_constraintBottom_toTopOf="@+id/cart_sheet_guideLine"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/groupRvArea"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginBottom="@dimen/dp_5">
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
+    </ConstraintSet>
+
     <ConstraintSet android:id="@+id/end">
         <Constraint
             android:id="@+id/itemRv"
@@ -130,6 +161,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end_with_cart_open"
+        motion:deriveConstraintsFrom="@+id/end">
+        <Constraint
+            android:id="@+id/typeItemRv"
+            motion:layout_constraintBottom_toTopOf="@+id/cart_sheet_guideLine"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/typeName"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/dp_10"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_5">
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
     </ConstraintSet>
 
 </MotionScene>

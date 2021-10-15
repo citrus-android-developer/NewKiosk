@@ -4,21 +4,18 @@
 
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <corners android:radius="10dip"/>
-            <solid android:color="@color/colorLightGray" />
-            <stroke android:width="@dimen/dp_1"
-                android:color="@color/colorDarkGray"
-                />
+            <corners android:radius="@dimen/dp_15"/>
+            <solid android:color="@color/lightGreen" />
+
         </shape>
     </item>
     <!-- 預設時 -->
     <item>
         <shape
             android:shape="rectangle">
-            <corners android:radius="10dip"/>
-            <stroke android:width="@dimen/dp_1"
-                android:color="@color/colorDarkGray"
-                />
+            <corners android:radius="@dimen/dp_15"/>
+            <solid android:color="@color/lightGreen" />
+
         </shape>
     </item>
 

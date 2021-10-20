@@ -58,6 +58,16 @@ interface AppModule {
 @InstallIn(FragmentComponent::class)
 object FragmentModule {
 
+
+    @Provides
+    fun provideGoodsItemAdapter(fragment: Fragment) =
+        GoodsItemAdapter(fragment.requireContext())
+
+    @Provides
+    fun provideMainGroupItemAdapter(fragment: Fragment) =
+        MainGroupItemAdapter(fragment.requireContext())
+
+
     @Provides
     fun provideGroupItemAdapter(fragment: Fragment) =
         GroupItemAdapter(fragment.requireContext())

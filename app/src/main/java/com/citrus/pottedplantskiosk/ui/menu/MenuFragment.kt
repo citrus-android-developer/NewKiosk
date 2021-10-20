@@ -2,7 +2,6 @@ package com.citrus.pottedplantskiosk.ui.menu
 
 
 import android.graphics.Color
-import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,13 +18,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.citrus.pottedplantskiosk.R
-import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.FragmentMenuBinding
 import com.citrus.pottedplantskiosk.ui.menu.adapter.*
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
 import com.google.android.material.snackbar.Snackbar
-import com.skydoves.elasticviews.ElasticAnimation
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -42,19 +39,23 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMenuBinding::inflate
 
-    private var currentCartGoods: List<Good>? = null
-
     private var snackbar: Snackbar? = null
     private var updateTimerJob: Job? = null
+
+    @Inject
+    lateinit var mainGroupItemAdapter: MainGroupItemAdapter
+    private var updateMainGroupItemJob: Job? = null
 
     @Inject
     lateinit var groupItemAdapter: GroupItemAdapter
     private var updateGroupItemJob: Job? = null
 
     @Inject
+    lateinit var goodsItemAdapter: GoodsItemAdapter
+
+    @Inject
     lateinit var cartItemAdapter: CartItemAdapter
 
-    private var updateKindItemJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,42 +67,23 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             cartMotionLayout.registerLifecycleOwner(lifecycle)
             cartMotionLayout.setAdapter(cartItemAdapter)
 
-            groupRv.apply {
+            mainGroupRv.apply {
                 layoutManager =
                     LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)
+                adapter = mainGroupItemAdapter
+            }
+
+            mainGroupRv.visibility = View.GONE
+
+            groupRv.apply {
+                layoutManager =
+                    LinearLayoutManager(requireActivity(), RecyclerView.VERTICAL, false)
                 adapter = groupItemAdapter
             }
 
-            itemRv.apply {
-                layoutManager = LinearLayoutManager(requireActivity(), RecyclerView.VERTICAL, false)
-            }
-
-            typeItemRv.apply {
-                layoutManager = GridLayoutManager(requireActivity(), 4)
-            }
-
-//            cartRv.apply {
-//                layoutManager =
-//                    LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)
-//                adapter = cartItemAdapter
-//            }
-
-            setBack.setOnClickListener { v ->
-                ElasticAnimation(v)
-                    .setScaleX(0.85f)
-                    .setScaleY(0.85f)
-                    .setDuration(50)
-                    .setOnFinishListener {
-                        root.apply {
-                            lifecycleScope.launchWhenStarted {
-                                if (currentState == R.id.end_with_cart_open) {
-                                    binding.cartMotionLayout.setCloseSheet()
-                                }
-                                transitionToState(R.id.start)
-                                awaitTransitionComplete(R.id.start)
-                            }
-                        }
-                    }.doAction()
+            goodsRv.apply {
+                layoutManager = GridLayoutManager(requireActivity(), 3)
+                adapter = goodsItemAdapter
             }
         }
     }
@@ -116,54 +98,33 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
         lifecycleScope.launchWhenStarted {
             menuViewModel.menuGroupName.collect { groupList ->
-                updateGroupItemJob?.cancel()
-                updateGroupItemJob = lifecycleScope.launch {
-                    groupItemAdapter.updateDataset(groupList)
-                    binding.groupRvArea.isVisible = true
+                updateMainGroupItemJob?.cancel()
+                updateMainGroupItemJob = lifecycleScope.launch {
+                    mainGroupItemAdapter.updateDataset(groupList)
+                    binding.mainGroupRv.isVisible = true
                 }
             }
         }
 
         lifecycleScope.launchWhenStarted {
-            menuViewModel.kindList.collect { kindList ->
-                binding.itemRv.adapter = KindItemAdapter(
-                    requireActivity(),
-                    lifecycleScope,
-                    onItemClick = { goods, list ->
-                        menuViewModel.onGoodsClick(goods, list)
-                    },
-                    onViewMoreClick = { title, goods ->
-                        binding.typeItemRv.adapter = GoodsItemAdapter(
-                            requireActivity(),
-                            onItemClick = { goods, list ->
-                                menuViewModel.onGoodsClick(goods.deepCopy(), list)
-                            }
-                        )
-
-                        binding.typeName.text = title
-                        binding.typeName.paint.flags = Paint.UNDERLINE_TEXT_FLAG
-
-                        binding.root.apply {
-                            lifecycleScope.launchWhenStarted {
-                                if (currentState == R.id.start_with_cart_open) {
-                                    binding.cartMotionLayout.setCloseSheet()
-                                }
-                                transitionToState(R.id.end)
-                                awaitTransitionComplete(R.id.end)
-                                (binding.typeItemRv.adapter as GoodsItemAdapter).updateDataset(goods)
-                                binding.typeItemRv.scheduleLayoutAnimation()
-                                binding.setBack.isVisible = true
-                            }
-                        }
-                    }
-                )
-                updateKindItemJob?.cancel()
-                updateKindItemJob = lifecycleScope.launch {
-                    (binding.itemRv.adapter as KindItemAdapter).updateDataset(kindList)
+            menuViewModel.groupDescName.collect { result ->
+                updateGroupItemJob?.cancel()
+                updateGroupItemJob = lifecycleScope.launch {
+                    groupItemAdapter.resetKindIndex()
+                    groupItemAdapter.updateDataset(result)
+                    binding.groupRv.scrollToPosition(0)
                 }
             }
         }
 
+        lifecycleScope.launchWhenStarted {
+            menuViewModel.allGoods.collect { goodsList ->
+                goodsItemAdapter.setGoodsList(goodsList)
+                binding.goodsRv.scrollToPosition(0)
+                binding.goodsRv.scheduleLayoutAnimation()
+            }
+
+        }
 
         lifecycleScope.launchWhenStarted {
             menuViewModel.showDetailEvent.collect { goods ->
@@ -178,7 +139,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         lifecycleScope.launchWhenStarted {
             menuViewModel.tikTok.collect { timer ->
                 if (timer == 0) {
-                    /**If click anywhere except continue button*/
                     releaseSnack()
                 }
 
@@ -216,78 +176,51 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     }
 
     override fun initAction() {
-        groupItemAdapter.setOnKindClickListener { groupName ->
-            menuViewModel.onGroupChange(groupName)
-            binding.motionLayout.apply {
-                when (binding.root.currentState) {
-                    R.id.end_with_cart_open -> {
-                        binding.cartMotionLayout.setCloseSheet()
-                        binding.root.transitionToState(R.id.start)
-                    }
-                    R.id.start_with_cart_open -> {
-                        binding.cartMotionLayout.setCloseSheet()
-                    }
-                    R.id.start -> Unit
-                    R.id.end -> {
-                        binding.root.transitionToState(R.id.start)
-                    }
-                }
-            }
+        mainGroupItemAdapter.setOnMainGroupNameClickListener { menuGroupName ->
+            menuViewModel.onGroupChange(menuGroupName)
+        }
+
+        groupItemAdapter.setOnDescClickListener { desc ->
+            menuViewModel.onDescChange(desc)
+        }
+
+        goodsItemAdapter.setOnGoodsClickListener { good, list ->
+            menuViewModel.onGoodsClick(good, list)
         }
 
         binding.cartMotionLayout.setOnOpenSheetListener {
-            when (binding.root.currentState) {
-                R.id.start -> {
-                    lifecycleScope.launchWhenStarted {
-                        binding.root.transitionToState(R.id.start_with_cart_open)
-                        binding.root.awaitTransitionComplete(R.id.start_with_cart_open)
-                    }
-                }
-                R.id.end -> {
-                    lifecycleScope.launchWhenStarted {
-                        binding.root.transitionToState(R.id.end_with_cart_open)
-                        binding.root.awaitTransitionComplete(R.id.end_with_cart_open)
-                    }
+            binding.root.apply {
+                lifecycleScope.launchWhenStarted {
+//                    setTransition(R.id.start, R.id.end)
+//                    transitionToState(R.id.end)
+//                    awaitTransitionComplete(R.id.end)
                 }
             }
         }
 
         binding.cartMotionLayout.setOnCloseSheetListener {
-            lifecycleScope.launchWhenStarted {
-                when (binding.root.currentState) {
-                    R.id.start_with_cart_open -> {
-                        binding.root.transitionToState(R.id.start)
-                        binding.root.awaitTransitionComplete(R.id.start)
-                    }
-                    R.id.end_with_cart_open -> {
-                        binding.root.transitionToState(R.id.end)
-                        binding.root.awaitTransitionComplete(R.id.end)
-                    }
-                }
-            }
-        }
-
-        binding.cartMotionLayout.setOnCloseSheetWhenSwitchListener {
-            when (binding.root.currentState) {
-                R.id.start -> {
-                    binding.root.transitionToState(R.id.end)
-                }
-                R.id.end -> {
-                    binding.root.transitionToState(R.id.start)
+            binding.root.apply {
+                lifecycleScope.launchWhenStarted {
+//                    transitionToStart()
+//                    awaitTransitionComplete(R.id.start)
                 }
             }
         }
 
         binding.cartMotionLayout.setOnPayButtonClickListener { list ->
-            Log.e("list",list.toString())
+            Log.e("list", list.toString())
         }
 
         cartItemAdapter.setOnItemDeleteListener { good ->
             binding.cartMotionLayout.removeGoods(good)
         }
+
+
+
+
     }
 
-    private fun releaseSnack(){
+    private fun releaseSnack() {
         updateTimerJob?.cancel()
         updateTimerJob = null
         snackbar?.dismiss()

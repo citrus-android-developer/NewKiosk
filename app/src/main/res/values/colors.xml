@@ -4,7 +4,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="overlay">#BF000000</color>
-    <color name="lightBlack">#212121</color>
+    <color name="lightBlack">#C2C2C2</color>
     <color name="lightWhite">#f5f5f5</color>
     <color name="white">#FFFFFFFF</color>
 
@@ -23,11 +23,18 @@
     <color name="colorLightGray">#fafafa</color>
     <color name="colorDarkGray">#c7c7c7</color>
     <color name="bg_green">#e8f5e9</color>
-    <color name="colorLightYellow">#EAE3CE</color>
+    <color name="colorLightYellow">#C9CCB2</color>
     <color name="noClick">#2e2e2e</color>
-    <color name="colorMiddleYellow">#FFD377</color>
+    <color name="colorMiddleYellow">#FFE8B8</color>
     <color name="colorDeepOrange">#75451E</color>
     <color name="colorLightGray2">#C5C5C5</color>
     <color name="grayOverlay2">#23A1A1A1</color>
     <color name="greenDark">#0B5E10</color>
+    <color name="green">#D0DFCA</color>
+    <color name="red">#FF1414</color>
+    <color name="colorLightOrange">#7988664A</color>
+    <color name="deleteRed">#F77171</color>
+    <color name="gray">#CFCFCF</color>
+    <color name="lightLightWhite">#EAEAEA</color>
+
 </resources>

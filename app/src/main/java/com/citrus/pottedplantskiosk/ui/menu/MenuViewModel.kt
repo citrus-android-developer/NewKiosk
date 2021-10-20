@@ -20,7 +20,7 @@ class MenuViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private var timerJob: Job?= null
+    private var timerJob: Job? = null
     var timeCount = 0
     private val _tikTok = MutableStateFlow(0)
     val tikTok: StateFlow<Int> = _tikTok
@@ -28,8 +28,14 @@ class MenuViewModel @Inject constructor(
     private val _menuData = MutableStateFlow<List<MainGroup>>(listOf())
     val menuData: StateFlow<List<MainGroup>> = _menuData
 
-    private val _menuGroupName = MutableStateFlow<List<GroupItem>>(listOf())
-    val menuGroupName: StateFlow<List<GroupItem>> = _menuGroupName
+    private val _menuGroupName = MutableStateFlow<List<String>>(listOf())
+    val menuGroupName: StateFlow<List<String>> = _menuGroupName
+
+    private val _groupDescName = MutableStateFlow<List<String>>(listOf())
+    val groupDescName: StateFlow<List<String>> = _groupDescName
+
+    private val _allGoods = MutableStateFlow<List<Good>>(listOf())
+    val allGoods: StateFlow<List<Good>> = _allGoods
 
     private val _kindList = MutableStateFlow<List<Kind>>(listOf())
     val kindList: StateFlow<List<Kind>> = _kindList
@@ -41,11 +47,11 @@ class MenuViewModel @Inject constructor(
     val showBannerData: StateFlow<List<BannerData>> = _showBannerData
 
     var currentDetailGoodsList: List<Good> = listOf()
+    private var currentGroup: MainGroup? = null
 
     private var _currentCartGoods = MutableStateFlow<Good?>(null)
     val currentCartGoods: StateFlow<Good?> = _currentCartGoods
 
-    data class GroupItem(val name:String, val imgUrl:String?)
 
     private fun tickerFlow() = flow {
         while (true) {
@@ -56,51 +62,43 @@ class MenuViewModel @Inject constructor(
 
     private fun startTimer() {
         timerJob = viewModelScope.launch(Default) {
-            tickerFlow().collect{
+            tickerFlow().collect {
                 _tikTok.emit(it)
             }
         }
     }
 
-    fun stopTimer()= viewModelScope.launch{
+    fun stopTimer() = viewModelScope.launch {
         timerJob?.cancel()
         _currentCartGoods.emit(null)
     }
 
     fun showData(data: Data) = viewModelScope.launch {
         _menuData.emit(data.mainGroup)
-       // var groupList = data.mainGroup.map { GroupItem(it.groupName, if(it.kind.isNotEmpty()) it.kind[0].goods[0].picName else null) }
-        var groupList = data.mainGroup.map { GroupItem(it.groupName,  null) }
+        var groupList = data.mainGroup.map { it.groupName }
 
         _menuGroupName.emit(groupList)
-        onGroupChange(groupList[0].name)
+        onGroupChange(groupList[0])
+
+        currentGroup = data.mainGroup.first()
     }
 
     fun onGroupChange(groupName: String) = viewModelScope.launch {
-        var data = _menuData.value
-        var kindList = data.first { it.groupName == groupName }.kind
 
-        /**MockSize*/
-        val size1 = Size("Bottle","101",4500.0,"107","Bottle","")
-        val size2 = Size("Glass","123",780.0,"103","Glass","")
-        var sizeList = listOf<Size>()
-        sizeList = sizeList + size1
-        sizeList = sizeList + size2
-        kindList[0].goods[0].size = sizeList
+        currentGroup = _menuData.value.find { it.groupName == groupName }
 
+        currentGroup?.let { mainGroup ->
+            var list = mainGroup.kind.map { it.desc }
+            _groupDescName.emit(list)
+            onDescChange(mainGroup.kind.first().desc)
+        }
+    }
 
-        /**MockSize*/
-        val size3 = Size("Small","101",8.9,"107","Small","")
-        val size4 = Size("Middle","123",10.7,"103","Middle","")
-        val size5 = Size("Big","123",12.9,"103","Big","")
-        var sizeList2 = listOf<Size>()
-        sizeList2 = sizeList2 + size3
-        sizeList2 = sizeList2 + size4
-        sizeList2 = sizeList2 + size5
-
-        kindList[0].goods[1].size = sizeList2
-
-        _kindList.emit(kindList)
+    fun onDescChange(desc:String) = viewModelScope.launch{
+        currentGroup?.let{ mainGroup ->
+            var goods = mainGroup.kind.find { it.desc == desc}?.goods ?: listOf()
+            _allGoods.emit(goods)
+        }
     }
 
     fun onGoodsClick(good: Good, list: List<Good>) = viewModelScope.launch {
@@ -112,12 +110,12 @@ class MenuViewModel @Inject constructor(
         startTimer()
     }
 
-    fun setCartGoods(good:Good) = viewModelScope.launch{
+    fun setCartGoods(good: Good) = viewModelScope.launch {
         _currentCartGoods.emit(good)
     }
 
-    fun showBanner(bannerResponse: BannerResponse) = viewModelScope.launch{
-        Log.e("showBanner",bannerResponse.toString())
+    fun showBanner(bannerResponse: BannerResponse) = viewModelScope.launch {
+        Log.e("showBanner", bannerResponse.toString())
         _showBannerData.emit(bannerResponse.data)
     }
 

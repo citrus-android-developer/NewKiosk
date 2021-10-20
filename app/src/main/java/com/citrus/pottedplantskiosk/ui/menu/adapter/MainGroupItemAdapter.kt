@@ -4,19 +4,19 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Typeface
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.R
-import com.citrus.pottedplantskiosk.databinding.GroupNameItemViewBinding
+import com.citrus.pottedplantskiosk.databinding.MainGroupItemViewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class GroupItemAdapter @Inject constructor(val context: Context) :
-    RecyclerView.Adapter<GroupItemAdapter.GroupItemViewHolder>() {
-    class GroupItemViewHolder(val binding: GroupNameItemViewBinding) :
+class MainGroupItemAdapter @Inject constructor(val context: Context) :
+    RecyclerView.Adapter<MainGroupItemAdapter.GroupItemViewHolder>() {
+    class GroupItemViewHolder(val binding: MainGroupItemViewBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     var groupTitles = listOf<String>()
@@ -43,13 +43,13 @@ class GroupItemAdapter @Inject constructor(val context: Context) :
         })
         withContext(Dispatchers.Main) {
             groupTitles = newDataset
-            diff.dispatchUpdatesTo(this@GroupItemAdapter)
+            diff.dispatchUpdatesTo(this@MainGroupItemAdapter)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupItemViewHolder {
         return GroupItemViewHolder(
-            GroupNameItemViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            MainGroupItemViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -57,28 +57,26 @@ class GroupItemAdapter @Inject constructor(val context: Context) :
         holder: GroupItemViewHolder,
         @SuppressLint("RecyclerView") position: Int
     ) {
-        val name = groupTitles[position]
+        val title = groupTitles[position]
         holder.binding.apply {
-            title.text = name
+            mainTitle.text = title
 
             if (kindIndex == position) {
-                cardView.background =
-                    ContextCompat.getDrawable(context, R.drawable.button_mid_green_15)
-                title.setTypeface(title.typeface, Typeface.BOLD)
-                title.setTextColor(context.resources.getColor(R.color.colorPrimaryText))
+                selectLine.visibility = View.VISIBLE
+                mainTitle.setTypeface(mainTitle.typeface, Typeface.BOLD)
+                mainTitle.setTextColor(context.resources.getColor(R.color.colorPrimaryText))
             } else {
-                cardView.background =
-                    ContextCompat.getDrawable(context, R.drawable.button_light_45)
-                title.typeface = null
-                title.setTextColor(context.resources.getColor(R.color.colorSecondText))
+                selectLine.visibility = View.INVISIBLE
+                mainTitle.typeface = null
+                mainTitle.setTextColor(context.resources.getColor(R.color.colorSecondText))
             }
 
             root.setOnClickListener {
                 if (position != kindIndex) {
                     kindIndex = position
                     notifyDataSetChanged()
-                    onDescClickListener?.let { click ->
-                        click(name)
+                    onClickListener?.let { click ->
+                        click(title)
                     }
                 }
             }
@@ -89,14 +87,10 @@ class GroupItemAdapter @Inject constructor(val context: Context) :
         return groupTitles.size
     }
 
-    fun resetKindIndex(){
-        kindIndex = 0
-    }
 
+    private var onClickListener: ((String) -> Unit)? = null
 
-    private var onDescClickListener: ((String) -> Unit)? = null
-
-    fun setOnDescClickListener(listener: (String) -> Unit) {
-        onDescClickListener = listener
+    fun setOnMainGroupNameClickListener(listener: (String) -> Unit) {
+        onClickListener = listener
     }
 }

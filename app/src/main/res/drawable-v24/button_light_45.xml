@@ -4,7 +4,7 @@
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
             <corners android:radius="30dip" />
-            <solid android:color="#75a478" />
+            <solid android:color="@color/cardBackground" />
         </shape>
     </item>
     <!-- 預設時 -->

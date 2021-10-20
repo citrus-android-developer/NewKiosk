@@ -62,18 +62,23 @@ class CartItemAdapter @Inject constructor(val context: Context) :
     ) {
         val item = cartGoods[position]
         holder.binding.apply {
-            tvItemName.text = item.gName
+            if(position % 2 != 0){
+                root.background = context.resources.getDrawable(R.drawable.cart_item_bg2,null)
+            }else{
+                root.background = context.resources.getDrawable(R.drawable.cart_item_bg,null)
+            }
 
-            itemNo.text = (position + 1).toString()
+
+            tvGoodsName.text = item.gName
 
             Glide.with(holder.itemView)
                 .load(Constants.IMG_URL + item.picName)
-                .into(itemImage)
+                .into(goodsImg)
 
             tvPrice.text = "$" + df.format(checkPrice(item.price, item.qty))
 
             numberPicker.setValue(item.qty)
-            numberPicker.setTextSize(R.dimen.sp_7)
+            numberPicker.setTextSize(R.dimen.sp_10)
 
             numberPicker.setOnBtnClickListener { value ->
                 item.qty = value
@@ -101,6 +106,7 @@ class CartItemAdapter @Inject constructor(val context: Context) :
 
 
     private var onItemDeleteListener: ((Good) -> Unit)? = null
+
     fun setOnItemDeleteListener(listener: (Good) -> Unit) {
         onItemDeleteListener = listener
     }

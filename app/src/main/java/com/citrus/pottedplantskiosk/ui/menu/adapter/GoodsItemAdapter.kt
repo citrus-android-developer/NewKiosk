@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -14,39 +13,18 @@ import com.citrus.pottedplantskiosk.databinding.GoodsItemViewBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
 import com.skydoves.elasticviews.ElasticAnimation
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class GoodsItemAdapter(val context: Context, private val onItemClick: (Good, List<Good>) -> Unit) :
+class GoodsItemAdapter @Inject constructor(val context: Context) :
     RecyclerView.Adapter<GoodsItemAdapter.GoodsItemViewHolder>() {
     class GoodsItemViewHolder(val binding: GoodsItemViewBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     var goods = listOf<Good>()
 
-    suspend fun updateDataset(newDataset: List<Good>) = withContext(Dispatchers.Default) {
-        val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int {
-                return goods.size
-            }
-
-            override fun getNewListSize(): Int {
-                return newDataset.size
-            }
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return true
-            }
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return goods[oldItemPosition] == newDataset[newItemPosition]
-            }
-
-        })
-        withContext(Dispatchers.Main) {
-            goods = newDataset.map { it.deepCopy() }
-            diff.dispatchUpdatesTo(this@GoodsItemAdapter)
-        }
+    fun setGoodsList(newDataset: List<Good>){
+        goods = newDataset.map { it.deepCopy() }
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GoodsItemViewHolder {
@@ -86,7 +64,9 @@ class GoodsItemAdapter(val context: Context, private val onItemClick: (Good, Lis
                     .setScaleY(0.85f)
                     .setDuration(50)
                     .setOnFinishListener {
-                        onItemClick(item, goods)
+                        onClickListener?.let {  click ->
+                            click(item,goods)
+                        }
                     }
                     .doAction()
             }
@@ -95,6 +75,12 @@ class GoodsItemAdapter(val context: Context, private val onItemClick: (Good, Lis
 
     override fun getItemCount(): Int {
         return goods.size
+    }
+
+    private var onClickListener: ((Good,List<Good>) -> Unit)? = null
+
+    fun setOnGoodsClickListener(listener: (Good,List<Good>) -> Unit) {
+        onClickListener = listener
     }
 
 }

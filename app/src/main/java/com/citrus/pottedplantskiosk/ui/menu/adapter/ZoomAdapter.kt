@@ -89,11 +89,6 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
             tvPrice.text = "$" + item.price
 
             Glide.with(root)
-                .applyDefaultRequestOptions(
-                    RequestOptions()
-                        .placeholder(R.drawable.ic_image_gallery__2_)
-                        .error(R.drawable.ic_image_gallery__2_)
-                )
                 .load(Constants.IMG_URL + item.picName)
                 .into(photo)
 

@@ -25,6 +25,21 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.75" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hintTopLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hintBottomLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.28" />
+
     <View
         android:id="@+id/filter_sheet_placeholder"
         android:layout_width="0dp"
@@ -32,21 +47,34 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filter_sheet_placeholder_guideline" />
+        app:layout_constraintTop_toBottomOf="@+id/hintBottomLine" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/filter_sheet_placeholder_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.70" />
+        app:layout_constraintGuide_percent="0.75" />
+
+    <TextView
+        android:id="@+id/cartItemSize"
+        android:layout_width="@dimen/dp_10"
+        android:layout_height="@dimen/dp_10"
+        android:background="@drawable/cart_size_hint_bg"
+        android:elevation="@dimen/dp_38"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_6"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/fab"
+        app:layout_constraintTop_toTopOf="@+id/fab" />
 
 
     <com.citrus.pottedplantskiosk.util.CircleCardView
         android:id="@+id/fab"
         android:layout_width="@dimen/dp_72"
         android:layout_height="@dimen/dp_72"
-        app:cardBackgroundColor="@color/lightGreen"
+        app:cardBackgroundColor="@color/greenDark"
         app:cardCornerRadius="@dimen/dp_36"
         app:cardElevation="16dp" />
 
@@ -57,67 +85,114 @@
         android:elevation="@dimen/dp_34"
         android:outlineProvider="none"
         android:scaleType="centerInside"
+        android:src="@drawable/ic_round_shopping_cart_24"
         app:layout_constraintBottom_toBottomOf="@id/fab"
         app:layout_constraintEnd_toEndOf="@id/fab"
         app:layout_constraintStart_toStartOf="@id/fab"
-        app:srcCompat="@drawable/ic_round_shopping_cart_24"
-        app:tint="@color/darkGreen" />
+        app:tint="@color/white" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:padding="@dimen/dp_10"
-        android:elevation="@dimen/dp_36"
-        android:id="@+id/cartRv"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/hintArea"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/greenDark"
         android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hintBottomLine">
+
+        <TextView
+            android:id="@+id/tvTotalPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/dp_2"
+            android:layout_marginEnd="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_15"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/dp_5"
+            android:layout_marginTop="@dimen/dp_2"
+            android:layout_marginBottom="@dimen/dp_2"
+            android:drawableStart="@drawable/ic_baseline_shopping_bag_24"
+            android:drawablePadding="@dimen/dp_1"
+            android:drawableTint="@color/white"
+            android:gravity="center"
+            android:text="My Cart"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_20"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.mlsdev.animatedrv.AnimatedRecyclerView
+        android:id="@+id/cartRv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/fab"
+        android:elevation="@dimen/dp_36"
+        android:fadingEdgeLength="@dimen/dp_50"
+        android:padding="@dimen/dp_10"
+        android:requiresFadingEdge="vertical"
+        android:visibility="invisible"
+        app:animationDuration="500"
+        app:layoutAnimation="@anim/layout_animation_from_bottom"
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar_card_view"
         app:layout_constraintEnd_toEndOf="@id/fab"
         app:layout_constraintStart_toStartOf="@+id/fab"
         app:layout_constraintTop_toTopOf="@id/fab"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
 
     <LinearLayout
         android:id="@+id/shoppingBagHint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:elevation="@dimen/dp_35"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/fab"
         app:layout_constraintEnd_toEndOf="@id/fab"
         app:layout_constraintStart_toStartOf="@+id/fab"
-        app:layout_constraintTop_toTopOf="@id/fab"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:elevation="@dimen/dp_35"
-        android:visibility="invisible"
-        >
+        app:layout_constraintTop_toTopOf="@id/fab">
+
         <ImageView
-            android:layout_gravity="center"
             android:id="@+id/shoppingBag"
-            android:layout_width="@dimen/dp_60"
-            android:layout_height="@dimen/dp_60"
+            android:layout_width="@dimen/dp_40"
+            android:layout_height="@dimen/dp_40"
+            android:layout_gravity="center"
             app:srcCompat="@drawable/empty_cart"
             app:tint="@color/lightWhite" />
 
         <TextView
-            android:layout_gravity="center"
             android:id="@+id/shoppingHint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dp_2"
             android:fontFamily="@font/droidbold"
             android:text="請選購商品"
-            android:textSize="@dimen/sp_12"
             android:textColor="@color/lightWhite"
-            android:layout_marginTop="@dimen/dp_2"
-            />
+            android:textSize="@dimen/sp_8"
+            android:textStyle="bold" />
     </LinearLayout>
-
-
 
 
     <androidx.cardview.widget.CardView
         android:id="@+id/bottom_bar_card_view"
         android:layout_width="0dp"
-        android:layout_height="@dimen/dp_40"
+        android:layout_height="@dimen/dp_30"
         android:outlineProvider="none"
         android:visibility="invisible"
         app:cardBackgroundColor="@android:color/transparent"
@@ -140,6 +215,12 @@
         app:layout_constraintTop_toTopOf="@id/bottom_bar_card_view"
         app:srcCompat="@drawable/ic_baseline_close_24"
         app:tint="@color/white" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/fabBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top" />
 
 
 </merge>

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.ui.menu.adapter.CartItemAdapter
+import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.MultiListenerMotionLayout
 import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.Job
@@ -36,11 +37,15 @@ class CartMotionLayout @JvmOverloads constructor(
     private val filterIcon: ImageView
     private val shoppingBag: ImageView
     private val shoppingHint: TextView
+    private val cartItemSize: TextView
+    private val tvTotalPrice: TextView
     private val shoppingBagHint: LinearLayout
     private val cartRv: RecyclerView
     private var updateCartItemJob: Job? = null
     lateinit var scope: LifecycleCoroutineScope
     private var list: List<Good> = listOf()
+    private var emptyListForAnimate: List<Good> = listOf()
+
 
 
     init {
@@ -51,12 +56,15 @@ class CartMotionLayout @JvmOverloads constructor(
         cartRv = findViewById(R.id.cartRv)
         shoppingHint = findViewById(R.id.shoppingHint)
         shoppingBagHint = findViewById(R.id.shoppingBagHint)
+        cartItemSize = findViewById(R.id.cartItemSize)
+        tvTotalPrice = findViewById(R.id.tvTotalPrice)
 
         cartRv.apply {
             layoutManager =
-                LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         }
         enableClicks()
+
     }
 
     /**
@@ -81,14 +89,13 @@ class CartMotionLayout @JvmOverloads constructor(
         transitionToState(R.id.set3_reveal)
         awaitTransitionComplete(R.id.set3_reveal)
 
+        cartRv.isVisible = true
+        updateRvData(list)
+
         // 3) set3_reveal -> set4_settle
         transitionToState(R.id.set4_settle)
         awaitTransitionComplete(R.id.set4_settle)
 
-        (cartRv.adapter as (CartItemAdapter)).notifyDataSetChanged()
-        cartRv.isVisible = true
-        shoppingBagHint.visibility =
-            if ((cartRv.adapter as (CartItemAdapter)).itemCount > 0) View.INVISIBLE else View.VISIBLE
     }
 
     /**
@@ -102,10 +109,13 @@ class CartMotionLayout @JvmOverloads constructor(
      */
     private fun closeSheet(): Unit = performAnimation {
         cartRv.isVisible = false
+        updateRvData(emptyListForAnimate)
+
         shoppingBagHint.visibility = View.INVISIBLE
         // 1) set4_settle -> set3_reveal
         transitionToStart()
         awaitTransitionComplete(R.id.set3_reveal)
+
 
         // 2) set3_reveal -> set2_path
         setTransition(R.id.set2_path, R.id.set3_reveal)
@@ -178,10 +188,12 @@ class CartMotionLayout @JvmOverloads constructor(
         cartRv.adapter = cartItemAdapter
     }
 
-    private fun updateRvData() {
+    private fun updateRvData(mList:List<Good>) {
         updateCartItemJob?.cancel()
         updateCartItemJob = scope.launch {
-            (cartRv.adapter as (CartItemAdapter)).updateDataset(list)
+            (cartRv.adapter as (CartItemAdapter)).updateDataset(mList)
+            cartItemSize.text = list.size.toString()
+            cartRv.scheduleLayoutAnimation()
         }
     }
 
@@ -191,12 +203,24 @@ class CartMotionLayout @JvmOverloads constructor(
         } ?: run {
             list = listOf()
         }
-        updateRvData()
+        updateRvData(list)
+        showTotalPrice()
     }
 
     fun removeGoods(good: Good) {
         list = list - good
-        updateRvData()
+        updateRvData(list)
+        showTotalPrice()
+    }
+
+    private fun showTotalPrice(){
+        var total = 0.0
+        list.forEach {
+            Log.e("price",(it.price * it.qty).toString())
+            total += (it.price * it.qty)
+        }
+
+        tvTotalPrice.text = "Total Price: $ " + Constants.df.format(total)
     }
 
     /**
@@ -216,6 +240,9 @@ class CartMotionLayout @JvmOverloads constructor(
             enableClicks()
         }
     }
+
+
+
 
     private inline fun clickAnimation(crossinline block: suspend () -> Unit, view: View) {
         ElasticAnimation(view)

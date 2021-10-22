@@ -115,7 +115,6 @@ class MenuViewModel @Inject constructor(
     }
 
     fun showBanner(bannerResponse: BannerResponse) = viewModelScope.launch {
-        Log.e("showBanner", bannerResponse.toString())
         _showBannerData.emit(bannerResponse.data)
     }
 

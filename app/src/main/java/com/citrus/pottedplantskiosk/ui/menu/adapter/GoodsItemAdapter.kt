@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.GoodsItemViewBinding
 import com.citrus.pottedplantskiosk.di.prefs
@@ -41,11 +39,6 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
         holder.binding.apply {
 
             Glide.with(root)
-                .applyDefaultRequestOptions(
-                    RequestOptions()
-                        .placeholder(R.drawable.ic_image_gallery__2_)
-                        .error(R.drawable.ic_image_gallery__2_)
-                )
                 .load(Constants.IMG_URL + item.picName)
                 .into(itemImage)
 

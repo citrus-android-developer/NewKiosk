@@ -89,6 +89,7 @@ class SlashActivity : AppCompatActivity() {
                 bundle.putSerializable("banner", bannerData)
                 intent.putExtras(bundle)
                 this@SlashActivity.startActivity(intent)
+                finish()
             }
         }
     }

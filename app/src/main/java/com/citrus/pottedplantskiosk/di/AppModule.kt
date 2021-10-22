@@ -1,5 +1,6 @@
 package com.citrus.pottedplantskiosk.di
 
+import android.app.Activity
 import androidx.fragment.app.Fragment
 import com.citrus.pottedplantskiosk.api.remote.ApiService
 import com.citrus.pottedplantskiosk.ui.menu.adapter.*
@@ -9,6 +10,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.components.ViewComponent
 import dagger.hilt.android.scopes.FragmentScoped
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
@@ -54,11 +56,11 @@ interface AppModule {
     }
 }
 
+
+
 @Module
 @InstallIn(FragmentComponent::class)
 object FragmentModule {
-
-
     @Provides
     fun provideGoodsItemAdapter(fragment: Fragment) =
         GoodsItemAdapter(fragment.requireContext())
@@ -74,14 +76,8 @@ object FragmentModule {
 
 
     @Provides
-    fun provideCartItemAdapter(fragment: Fragment) =
-        CartItemAdapter(fragment.requireContext())
-
-    @Provides
     fun provideDescItemAdapter(fragment: Fragment) =
         DescItemAdapter(fragment.requireContext())
 
-    @Provides
-    fun provideGoodsPageAdapter(fragment: Fragment) =
-        GoodsPageAdapter(fragment.requireContext())
+
 }

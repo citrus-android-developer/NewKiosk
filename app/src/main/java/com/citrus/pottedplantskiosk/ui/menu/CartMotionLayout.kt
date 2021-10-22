@@ -2,7 +2,6 @@ package com.citrus.pottedplantskiosk.ui.menu
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -17,7 +16,6 @@ import com.citrus.pottedplantskiosk.ui.menu.adapter.CartItemAdapter
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.MultiListenerMotionLayout
 import com.skydoves.elasticviews.ElasticAnimation
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 /**
@@ -29,7 +27,7 @@ import kotlinx.coroutines.launch
 class CartMotionLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
 ) : MultiListenerMotionLayout(context, attrs, defStyleAttr), LifecycleObserver {
 
 
@@ -41,11 +39,8 @@ class CartMotionLayout @JvmOverloads constructor(
     private val tvTotalPrice: TextView
     private val shoppingBagHint: LinearLayout
     private val cartRv: RecyclerView
-    private var updateCartItemJob: Job? = null
     lateinit var scope: LifecycleCoroutineScope
-    private var list: List<Good> = listOf()
-    private var emptyListForAnimate: List<Good> = listOf()
-
+    var cartItemAdapter: CartItemAdapter?
 
 
     init {
@@ -59,11 +54,27 @@ class CartMotionLayout @JvmOverloads constructor(
         cartItemSize = findViewById(R.id.cartItemSize)
         tvTotalPrice = findViewById(R.id.tvTotalPrice)
 
+        cartItemSize.text = "0"
+
+        cartItemAdapter = CartItemAdapter(context)
         cartRv.apply {
             layoutManager =
                 LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            adapter = cartItemAdapter
         }
         enableClicks()
+
+
+        cartItemAdapter?.setOnChangedListener {
+            infoChange()
+        }
+
+
+        cartItemAdapter?.setOnGoodsClickListener { goods ->
+            onGoodsClickListener?.let { click ->
+                click(goods)
+            }
+        }
 
     }
 
@@ -82,20 +93,16 @@ class CartMotionLayout @JvmOverloads constructor(
         // 1) set1_base -> set2_path
         // (Start scale down animation simultaneously)
         transitionToState(R.id.set2_path)
-
         awaitTransitionComplete(R.id.set2_path)
 
         // 2) set2_path -> set3_reveal
         transitionToState(R.id.set3_reveal)
         awaitTransitionComplete(R.id.set3_reveal)
-
-        cartRv.isVisible = true
-        updateRvData(list)
+        updateRvData()
 
         // 3) set3_reveal -> set4_settle
         transitionToState(R.id.set4_settle)
         awaitTransitionComplete(R.id.set4_settle)
-
     }
 
     /**
@@ -108,8 +115,7 @@ class CartMotionLayout @JvmOverloads constructor(
      * set4_settle -> set3_reveal -> set2_path -> set1_base
      */
     private fun closeSheet(): Unit = performAnimation {
-        cartRv.isVisible = false
-        updateRvData(emptyListForAnimate)
+        cartRv.visibility = View.INVISIBLE
 
         shoppingBagHint.visibility = View.INVISIBLE
         // 1) set4_settle -> set3_reveal
@@ -154,7 +160,7 @@ class CartMotionLayout @JvmOverloads constructor(
             filterIcon.setOnClickListener { v ->
                 clickAnimation({
                     onPayButtonClickListener?.let { call ->
-                        call(list)
+                        cartItemAdapter?.let { call(it.getList()) }
                     }
                 }, v)
             }
@@ -180,48 +186,28 @@ class CartMotionLayout @JvmOverloads constructor(
         scope = lifecycle.coroutineScope
     }
 
-    fun setCloseSheet() {
-        closeSheet()
+
+    private fun updateRvData() {
+        cartRv.startLayoutAnimation()
+        cartRv.isVisible = true
     }
 
-    fun setAdapter(cartItemAdapter: CartItemAdapter) {
-        cartRv.adapter = cartItemAdapter
+
+    fun addCartGoods(cartGoods: Good) {
+        cartItemAdapter?.updateGoods(cartGoods)
     }
 
-    private fun updateRvData(mList:List<Good>) {
-        updateCartItemJob?.cancel()
-        updateCartItemJob = scope.launch {
-            (cartRv.adapter as (CartItemAdapter)).updateDataset(mList)
-            cartItemSize.text = list.size.toString()
-            cartRv.scheduleLayoutAnimation()
+
+    private fun infoChange() {
+        var totalPrice = 0.0
+        var list = cartItemAdapter?.getList()
+        list?.forEach { goods ->
+            totalPrice += goods.price * goods.qty
         }
+        tvTotalPrice.text = "Total Price: $ " + Constants.df.format(totalPrice)
+        cartItemSize.text = cartItemAdapter?.getList()?.size.toString()
     }
 
-    fun addCartGoods(cartGoods: Good?) {
-        cartGoods?.let {
-            list = list + it
-        } ?: run {
-            list = listOf()
-        }
-        updateRvData(list)
-        showTotalPrice()
-    }
-
-    fun removeGoods(good: Good) {
-        list = list - good
-        updateRvData(list)
-        showTotalPrice()
-    }
-
-    private fun showTotalPrice(){
-        var total = 0.0
-        list.forEach {
-            Log.e("price",(it.price * it.qty).toString())
-            total += (it.price * it.qty)
-        }
-
-        tvTotalPrice.text = "Total Price: $ " + Constants.df.format(total)
-    }
 
     /**
      * Convenience method to launch a coroutine in MainActivity's lifecycleScope
@@ -240,8 +226,6 @@ class CartMotionLayout @JvmOverloads constructor(
             enableClicks()
         }
     }
-
-
 
 
     private inline fun clickAnimation(crossinline block: suspend () -> Unit, view: View) {
@@ -275,6 +259,17 @@ class CartMotionLayout @JvmOverloads constructor(
     private var onPayButtonClickListener: ((List<Good>) -> Unit)? = null
     fun setOnPayButtonClickListener(listener: (List<Good>) -> Unit) {
         onPayButtonClickListener = listener
+    }
+
+
+    private var onGoodsClickListener: ((Good) -> Unit)? = null
+    fun setOnGoodsClickListener(listener: (Good) -> Unit) {
+        onGoodsClickListener = listener
+    }
+
+
+    fun releaseAdapter() {
+        cartItemAdapter = null
     }
 
 }

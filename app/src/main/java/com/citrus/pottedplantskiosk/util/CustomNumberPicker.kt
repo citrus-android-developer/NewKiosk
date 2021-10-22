@@ -2,6 +2,7 @@ package com.citrus.pottedplantskiosk.util
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
@@ -39,12 +40,12 @@ class CustomNumberPicker @JvmOverloads constructor(
                 .setScaleY(0.85f)
                 .setDuration(50)
                 .setOnFinishListener {
-                    if (currentValue > 1) {
+                    if (currentValue > 0) {
+                        var prevNum = currentValue
                         currentValue--
                         updateDisplayValue()
-                    }else{
-                        onRemoveItemListener?.let{ call ->
-                            call(0)
+                        onButtonClick?.let{ click ->
+                            click(prevNum,currentValue)
                         }
                     }
                 }.doAction()
@@ -57,14 +58,18 @@ class CustomNumberPicker @JvmOverloads constructor(
                 .setScaleY(0.85f)
                 .setDuration(50)
                 .setOnFinishListener {
+                    var prevNum = currentValue
                     currentValue++
                     updateDisplayValue()
+                    onButtonClick?.let{ click ->
+                        click(prevNum,currentValue)
+                    }
                 }.doAction()
         }
     }
 
-     fun setTextSize(id:Int){
-        displayValue.textSize = context.resources.getDimension(id)
+     fun setTextSize(size: Float){
+         displayValue.textSize = size
     }
 
      fun setValue(value:Int) {
@@ -74,20 +79,14 @@ class CustomNumberPicker @JvmOverloads constructor(
 
     private fun updateDisplayValue() {
         displayValue.text = currentValue.toString()
-        onBtnClickListener?.let { click ->
-            click(currentValue)
-        }
     }
 
-    private var onBtnClickListener: ((Int) -> Unit)? = null
 
-    fun setOnBtnClickListener(listener: (Int) -> Unit) {
-        onBtnClickListener = listener
+    private var onButtonClick: ((Int,Int) -> Unit)? = null
+    fun setOnButtonClickListener(listener: (Int,Int) -> Unit) {
+        onButtonClick = listener
     }
 
-    private var onRemoveItemListener: ((Int) -> Unit)? = null
 
-    fun setOnRemoveItemListener(listener: (Int) -> Unit) {
-        onRemoveItemListener = listener
-    }
+
 }

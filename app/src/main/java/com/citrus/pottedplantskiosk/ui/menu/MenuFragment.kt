@@ -23,6 +23,7 @@ import com.citrus.pottedplantskiosk.ui.menu.adapter.*
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
 import com.google.android.material.snackbar.Snackbar
+import com.skydoves.elasticviews.ElasticAnimation
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -53,8 +54,9 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     @Inject
     lateinit var goodsItemAdapter: GoodsItemAdapter
 
-    @Inject
-    lateinit var cartItemAdapter: CartItemAdapter
+
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +67,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     override fun initView() {
         binding.apply {
             cartMotionLayout.registerLifecycleOwner(lifecycle)
-            cartMotionLayout.setAdapter(cartItemAdapter)
+
 
             mainGroupRv.apply {
                 layoutManager =
@@ -91,7 +93,13 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     override fun initObserve() {
         lifecycleScope.launchWhenStarted {
             menuViewModel.currentCartGoods.collect { cartGoods ->
-                binding.cartMotionLayout.addCartGoods(cartGoods)
+                if (cartGoods != null) {
+                    if(cartGoods.isEdit){
+                        return@collect
+                    }else{
+                        binding.cartMotionLayout.addCartGoods(cartGoods)
+                    }
+                }
             }
         }
 
@@ -149,7 +157,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                         layoutInflater.inflate(R.layout.custom_snackbar_view, null)
                     snackbar!!.view.setBackgroundColor(Color.TRANSPARENT)
                     val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
-                    snackbarLayout.setPadding(0, 0, 0, 0)
+                    snackbarLayout.setPadding(0, 0, 0, 50)
                     val bGotoWebsite: Button = customSnackView.findViewById(R.id.gotoWebsiteButton)
                     val timerHint: TextView = customSnackView.findViewById(R.id.textView2)
                     updateTimerJob = lifecycleScope.launch {
@@ -160,8 +168,15 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                         }
                     }
 
-                    bGotoWebsite.setOnClickListener {
-                        releaseSnack()
+                    bGotoWebsite.setOnClickListener { v ->
+                        ElasticAnimation(v)
+                            .setScaleX(0.85f)
+                            .setScaleY(0.85f)
+                            .setDuration(100)
+                            .setOnFinishListener {
+                                releaseSnack()
+                            }
+                            .doAction()
                     }
                     snackbarLayout.addView(customSnackView, 0)
                     snackbar!!.show()
@@ -169,6 +184,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
                 if (timer == Constants.TWO_MINUTES) {
                     menuViewModel.stopTimer()
+                    binding.cartMotionLayout.releaseAdapter()
                     findNavController().popBackStack(R.id.mainFragment, false)
                 }
             }
@@ -186,6 +202,14 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
         goodsItemAdapter.setOnGoodsClickListener { good, list ->
             menuViewModel.onGoodsClick(good, list)
+        }
+
+
+        binding.cartMotionLayout.setOnGoodsClickListener { goods ->
+            findNavController().navigate(
+                R.id.action_menuFragment_to_zoomPageFragment,
+                bundleOf("goods" to goods)
+            )
         }
 
         binding.cartMotionLayout.setOnOpenSheetListener {
@@ -208,14 +232,9 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         }
 
         binding.cartMotionLayout.setOnPayButtonClickListener { list ->
+
             Log.e("list", list.toString())
         }
-
-        cartItemAdapter.setOnItemDeleteListener { good ->
-            binding.cartMotionLayout.removeGoods(good)
-        }
-
-
 
 
     }

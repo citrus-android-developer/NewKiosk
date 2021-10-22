@@ -77,7 +77,14 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
         holder.setIsRecyclable(false)
         val item = cartGoods[position]
         holder.binding.apply {
-            item.qty = 1
+
+            if(item.isEdit){
+                numberPicker.setValue(item.qty)
+                addCart.text = "DONE"
+            }else{
+                item.qty = 1
+            }
+
             rvSize.isVisible = false
             numberPicker.isVisible = false
             if (prefs.languagePos == 1) {
@@ -140,11 +147,12 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
                 }
             })
 
-            numberPicker.setOnBtnClickListener {
-                if(it == 0){
-                    return@setOnBtnClickListener
+            numberPicker.setOnButtonClickListener{ _ , currentNum ->
+                if(currentNum == 0){
+                    numberPicker.setValue(1)
+                   return@setOnButtonClickListener
                 }
-                item.qty = it
+                item.qty = currentNum
                 sumPriceCount(tvPrice, item.qty, item.price)
             }
         }

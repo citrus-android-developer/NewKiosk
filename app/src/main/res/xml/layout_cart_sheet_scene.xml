@@ -137,8 +137,8 @@
             android:id="@+id/cartItemSize"
             android:elevation="@dimen/dp_38"
             motion:layout_constraintEnd_toEndOf="@id/fab"
-            android:layout_width="@dimen/dp_10"
-            android:layout_height="@dimen/dp_10"
+            android:layout_width="@dimen/dp_12"
+            android:layout_height="@dimen/dp_12"
             motion:layout_constraintTop_toTopOf="@+id/fab"
             android:visibility="visible"/>
     </ConstraintSet>
@@ -185,8 +185,8 @@
             android:id="@+id/cartItemSize"
             android:elevation="@dimen/dp_38"
             motion:layout_constraintEnd_toEndOf="@id/fab"
-            android:layout_width="@dimen/dp_10"
-            android:layout_height="@dimen/dp_10"
+            android:layout_width="@dimen/dp_12"
+            android:layout_height="@dimen/dp_12"
             motion:layout_constraintTop_toTopOf="@+id/fab"
             android:visibility="invisible"/>
     </ConstraintSet>

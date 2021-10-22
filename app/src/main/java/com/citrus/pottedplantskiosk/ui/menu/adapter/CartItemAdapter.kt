@@ -1,50 +1,82 @@
 package com.citrus.pottedplantskiosk.ui.menu.adapter
 
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.CartItemViewBinding
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.df
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.skydoves.elasticviews.ElasticAnimation
 import javax.inject.Inject
+import android.util.DisplayMetrics
+
 
 class CartItemAdapter @Inject constructor(val context: Context) :
     RecyclerView.Adapter<CartItemAdapter.CartItemViewHolder>() {
     class CartItemViewHolder(val binding: CartItemViewBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    var cartGoods = listOf<Good>()
+    private var _cartGoods = mutableListOf<Good>()
+        private val cartGoods get() = _cartGoods
 
-    suspend fun updateDataset(newDataset: List<Good>) = withContext(Dispatchers.Default) {
-        val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int {
-                return cartGoods.size
+    fun getList(): MutableList<Good> {
+        return cartGoods
+    }
+
+    private fun insertGoods(goods: Good?) {
+        goods?.let {
+            _cartGoods.add(goods)
+            notifyItemInserted(_cartGoods.size)
+            onChangedListener?.let { notify ->
+                notify()
             }
+        }
+    }
 
-            override fun getNewListSize(): Int {
-                return newDataset.size
+    fun updateGoods(goods: Good) {
+        var position = -1
+        for (item in _cartGoods) {
+            if (item.gID == goods.gID && item.gKID == goods.gKID && item.size == goods.size) {
+                    position = _cartGoods.indexOf(item)
+                    if (goods.isEdit) {
+                        /**修改的商品覆蓋原品項參數*/
+                        item.qty = goods.qty
+                        item.size = goods.size
+                        item.sPrice = goods.sPrice
+                        item.add = goods.add
+                        item.flavor = goods.flavor
+                    } else {
+                        /**重複購買的商品增加原數量*/
+                        item.qty += goods.qty
+                    }
+                    notifyItemChanged(position)
+                break
             }
+        }
 
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return true
-            }
+        if (position == -1) {
+            /**新增品項、註記為可修改品項*/
+            goods.isEdit = true
+            insertGoods(goods)
+        }
 
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return cartGoods[oldItemPosition] == newDataset[newItemPosition]
-            }
+        onChangedListener?.let { notify ->
+            notify()
+        }
+    }
 
-        })
-        withContext(Dispatchers.Main) {
-            cartGoods = newDataset.map { it.copy() }
-            diff.dispatchUpdatesTo(this@CartItemAdapter)
+    private fun removeGoods(goods: Good) {
+        val position = _cartGoods.indexOf(goods)
+        _cartGoods.remove(goods)
+        notifyItemRemoved(position)
+        onChangedListener?.let { notify ->
+            notify()
         }
     }
 
@@ -60,14 +92,15 @@ class CartItemAdapter @Inject constructor(val context: Context) :
         holder: CartItemViewHolder,
         @SuppressLint("RecyclerView") position: Int
     ) {
-        val item = cartGoods[position]
+        val item = _cartGoods[position]
         holder.binding.apply {
-            if(position % 2 != 0){
-                root.background = context.resources.getDrawable(R.drawable.cart_item_bg2,null)
-            }else{
-                root.background = context.resources.getDrawable(R.drawable.cart_item_bg,null)
-            }
 
+            var size: String = item.size?.find { it.isCheck }?.desc ?: ""
+            if (size == "") {
+                tvSize.isVisible = false
+            } else {
+                tvSize.text = size
+            }
 
             tvGoodsName.text = item.gName
 
@@ -77,21 +110,54 @@ class CartItemAdapter @Inject constructor(val context: Context) :
 
             tvPrice.text = "$" + df.format(checkPrice(item.price, item.qty))
 
+
+            val metrics: DisplayMetrics = context.resources.displayMetrics
+            val textSize: Float = tvPrice.textSize / metrics.density
+
             numberPicker.setValue(item.qty)
-            numberPicker.setTextSize(R.dimen.sp_10)
+            numberPicker.setTextSize(textSize + 1)
 
-            numberPicker.setOnBtnClickListener { value ->
-                item.qty = value
-                item.sPrice = checkPrice(item.price, item.qty)
-                tvPrice.text = "$" + df.format(item.sPrice)
-            }
 
-            numberPicker.setOnRemoveItemListener {
-                onItemDeleteListener?.let { remove ->
-                    remove(item)
+
+            numberPicker.setOnButtonClickListener { _, newValue ->
+                if (newValue > 0) {
+                    item.qty = newValue
+                    item.sPrice = checkPrice(item.price, item.qty)
+                    tvPrice.text = "$" + df.format(item.sPrice)
+                    notifyItemChanged(position)
+                    onChangedListener?.let { notify ->
+                        notify()
+                    }
+                } else {
+                    removeGoods(item)
                 }
             }
 
+
+            deleteBtn.setOnClickListener { v ->
+                ElasticAnimation(v)
+                    .setScaleX(0.85f)
+                    .setScaleY(0.85f)
+                    .setDuration(100)
+                    .setOnFinishListener {
+                        removeGoods(item)
+                    }
+                    .doAction()
+
+
+            }
+
+            root.setOnClickListener { v ->
+                ElasticAnimation(v)
+                    .setScaleX(0.85f)
+                    .setScaleY(0.85f)
+                    .setDuration(50)
+                    .setOnFinishListener {
+                        onGoodsClickListener?.let { click ->
+                            click(item)
+                        }
+                    }.doAction()
+            }
 
         }
     }
@@ -101,14 +167,20 @@ class CartItemAdapter @Inject constructor(val context: Context) :
     }
 
     override fun getItemCount(): Int {
-        return cartGoods.size
+        return _cartGoods.size
     }
 
 
-    private var onItemDeleteListener: ((Good) -> Unit)? = null
-
-    fun setOnItemDeleteListener(listener: (Good) -> Unit) {
-        onItemDeleteListener = listener
+    private var onChangedListener: (() -> Unit)? = null
+    fun setOnChangedListener(listener: () -> Unit) {
+        onChangedListener = listener
     }
+
+
+    private var onGoodsClickListener: ((Good) -> Unit)? = null
+    fun setOnGoodsClickListener(listener: (Good) -> Unit) {
+        onGoodsClickListener = listener
+    }
+
 
 }

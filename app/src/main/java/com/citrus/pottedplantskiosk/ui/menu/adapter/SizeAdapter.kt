@@ -22,7 +22,6 @@ class SizeAdapter(val context: Context) : RecyclerView.Adapter<SizeAdapter.SizeV
 
     suspend fun updateDataset(newDataset: List<Size>) =
         withContext(Dispatchers.Default) {
-            Log.e("newDataset",newDataset.toString())
             val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
                 override fun getOldListSize(): Int {
                     return sizeList.size

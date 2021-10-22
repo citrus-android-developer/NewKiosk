@@ -13,9 +13,6 @@
         <action
             android:id="@+id/action_menuFragment_to_zoomPageFragment"
             app:destination="@id/zoomPageFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_goodsViewFragment"
-            app:destination="@id/goodsViewFragment" />
     </fragment>
 
     <dialog
@@ -27,14 +24,7 @@
             android:name="goods"
             app:argType="com.citrus.pottedplantskiosk.api.remote.dto.Good" />
     </dialog>
-    <fragment
-        android:id="@+id/goodsViewFragment"
-        android:name="com.citrus.pottedplantskiosk.ui.menu.GoodsViewFragment"
-        android:label="GoodsViewFragment" >
-        <argument
-            android:name="goods"
-            app:argType="com.citrus.pottedplantskiosk.api.remote.dto.Good" />
-    </fragment>
+
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.citrus.pottedplantskiosk.ui.menu.MainFragment"

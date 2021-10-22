@@ -34,6 +34,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
@@ -166,13 +167,9 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
                         .doAction()
                 }
             }
-        }).addBannerLifecycleObserver(viewLifecycleOwner).indicator =
-            CircleIndicator(requireContext())
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
+        }).addBannerLifecycleObserver(viewLifecycleOwner).indicator = CircleIndicator(requireContext())
 
     }
+
 
 }

@@ -2,7 +2,6 @@ package com.citrus.pottedplantskiosk.ui.menu
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -23,13 +22,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import www.sanju.zoomrecyclerlayout.ZoomRecyclerLayout
-import javax.inject.Inject
 import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
-import com.citrus.pottedplantskiosk.di.prefs
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.skydoves.elasticviews.ElasticAnimation
-import kotlinx.coroutines.delay
 
 
 @AndroidEntryPoint
@@ -95,7 +91,14 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
     }
 
     private fun initAction() {
-        goodsList = menuViewModel.currentDetailGoodsList.map { it.deepCopy() }
+
+        goodsList = if(args.goods.isEdit){
+            goodsList + args.goods
+        }else{
+            menuViewModel.currentDetailGoodsList.map { it.deepCopy() }
+        }
+
+
         currentIndex = goodsList.indexOf(args.goods)
         if (currentIndex == 0) {
             binding.prev.visibility = View.INVISIBLE
@@ -128,13 +131,12 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
 
     private fun initView() {
         binding.apply {
-            zoomItemAdapter = ZoomAdapter(requireContext(), lifecycleScope)
-
             val linearLayoutManager = ZoomRecyclerLayout(requireContext())
             linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
             zoomRv.layoutManager =
                 linearLayoutManager
 
+            zoomItemAdapter = ZoomAdapter(requireContext(), lifecycleScope)
             zoomRv.adapter = zoomItemAdapter
 
 

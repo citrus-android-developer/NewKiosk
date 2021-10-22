@@ -36,13 +36,13 @@ data class Kind(
 
 data class Good(
     @SerializedName("add")
-    val add: List<Add>,
+    var add: List<Add>,
     @SerializedName("BarCode")
     val barCode: String,
     @SerializedName("ChgPrice")
     val chgPrice: String,
     @SerializedName("flavor")
-    val flavor: List<Flavor>,
+    var flavor: List<Flavor>,
     @SerializedName("GID")
     var gID: String,
     @SerializedName("GKID")

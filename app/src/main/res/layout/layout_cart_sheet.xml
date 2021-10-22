@@ -108,14 +108,14 @@
             android:layout_marginTop="@dimen/dp_2"
             android:layout_marginEnd="@dimen/dp_5"
             android:layout_marginBottom="@dimen/dp_2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="center"
             android:maxLines="2"
             android:minLines="2"
-            android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="@dimen/sp_15"/>
+            android:textSize="@dimen/sp_15"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/title"
@@ -188,7 +188,18 @@
             android:textColor="@color/lightWhite"
             android:textSize="@dimen/sp_8"
             android:textStyle="bold" />
-    </LinearLayout>x
+    </LinearLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/payWayRv"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_70"
+        android:background="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_bar_card_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="invisible" />
 
 
     <androidx.cardview.widget.CardView

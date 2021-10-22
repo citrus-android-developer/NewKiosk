@@ -94,11 +94,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         lifecycleScope.launchWhenStarted {
             menuViewModel.currentCartGoods.collect { cartGoods ->
                 if (cartGoods != null) {
-                    if(cartGoods.isEdit){
-                        return@collect
-                    }else{
-                        binding.cartMotionLayout.addCartGoods(cartGoods)
-                    }
+                    binding.cartMotionLayout.addCartGoods(cartGoods)
                 }
             }
         }
@@ -203,7 +199,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         goodsItemAdapter.setOnGoodsClickListener { good, list ->
             menuViewModel.onGoodsClick(good, list)
         }
-
 
         binding.cartMotionLayout.setOnGoodsClickListener { goods ->
             findNavController().navigate(

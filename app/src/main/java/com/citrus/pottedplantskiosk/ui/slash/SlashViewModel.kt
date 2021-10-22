@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.ui.slash
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.citrus.pottedplantskiosk.api.remote.RemoteRepository
@@ -32,6 +33,9 @@ class SlashViewModel @Inject constructor(
 
     private val _allData = MutableSharedFlow<Boolean>()
     val allData: SharedFlow<Boolean> = _allData
+
+
+
 
 
     fun asyncTask() = viewModelScope.launch {

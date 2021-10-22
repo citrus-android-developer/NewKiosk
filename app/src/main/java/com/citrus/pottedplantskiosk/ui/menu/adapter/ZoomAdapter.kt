@@ -80,6 +80,7 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
 
             if(item.isEdit){
                 numberPicker.setValue(item.qty)
+                sumPriceCount(tvPrice, item.qty, item.price)
                 addCart.text = "DONE"
             }else{
                 item.qty = 1

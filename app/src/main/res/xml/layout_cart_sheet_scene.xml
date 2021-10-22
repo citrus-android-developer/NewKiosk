@@ -52,8 +52,7 @@
                 motion:motionTarget="@id/fab">
                 <CustomAttribute
                     motion:attributeName="radius"
-                    motion:customDimension="160dp"
-                    />
+                    motion:customDimension="160dp" />
             </KeyAttribute>
             <KeyPosition
                 motion:framePosition="80"
@@ -68,6 +67,7 @@
         </KeyFrameSet>
     </Transition>
 
+
     <!-- /////////////////////////////////
     // 3 -> 4: Settle Transition
     ///////////////////////////////// -->
@@ -76,6 +76,12 @@
         android:id="@+id/set3To4"
         motion:constraintSetEnd="@id/set4_settle"
         motion:constraintSetStart="@id/set3_reveal"
+        motion:duration="500" />
+
+    <Transition
+        android:id="@+id/set4To5"
+        motion:constraintSetEnd="@id/set5_payWay"
+        motion:constraintSetStart="@id/set4_settle"
         motion:duration="500" />
 
     <ConstraintSet android:id="@+id/set1_base">
@@ -135,12 +141,20 @@
         </Constraint>
         <Constraint
             android:id="@+id/cartItemSize"
-            android:elevation="@dimen/dp_38"
-            motion:layout_constraintEnd_toEndOf="@id/fab"
             android:layout_width="@dimen/dp_12"
             android:layout_height="@dimen/dp_12"
-            motion:layout_constraintTop_toTopOf="@+id/fab"
-            android:visibility="visible"/>
+            android:elevation="@dimen/dp_38"
+            android:visibility="visible"
+            motion:layout_constraintEnd_toEndOf="@id/fab"
+            motion:layout_constraintTop_toTopOf="@+id/fab" />
+        <Constraint
+            android:id="@+id/payWayRv"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_70"
+            android:visibility="invisible"
+            motion:layout_constraintBottom_toTopOf="@+id/bottom_bar_card_view"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" />
     </ConstraintSet>
 
     <!-- /////////////////////////////////
@@ -183,12 +197,12 @@
 
         <Constraint
             android:id="@+id/cartItemSize"
-            android:elevation="@dimen/dp_38"
-            motion:layout_constraintEnd_toEndOf="@id/fab"
             android:layout_width="@dimen/dp_12"
             android:layout_height="@dimen/dp_12"
-            motion:layout_constraintTop_toTopOf="@+id/fab"
-            android:visibility="invisible"/>
+            android:elevation="@dimen/dp_38"
+            android:visibility="invisible"
+            motion:layout_constraintEnd_toEndOf="@id/fab"
+            motion:layout_constraintTop_toTopOf="@+id/fab" />
     </ConstraintSet>
 
     <!-- /////////////////////////////////
@@ -211,8 +225,7 @@
 
             <CustomAttribute
                 motion:attributeName="radius"
-                motion:customDimension="0dp"
-              />
+                motion:customDimension="0dp" />
             <CustomAttribute
                 motion:attributeName="cardBackgroundColor"
                 motion:customColorValue="@color/darkGreen" />
@@ -240,12 +253,12 @@
 
         <Constraint
             android:id="@+id/hintArea"
-            motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="visible"
-            motion:layout_constraintTop_toBottomOf="@id/hintBottomLine"
-            motion:layout_constraintStart_toStartOf="parent" />
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@id/hintBottomLine" />
 
     </ConstraintSet>
 
@@ -300,17 +313,48 @@
                 motion:layout_constraintEnd_toEndOf="@id/fab"
                 motion:layout_constraintStart_toStartOf="@+id/fab"
                 motion:layout_constraintTop_toTopOf="@id/fab" />
-            <PropertySet
-                motion:visibilityMode="ignore" />
+            <PropertySet motion:visibilityMode="ignore" />
         </Constraint>
         <Constraint
             android:id="@+id/hintArea"
-            motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="0dp"
             android:layout_height="0dp"
             motion:layout_constraintBottom_toTopOf="@+id/hintBottomLine"
-            motion:layout_constraintTop_toBottomOf="@id/hintTopLine"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@id/hintTopLine" />
+    </ConstraintSet>
+
+
+    <!-- /////////////////////////////////
+  // 5) payWay Set
+  ///////////////////////////////// -->
+    <ConstraintSet
+        android:id="@+id/set5_payWay"
+        motion:deriveConstraintsFrom="@id/set4_settle">
+
+        <Constraint android:id="@+id/cartRv">
+            <Layout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                motion:layout_constraintBottom_toTopOf="@id/payWayRv"
+                motion:layout_constraintEnd_toEndOf="@id/fab"
+                motion:layout_constraintStart_toStartOf="@+id/fab"
+                motion:layout_constraintTop_toTopOf="@+id/fab" />
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
+
+
+        <Constraint
+            android:id="@+id/payWayRv"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_70"
+            android:visibility="visible"
+            motion:layout_constraintBottom_toTopOf="@+id/bottom_bar_card_view"
+            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent" />
 
+
     </ConstraintSet>
+
 </MotionScene>

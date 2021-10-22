@@ -75,7 +75,6 @@ class CartMotionLayout @JvmOverloads constructor(
                 click(goods)
             }
         }
-
     }
 
     /**
@@ -115,8 +114,16 @@ class CartMotionLayout @JvmOverloads constructor(
      * set4_settle -> set3_reveal -> set2_path -> set1_base
      */
     private fun closeSheet(): Unit = performAnimation {
-        cartRv.visibility = View.INVISIBLE
 
+
+        if (currentState == R.id.set5_payWay) {
+            transitionToStart()
+            awaitTransitionComplete(R.id.set4_settle)
+            setTransition(R.id.set3_reveal, R.id.set4_settle)
+            progress = 1f
+        }
+
+        cartRv.visibility = View.INVISIBLE
         shoppingBagHint.visibility = View.INVISIBLE
         // 1) set4_settle -> set3_reveal
         transitionToStart()
@@ -143,6 +150,18 @@ class CartMotionLayout @JvmOverloads constructor(
         // Remove adapters after closing filter sheet
     }
 
+    private fun payWay(): Unit = performAnimation {
+        transitionToState(R.id.set5_payWay)
+        awaitTransitionComplete(R.id.set5_payWay)
+    }
+
+    private fun payWayReveal(): Unit = performAnimation {
+        transitionToStart()
+        awaitTransitionComplete(R.id.set4_settle)
+        setTransition(R.id.set3_reveal, R.id.set4_settle)
+        progress = 1f
+    }
+
 
     /**
      * Based on the currentState (ConstraintSet), we set the appropriate click listeners.
@@ -159,15 +178,27 @@ class CartMotionLayout @JvmOverloads constructor(
             filterIcon.setImageResource(R.drawable.ic_baseline_payment_24)
             filterIcon.setOnClickListener { v ->
                 clickAnimation({
-                    onPayButtonClickListener?.let { call ->
-                        cartItemAdapter?.let { call(it.getList()) }
-                    }
+                    payWay()
                 }, v)
             }
             closeIcon.setOnClickListener { v ->
                 clickAnimation({ closeSheet() }, v)
             }
         }
+
+        R.id.set5_payWay -> {
+            filterIcon.setImageResource(R.drawable.ic_baseline_payment_24)
+            filterIcon.setOnClickListener { v ->
+                clickAnimation({
+                    payWayReveal()
+                }, v)
+            }
+            closeIcon.setOnClickListener { v ->
+                clickAnimation({ closeSheet() }, v)
+            }
+        }
+
+
         else -> throw IllegalStateException("Can be called only for the permitted 3 currentStates")
     }
 

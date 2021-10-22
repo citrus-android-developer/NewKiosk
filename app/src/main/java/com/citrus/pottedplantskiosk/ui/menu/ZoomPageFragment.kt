@@ -103,6 +103,10 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
         if (currentIndex == 0) {
             binding.prev.visibility = View.INVISIBLE
         }
+        if(currentIndex == goodsList.size-1){
+            binding.next.visibility = View.INVISIBLE
+        }
+
         updateZoomItemJob?.cancel()
         updateZoomItemJob = lifecycleScope.launch {
             zoomItemAdapter.updateDataset(goodsList)

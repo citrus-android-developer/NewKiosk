@@ -20,7 +20,7 @@
             <KeyPosition
                 motion:framePosition="50"
                 motion:keyPositionType="deltaRelative"
-                motion:motionTarget="@id/filter_icon"
+                motion:motionTarget="@id/filter_icon_area"
                 motion:percentX="0.85"
                 motion:percentY="0.15" />
             <KeyPosition
@@ -62,7 +62,7 @@
             <KeyPosition
                 motion:framePosition="80"
                 motion:keyPositionType="deltaRelative"
-                motion:motionTarget="@id/filter_icon"
+                motion:motionTarget="@id/filter_icon_area"
                 motion:percentY="1" />
         </KeyFrameSet>
     </Transition>
@@ -84,6 +84,7 @@
         motion:constraintSetStart="@id/set4_settle"
         motion:duration="500" />
 
+
     <ConstraintSet android:id="@+id/set1_base">
         <Constraint android:id="@id/fab">
             <Layout
@@ -103,7 +104,7 @@
                 motion:customDimension="@dimen/dp_16" />
         </Constraint>
 
-        <Constraint android:id="@id/filter_icon">
+        <Constraint android:id="@id/filter_icon_area">
             <Layout
                 android:layout_width="@dimen/dp_36"
                 android:layout_height="@dimen/dp_36"
@@ -116,7 +117,7 @@
                 motion:customColorValue="#fff" />
         </Constraint>
 
-        <Constraint android:id="@id/close_icon">
+        <Constraint android:id="@id/close_icon_area">
             <Layout
                 android:layout_width="@dimen/dp_36"
                 android:layout_height="0dp"
@@ -155,6 +156,17 @@
             motion:layout_constraintBottom_toTopOf="@+id/bottom_bar_card_view"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent" />
+
+        <Constraint android:id="@+id/shoppingBagHint">
+            <Layout
+                android:layout_width="@dimen/dp_80"
+                android:layout_height="@dimen/dp_80"
+                motion:layout_constraintBottom_toTopOf="@id/bottom_bar_card_view"
+                motion:layout_constraintEnd_toEndOf="@id/fab"
+                motion:layout_constraintStart_toStartOf="@+id/fab"
+                motion:layout_constraintTop_toTopOf="@id/fab" />
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
     </ConstraintSet>
 
     <!-- /////////////////////////////////
@@ -203,6 +215,17 @@
             android:visibility="invisible"
             motion:layout_constraintEnd_toEndOf="@id/fab"
             motion:layout_constraintTop_toTopOf="@+id/fab" />
+
+        <Constraint android:id="@+id/shoppingBagHint">
+            <Layout
+                android:layout_width="@dimen/dp_80"
+                android:layout_height="@dimen/dp_80"
+                motion:layout_constraintBottom_toTopOf="@id/bottom_bar_card_view"
+                motion:layout_constraintEnd_toEndOf="@id/fab"
+                motion:layout_constraintStart_toStartOf="@+id/fab"
+                motion:layout_constraintTop_toTopOf="@id/fab" />
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
     </ConstraintSet>
 
     <!-- /////////////////////////////////
@@ -230,7 +253,7 @@
                 motion:attributeName="cardBackgroundColor"
                 motion:customColorValue="@color/darkGreen" />
         </Constraint>
-        <Constraint android:id="@id/filter_icon">
+        <Constraint android:id="@id/filter_icon_area">
             <Layout
                 android:layout_width="@dimen/dp_36"
                 android:layout_height="@dimen/dp_36"
@@ -260,6 +283,17 @@
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toBottomOf="@id/hintBottomLine" />
 
+        <Constraint android:id="@+id/shoppingBagHint">
+            <Layout
+                android:layout_width="@dimen/dp_80"
+                android:layout_height="@dimen/dp_80"
+                motion:layout_constraintBottom_toTopOf="@id/bottom_bar_card_view"
+                motion:layout_constraintEnd_toEndOf="@id/fab"
+                motion:layout_constraintStart_toStartOf="@+id/fab"
+                motion:layout_constraintTop_toTopOf="@id/fab" />
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
+
     </ConstraintSet>
 
     <!-- /////////////////////////////////
@@ -270,19 +304,21 @@
         android:id="@+id/set4_settle"
         motion:deriveConstraintsFrom="@id/set3_reveal">
 
-        <Constraint android:id="@id/filter_icon">
+        <Constraint android:id="@id/filter_icon_area">
             <Layout
-                android:layout_width="@dimen/dp_36"
-                android:layout_height="@dimen/dp_36"
-                motion:layout_constraintBottom_toBottomOf="@id/bottom_bar_card_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                motion:layout_constraintBottom_toBottomOf="@+id/bottom_bar_card_view"
                 motion:layout_constraintEnd_toStartOf="@id/guideline2"
                 motion:layout_constraintStart_toStartOf="@id/guideline2"
                 motion:layout_constraintTop_toTopOf="@id/bottom_bar_card_view" />
+
 
             <CustomAttribute
                 motion:attributeName="colorFilter"
                 motion:customColorValue="#FFFFFF" />
         </Constraint>
+
 
 
         <Constraint android:id="@id/bottom_bar_card_view">
@@ -292,10 +328,10 @@
             <PropertySet android:visibility="visible" />
         </Constraint>
 
-        <Constraint android:id="@id/close_icon">
+        <Constraint android:id="@id/close_icon_area">
             <Layout
-                android:layout_width="@dimen/dp_36"
-                android:layout_height="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 motion:layout_constraintBottom_toBottomOf="@id/bottom_bar_card_view"
                 motion:layout_constraintEnd_toStartOf="@id/guideline1"
                 motion:layout_constraintStart_toStartOf="@id/guideline1"
@@ -304,6 +340,7 @@
 
             <PropertySet android:visibility="visible" />
         </Constraint>
+
 
         <Constraint android:id="@+id/shoppingBagHint">
             <Layout
@@ -323,6 +360,17 @@
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toBottomOf="@id/hintTopLine" />
+
+        <Constraint android:id="@+id/shoppingBagHint">
+            <Layout
+                android:layout_width="@dimen/dp_80"
+                android:layout_height="@dimen/dp_80"
+                motion:layout_constraintBottom_toTopOf="@id/bottom_bar_card_view"
+                motion:layout_constraintEnd_toEndOf="@id/fab"
+                motion:layout_constraintStart_toStartOf="@+id/fab"
+                motion:layout_constraintTop_toTopOf="@id/fab" />
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
     </ConstraintSet>
 
 
@@ -348,12 +396,12 @@
         <Constraint
             android:id="@+id/payWayRv"
             android:layout_width="0dp"
-            android:layout_height="@dimen/dp_70"
-            android:visibility="visible"
+            android:layout_height="@dimen/dp_90"
             motion:layout_constraintBottom_toTopOf="@+id/bottom_bar_card_view"
             motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintStart_toStartOf="parent" />
-
+            motion:layout_constraintStart_toStartOf="parent">
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
 
     </ConstraintSet>
 

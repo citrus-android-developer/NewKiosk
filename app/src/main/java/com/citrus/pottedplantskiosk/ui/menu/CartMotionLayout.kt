@@ -8,22 +8,19 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.lifecycle.*
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.ui.menu.adapter.CartItemAdapter
+import com.citrus.pottedplantskiosk.ui.menu.adapter.PayWayAdapter
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.MultiListenerMotionLayout
 import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.launch
 
-/**
- * A MotionLayout version of [FiltersLayout]
- * All Transitions and ConstraintSets are defined in R.xml.scene_filter
- *
- * Code in this class contains mostly only choreographing the transitions.
- */
+
 class CartMotionLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -37,10 +34,16 @@ class CartMotionLayout @JvmOverloads constructor(
     private val shoppingHint: TextView
     private val cartItemSize: TextView
     private val tvTotalPrice: TextView
+    private val filterIconText:TextView
+    private val closeIconText:TextView
     private val shoppingBagHint: LinearLayout
+    private val filterIconArea: LinearLayout
+    private val closeIconArea: LinearLayout
     private val cartRv: RecyclerView
+    private val payWayRv: RecyclerView
     lateinit var scope: LifecycleCoroutineScope
     var cartItemAdapter: CartItemAdapter?
+    var payWayAdapter: PayWayAdapter?
 
 
     init {
@@ -48,15 +51,23 @@ class CartMotionLayout @JvmOverloads constructor(
         closeIcon = findViewById(R.id.close_icon)
         filterIcon = findViewById(R.id.filter_icon)
         shoppingBag = findViewById(R.id.shoppingBag)
+        filterIconText = findViewById(R.id.filter_icon_text)
+        closeIconText= findViewById(R.id.close_icon_text)
         cartRv = findViewById(R.id.cartRv)
+        payWayRv = findViewById(R.id.payWayRv)
         shoppingHint = findViewById(R.id.shoppingHint)
         shoppingBagHint = findViewById(R.id.shoppingBagHint)
+        filterIconArea = findViewById(R.id.filter_icon_area)
+        closeIconArea = findViewById(R.id.close_icon_area)
         cartItemSize = findViewById(R.id.cartItemSize)
         tvTotalPrice = findViewById(R.id.tvTotalPrice)
 
         cartItemSize.text = "0"
 
+
+        payWayAdapter = PayWayAdapter(context)
         cartItemAdapter = CartItemAdapter(context)
+
         cartRv.apply {
             layoutManager =
                 LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -64,6 +75,11 @@ class CartMotionLayout @JvmOverloads constructor(
         }
         enableClicks()
 
+        payWayRv.apply {
+            layoutManager =
+                GridLayoutManager(context, 4)
+            adapter = payWayAdapter
+        }
 
         cartItemAdapter?.setOnChangedListener {
             infoChange()
@@ -77,44 +93,38 @@ class CartMotionLayout @JvmOverloads constructor(
         }
     }
 
-    /**
-     * Opens the filter sheet. Set adapters before starting.
-     *
-     * Order of animations:
-     * set1_base -> set2_path -> set3_reveal -> set4_settle
-     */
+
     private fun openSheet(): Unit = performAnimation {
         onOpenSheetListener?.let { open ->
             open()
         }
 
         setTransition(R.id.set1_base, R.id.set2_path)
-        // 1) set1_base -> set2_path
-        // (Start scale down animation simultaneously)
+
+
         transitionToState(R.id.set2_path)
         awaitTransitionComplete(R.id.set2_path)
 
-        // 2) set2_path -> set3_reveal
+        filterIconText.visibility = View.INVISIBLE
+
+        if (cartItemAdapter?.getList().isNullOrEmpty()) {
+            shoppingBagHint.visibility = View.VISIBLE
+        }
+
+
         transitionToState(R.id.set3_reveal)
         awaitTransitionComplete(R.id.set3_reveal)
         updateRvData()
 
-        // 3) set3_reveal -> set4_settle
+        filterIconText.visibility = View.VISIBLE
+        closeIconText.visibility =  View.VISIBLE
+
         transitionToState(R.id.set4_settle)
         awaitTransitionComplete(R.id.set4_settle)
     }
 
-    /**
-     * Closes the filter sheet. Remove adapters after it's complete, useless to
-     * keep them around unless opened again.
-     * Instead of creating more transitions, we reverse the transitions by setting
-     * the required transition at progress=1f (end state) and using [transitionToStart].
-     *
-     * Order of animations:
-     * set4_settle -> set3_reveal -> set2_path -> set1_base
-     */
-    private fun closeSheet(): Unit = performAnimation {
 
+    private fun closeSheet(): Unit = performAnimation {
 
         if (currentState == R.id.set5_payWay) {
             transitionToStart()
@@ -122,40 +132,42 @@ class CartMotionLayout @JvmOverloads constructor(
             setTransition(R.id.set3_reveal, R.id.set4_settle)
             progress = 1f
         }
-
         cartRv.visibility = View.INVISIBLE
-        shoppingBagHint.visibility = View.INVISIBLE
-        // 1) set4_settle -> set3_reveal
+
         transitionToStart()
         awaitTransitionComplete(R.id.set3_reveal)
 
 
-        // 2) set3_reveal -> set2_path
         setTransition(R.id.set2_path, R.id.set3_reveal)
         progress = 1f
         transitionToStart()
         awaitTransitionComplete(R.id.set2_path)
+        filterIconText.visibility = View.INVISIBLE
+        closeIconText.visibility = View.INVISIBLE
+        shoppingBagHint.visibility = View.INVISIBLE
 
         onCloseSheetListener?.let { close ->
             close()
         }
 
-        // 3) set2_path -> set1_base
-        // (Start scale 'up' animator simultaneously)
+
         setTransition(R.id.set1_base, R.id.set2_path)
         progress = 1f
         transitionToStart()
         awaitTransitionComplete(R.id.set1_base)
+        filterIconText.visibility = View.GONE
 
-        // Remove adapters after closing filter sheet
     }
 
     private fun payWay(): Unit = performAnimation {
         transitionToState(R.id.set5_payWay)
         awaitTransitionComplete(R.id.set5_payWay)
+        payWayRv.visibility = View.VISIBLE
+
     }
 
     private fun payWayReveal(): Unit = performAnimation {
+        payWayRv.visibility = View.INVISIBLE
         transitionToStart()
         awaitTransitionComplete(R.id.set4_settle)
         setTransition(R.id.set3_reveal, R.id.set4_settle)
@@ -163,37 +175,34 @@ class CartMotionLayout @JvmOverloads constructor(
     }
 
 
-    /**
-     * Based on the currentState (ConstraintSet), we set the appropriate click listeners.
-     * Do not call this method during an animation.
-     */
+
     private fun enableClicks() = when (currentState) {
         R.id.set1_base -> {
             filterIcon.setImageResource(R.drawable.ic_round_shopping_cart_24)
-            filterIcon.setOnClickListener { openSheet() }
-            closeIcon.setOnClickListener(null)
+            filterIconArea.setOnClickListener { openSheet() }
+            closeIconArea.setOnClickListener(null)
         }
 
         R.id.set4_settle -> {
             filterIcon.setImageResource(R.drawable.ic_baseline_payment_24)
-            filterIcon.setOnClickListener { v ->
+            filterIconArea.setOnClickListener { v ->
                 clickAnimation({
                     payWay()
                 }, v)
             }
-            closeIcon.setOnClickListener { v ->
+            closeIconArea.setOnClickListener { v ->
                 clickAnimation({ closeSheet() }, v)
             }
         }
 
         R.id.set5_payWay -> {
             filterIcon.setImageResource(R.drawable.ic_baseline_payment_24)
-            filterIcon.setOnClickListener { v ->
+            filterIconArea.setOnClickListener { v ->
                 clickAnimation({
                     payWayReveal()
                 }, v)
             }
-            closeIcon.setOnClickListener { v ->
+            closeIconArea.setOnClickListener { v ->
                 clickAnimation({ closeSheet() }, v)
             }
         }
@@ -202,13 +211,10 @@ class CartMotionLayout @JvmOverloads constructor(
         else -> throw IllegalStateException("Can be called only for the permitted 3 currentStates")
     }
 
-    /**
-     * Called when an animation is started so that double clicking or
-     * clicking during animation will not trigger anything
-     */
+
     private fun disableClicks() {
-        filterIcon.setOnClickListener(null)
-        closeIcon.setOnClickListener(null)
+        filterIconArea.setOnClickListener(null)
+        closeIconArea.setOnClickListener(null)
     }
 
 
@@ -235,21 +241,17 @@ class CartMotionLayout @JvmOverloads constructor(
         list?.forEach { goods ->
             totalPrice += goods.price * goods.qty
         }
+
         tvTotalPrice.text = "Total Price: $ " + Constants.df.format(totalPrice)
         cartItemSize.text = cartItemAdapter?.getList()?.size.toString()
+
+        if (list?.isEmpty() == true) {
+            shoppingBagHint.visibility = View.VISIBLE
+        }
     }
 
 
-    /**
-     * Convenience method to launch a coroutine in MainActivity's lifecycleScope
-     * (to start animating transitions in MotionLayout) and to handle clicks appropriately.
-     *
-     * Note: [block] must contain only animation related code. Clicks are
-     * disabled at start and enabled at the end.
-     *
-     * Warning: [awaitTransitionComplete] must be called for the final state at the end of
-     * [block], otherwise [enableClicks] will be called at the wrong time for the wrong state.
-     */
+
     private inline fun performAnimation(crossinline block: suspend () -> Unit) {
         scope.launch {
             disableClicks()
@@ -282,10 +284,6 @@ class CartMotionLayout @JvmOverloads constructor(
         onCloseSheetListener = listener
     }
 
-    private var onCloseSheetWhenSwitchListener: (() -> Unit)? = null
-    fun setOnCloseSheetWhenSwitchListener(listener: () -> Unit) {
-        onCloseSheetWhenSwitchListener = listener
-    }
 
     private var onPayButtonClickListener: ((List<Good>) -> Unit)? = null
     fun setOnPayButtonClickListener(listener: (List<Good>) -> Unit) {
@@ -301,6 +299,7 @@ class CartMotionLayout @JvmOverloads constructor(
 
     fun releaseAdapter() {
         cartItemAdapter = null
+        payWayAdapter = null
     }
 
 }

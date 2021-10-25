@@ -20,6 +20,7 @@
         <entry key="app/src/main/res/drawable-v24/ic_baseline_keyboard_arrow_up_24.xml" value="0.26986301369863014" />
         <entry key="app/src/main/res/drawable-v24/main_group_select_bg.xml" value="0.26986301369863014" />
         <entry key="app/src/main/res/drawable-v24/menu_item_rv_bg.xml" value="0.26986301369863014" />
+        <entry key="app/src/main/res/drawable-v24/pay_bg.xml" value="0.13425925925925927" />
         <entry key="app/src/main/res/drawable-v24/selector_text.xml" value="0.18981481481481483" />
         <entry key="app/src/main/res/drawable-v24/text_size_bg.xml" value="0.27361111111111114" />
         <entry key="app/src/main/res/drawable/arrow_balloon_library_skydoves.xml" value="0.18489583333333334" />
@@ -59,6 +60,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.22871376811594202" />
         <entry key="app/src/main/res/layout/activity_menu.xml" value="0.18333333333333332" />
         <entry key="app/src/main/res/layout/activity_slash.xml" value="0.14351851851851852" />
+        <entry key="app/src/main/res/layout/banner_image.xml" value="0.2212962962962963" />
         <entry key="app/src/main/res/layout/cart_item_view.xml" value="0.4373831775700935" />
         <entry key="app/src/main/res/layout/custom_number_picker.xml" value="0.625" />
         <entry key="app/src/main/res/layout/custom_snackbar_view.xml" value="0.335" />
@@ -78,7 +80,7 @@
         <entry key="app/src/main/res/layout/inside_recycler_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_container_goods.xml" value="0.125" />
         <entry key="app/src/main/res/layout/item_size.xml" value="0.17546296296296296" />
-        <entry key="app/src/main/res/layout/layout_cart_sheet.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/layout_cart_sheet.xml" value="0.5" />
         <entry key="app/src/main/res/layout/layout_motion.xml" value="0.25" />
         <entry key="app/src/main/res/layout/layout_motion_test.xml" value="0.2222222222222222" />
         <entry key="app/src/main/res/layout/main_group_item_view.xml" value="0.25925925925925924" />

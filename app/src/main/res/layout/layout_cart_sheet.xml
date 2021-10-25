@@ -78,18 +78,44 @@
         app:cardCornerRadius="@dimen/dp_36"
         app:cardElevation="16dp" />
 
-    <ImageView
-        android:id="@+id/filter_icon"
+
+    <LinearLayout
+        android:id="@+id/filter_icon_area"
         android:layout_width="@dimen/dp_72"
         android:layout_height="@dimen/dp_72"
         android:elevation="@dimen/dp_34"
-        android:outlineProvider="none"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_round_shopping_cart_24"
         app:layout_constraintBottom_toBottomOf="@id/fab"
         app:layout_constraintEnd_toEndOf="@id/fab"
         app:layout_constraintStart_toStartOf="@id/fab"
-        app:tint="@color/white" />
+        app:layout_constraintTop_toTopOf="@+id/fab"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/filter_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:outlineProvider="none"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_round_shopping_cart_24"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/filter_icon_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/dp_34"
+            android:gravity="center|top"
+            android:text="Payment Type"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_10"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/filter_icon"
+            app:layout_constraintStart_toStartOf="@id/filter_icon"
+            app:layout_constraintTop_toBottomOf="@id/filter_icon" />
+
+    </LinearLayout>
+
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/hintArea"
@@ -191,21 +217,28 @@
     </LinearLayout>
 
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.mlsdev.animatedrv.AnimatedRecyclerView
         android:id="@+id/payWayRv"
         android:layout_width="0dp"
-        android:layout_height="@dimen/dp_70"
-        android:background="@color/black"
+        android:layout_height="@dimen/dp_90"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_10"
+        android:elevation="@dimen/dp_38"
+        android:visibility="invisible"
+        app:animationDuration="300"
+        app:layoutAnimation="@anim/layout_animation_from_right"
         app:layout_constraintBottom_toTopOf="@+id/bottom_bar_card_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="invisible" />
+        tools:itemCount="2"
+        tools:listitem="@layout/pay_way_item_view"
+        tools:visibility="visible" />
 
 
     <androidx.cardview.widget.CardView
         android:id="@+id/bottom_bar_card_view"
         android:layout_width="0dp"
-        android:layout_height="@dimen/dp_30"
+        android:layout_height="@dimen/dp_35"
         android:outlineProvider="none"
         android:visibility="invisible"
         app:cardBackgroundColor="@android:color/transparent"
@@ -215,19 +248,43 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"></androidx.cardview.widget.CardView>
 
-    <ImageView
-        android:id="@+id/close_icon"
+    <LinearLayout
+        android:id="@+id/close_icon_area"
         android:layout_width="@dimen/dp_72"
         android:layout_height="0dp"
         android:layout_gravity="center"
         android:elevation="@dimen/dp_34"
-        android:outlineProvider="none"
-        android:scaleType="centerInside"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/bottom_bar_card_view"
-        app:layout_constraintTop_toTopOf="@id/bottom_bar_card_view"
         app:srcCompat="@drawable/ic_baseline_close_24"
-        app:tint="@color/white" />
+        android:orientation="vertical"
+       >
+
+        <ImageView
+            android:id="@+id/close_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ic_baseline_close_24"
+            app:tint="@color/white"
+            android:outlineProvider="none"
+            />
+
+        <TextView
+            android:id="@+id/close_icon_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/dp_34"
+            android:gravity="center"
+            android:text="Close"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_10"
+            android:visibility="invisible" />
+
+
+    </LinearLayout>
+
+
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/fabBarrier"

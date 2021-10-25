@@ -20,10 +20,12 @@ class MenuViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
+
     private var timerJob: Job? = null
     var timeCount = 0
     private val _tikTok = MutableStateFlow(0)
     val tikTok: StateFlow<Int> = _tikTok
+
 
     private val _menuData = MutableStateFlow<List<MainGroup>>(listOf())
     val menuData: StateFlow<List<MainGroup>> = _menuData
@@ -78,6 +80,7 @@ class MenuViewModel @Inject constructor(
         var groupList = data.mainGroup.map { it.groupName }
 
         _menuGroupName.emit(groupList)
+
         onGroupChange(groupList[0])
 
         currentGroup = data.mainGroup.first()
@@ -94,9 +97,9 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    fun onDescChange(desc:String) = viewModelScope.launch{
-        currentGroup?.let{ mainGroup ->
-            var goods = mainGroup.kind.find { it.desc == desc}?.goods ?: listOf()
+    fun onDescChange(desc: String) = viewModelScope.launch {
+        currentGroup?.let { mainGroup ->
+            var goods = mainGroup.kind.find { it.desc == desc }?.goods ?: listOf()
             _allGoods.emit(goods)
         }
     }

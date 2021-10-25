@@ -6,7 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.api.remote.dto.PayWay
+import com.citrus.pottedplantskiosk.api.remote.dto.payWayList
 import com.citrus.pottedplantskiosk.databinding.PayWayItemViewBinding
+import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -15,36 +17,7 @@ class PayWayAdapter(val context: Context) : RecyclerView.Adapter<PayWayAdapter.P
     class PayWayViewHolder(val binding: PayWayItemViewBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    suspend fun updateDataset(newDataset: List<PayWay>) =
-        withContext(Dispatchers.Default) {
-            val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-                override fun getOldListSize(): Int {
-                    return payList.size
-                }
-
-                override fun getNewListSize(): Int {
-                    return newDataset.size
-                }
-
-                override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                    return payList[oldItemPosition] == newDataset[newItemPosition]
-                }
-
-                override fun areContentsTheSame(
-                    oldItemPosition: Int,
-                    newItemPosition: Int
-                ): Boolean {
-                    return payList[oldItemPosition] == newDataset[newItemPosition]
-                }
-            })
-            withContext(Dispatchers.Main) {
-                payList = newDataset.map { it.copy() }
-                diff.dispatchUpdatesTo(this@PayWayAdapter)
-            }
-        }
-
-    var payList = listOf<PayWay>()
-
+    var payList = payWayList()
 
     override fun getItemCount(): Int {
         return payList.size
@@ -61,7 +34,21 @@ class PayWayAdapter(val context: Context) : RecyclerView.Adapter<PayWayAdapter.P
     override fun onBindViewHolder(holder: PayWayViewHolder, position: Int) {
         val item = payList[position]
         holder.binding.apply {
+            payWayImg.setImageDrawable(context.resources.getDrawable(item.imgRes,null))
+            payWayHint.text = item.desc
 
+
+            root.setOnClickListener { v ->
+                ElasticAnimation(v)
+                    .setScaleX(0.85f)
+                    .setScaleY(0.85f)
+                    .setDuration(50)
+                    .setOnFinishListener {
+                        onPayWayClickListener?.let {  click ->
+                            click(item)
+                        }
+                    }.doAction()
+            }
         }
     }
 

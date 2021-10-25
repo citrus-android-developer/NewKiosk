@@ -1,7 +1,6 @@
 package com.citrus.pottedplantskiosk.api.remote
 
-import android.util.Log
-import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
+
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.skydoves.sandwich.suspendOnError
@@ -17,7 +16,8 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
 
     override fun getMenu(url: String, rsNo: String): Flow<Resource<Data>> =
         flow {
-            apiService.getMenu(url, rsNo).suspendOnSuccess {
+            apiService.getMenu(url, rsNo)
+                .suspendOnSuccess {
                 data?.let {
                     if (it.status == 1) {
                         emit(Resource.Success(data.data))

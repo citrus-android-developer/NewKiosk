@@ -25,6 +25,8 @@ import com.citrus.pottedplantskiosk.util.base.BindingFragment
 import com.google.android.material.snackbar.Snackbar
 import com.skydoves.elasticviews.ElasticAnimation
 import com.skydoves.transformationlayout.onTransformationStartContainer
+import com.youth.banner.indicator.RectangleIndicator
+import com.youth.banner.util.BannerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -55,7 +57,10 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     lateinit var goodsItemAdapter: GoodsItemAdapter
 
 
-
+    override fun onStop() {
+        super.onStop()
+        binding.banner.stop()
+    }
 
 
 
@@ -67,7 +72,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     override fun initView() {
         binding.apply {
             cartMotionLayout.registerLifecycleOwner(lifecycle)
-
 
             mainGroupRv.apply {
                 layoutManager =
@@ -91,6 +95,18 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     }
 
     override fun initObserve() {
+        lifecycleScope.launchWhenStarted {
+            menuViewModel.showBannerData.collect { banners ->
+                binding.banner.adapter = ImageAdapter(banners)
+                binding.banner.indicator = RectangleIndicator(activity)
+                binding.banner.setIndicatorSpace(BannerUtils.dp2px(4f).toInt())
+                binding.banner.setIndicatorRadius(0)
+                binding.banner.start()
+            }
+        }
+
+
+
         lifecycleScope.launchWhenStarted {
             menuViewModel.currentCartGoods.collect { cartGoods ->
                 if (cartGoods != null) {
@@ -207,24 +223,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             )
         }
 
-        binding.cartMotionLayout.setOnOpenSheetListener {
-            binding.root.apply {
-                lifecycleScope.launchWhenStarted {
-//                    setTransition(R.id.start, R.id.end)
-//                    transitionToState(R.id.end)
-//                    awaitTransitionComplete(R.id.end)
-                }
-            }
-        }
-
-        binding.cartMotionLayout.setOnCloseSheetListener {
-            binding.root.apply {
-                lifecycleScope.launchWhenStarted {
-//                    transitionToStart()
-//                    awaitTransitionComplete(R.id.start)
-                }
-            }
-        }
 
         binding.cartMotionLayout.setOnPayButtonClickListener { list ->
 

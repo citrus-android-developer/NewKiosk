@@ -2,6 +2,7 @@ package com.citrus.pottedplantskiosk.ui.menu.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,7 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
     class GoodsItemViewHolder(val binding: GoodsItemViewBinding) :
         RecyclerView.ViewHolder(binding.root)
 
+    private var mLastClickTime: Long = 0
     var goods = listOf<Good>()
 
     fun setGoodsList(newDataset: List<Good>){
@@ -52,6 +54,11 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
             tvPrice.text = "$" + item.price.toString()
 
             root.setOnClickListener { v ->
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return@setOnClickListener
+                }
+                mLastClickTime = SystemClock.elapsedRealtime()
+
                 ElasticAnimation(v)
                     .setScaleX(0.85f)
                     .setScaleY(0.85f)
@@ -60,8 +67,7 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
                         onClickListener?.let {  click ->
                             click(item,goods)
                         }
-                    }
-                    .doAction()
+                    }.doAction()
             }
         }
     }

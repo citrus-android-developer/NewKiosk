@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.ui.menu.adapter.CartItemAdapter
+import com.citrus.pottedplantskiosk.ui.menu.adapter.CheckoutAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.PayWayAdapter
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.MultiListenerMotionLayout
@@ -31,19 +32,26 @@ class CartMotionLayout @JvmOverloads constructor(
     private val closeIcon: ImageView
     private val filterIcon: ImageView
     private val shoppingBag: ImageView
+    private val title:TextView
     private val shoppingHint: TextView
     private val cartItemSize: TextView
     private val tvTotalPrice: TextView
     private val filterIconText:TextView
     private val closeIconText:TextView
+    private val orderTime:TextView
+    private val sumPrice:TextView
+    private val payType:TextView
     private val shoppingBagHint: LinearLayout
     private val filterIconArea: LinearLayout
     private val closeIconArea: LinearLayout
     private val cartRv: RecyclerView
     private val payWayRv: RecyclerView
+    private val checkoutRv: RecyclerView
     lateinit var scope: LifecycleCoroutineScope
     var cartItemAdapter: CartItemAdapter?
     var payWayAdapter: PayWayAdapter?
+    var checkoutAdapter: CheckoutAdapter?
+
 
 
     init {
@@ -53,8 +61,13 @@ class CartMotionLayout @JvmOverloads constructor(
         shoppingBag = findViewById(R.id.shoppingBag)
         filterIconText = findViewById(R.id.filter_icon_text)
         closeIconText= findViewById(R.id.close_icon_text)
+        orderTime = findViewById(R.id.orderTime)
+        sumPrice = findViewById(R.id.sumPrice)
+        payType = findViewById(R.id.payType)
+        title = findViewById(R.id.title)
         cartRv = findViewById(R.id.cartRv)
         payWayRv = findViewById(R.id.payWayRv)
+        checkoutRv = findViewById(R.id.checkoutRv)
         shoppingHint = findViewById(R.id.shoppingHint)
         shoppingBagHint = findViewById(R.id.shoppingBagHint)
         filterIconArea = findViewById(R.id.filter_icon_area)
@@ -67,17 +80,23 @@ class CartMotionLayout @JvmOverloads constructor(
 
         payWayAdapter = PayWayAdapter(context)
         cartItemAdapter = CartItemAdapter(context)
+        checkoutAdapter = CheckoutAdapter(context)
 
         cartRv.apply {
             layoutManager =
                 LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             adapter = cartItemAdapter
         }
-        enableClicks()
+
+        checkoutRv.apply {
+            layoutManager =
+                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            adapter = checkoutAdapter
+        }
 
         payWayRv.apply {
             layoutManager =
-                GridLayoutManager(context, 4)
+                GridLayoutManager(context, 5)
             adapter = payWayAdapter
         }
 
@@ -91,6 +110,14 @@ class CartMotionLayout @JvmOverloads constructor(
                 click(goods)
             }
         }
+
+
+        payWayAdapter?.setOnPayWayClickListener { payWay ->
+            checkout()
+            payType.text = "Payment Type: " + payWay.desc
+        }
+
+        enableClicks()
     }
 
 
@@ -174,6 +201,28 @@ class CartMotionLayout @JvmOverloads constructor(
         progress = 1f
     }
 
+    private fun checkout(): Unit = performAnimation {
+        cartItemAdapter?.getList()?.let { checkoutAdapter?.setList(it) }
+        checkoutRv.startLayoutAnimation()
+        title.text = "Order Detail"
+        title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_checklist_24, 0, 0, 0)
+        tvTotalPrice.visibility = View.INVISIBLE
+        transitionToState(R.id.set6_checkout)
+        awaitTransitionComplete(R.id.set6_checkout)
+    }
+
+
+    private fun checkoutReveal(): Unit = performAnimation {
+        title.text = "My Cart"
+        title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_shopping_bag_24, 0, 0, 0)
+        tvTotalPrice.visibility = View.VISIBLE
+        transitionToStart()
+        awaitTransitionComplete(R.id.set5_payWay)
+        setTransition(R.id.set4_settle, R.id.set5_payWay)
+        progress = 1f
+        checkoutAdapter?.setList(mutableListOf())
+    }
+
 
 
     private fun enableClicks() = when (currentState) {
@@ -197,13 +246,27 @@ class CartMotionLayout @JvmOverloads constructor(
 
         R.id.set5_payWay -> {
             filterIcon.setImageResource(R.drawable.ic_baseline_payment_24)
+            filterIconText.text = "Payment Type"
             filterIconArea.setOnClickListener { v ->
                 clickAnimation({
                     payWayReveal()
                 }, v)
             }
+            closeIcon.setImageResource(R.drawable.ic_baseline_close_24)
+            closeIconText.text = "Close"
             closeIconArea.setOnClickListener { v ->
                 clickAnimation({ closeSheet() }, v)
+            }
+        }
+
+        R.id.set6_checkout -> {
+            filterIcon.setImageResource(R.drawable.ic_baseline_price_check_24)
+            filterIconText.text = "Done"
+            filterIconArea.setOnClickListener(null)
+            closeIcon.setImageResource(R.drawable.ic_baseline_keyboard_backspace_24)
+            closeIconText.text = "Back"
+            closeIconArea.setOnClickListener { v ->
+                clickAnimation({ checkoutReveal() }, v)
             }
         }
 
@@ -243,6 +306,7 @@ class CartMotionLayout @JvmOverloads constructor(
         }
 
         tvTotalPrice.text = "Total Price: $ " + Constants.df.format(totalPrice)
+        sumPrice.text = "Total Price: $ " + Constants.df.format(totalPrice)
         cartItemSize.text = cartItemAdapter?.getList()?.size.toString()
 
         if (list?.isEmpty() == true) {
@@ -300,6 +364,7 @@ class CartMotionLayout @JvmOverloads constructor(
     fun releaseAdapter() {
         cartItemAdapter = null
         payWayAdapter = null
+        checkoutAdapter = null
     }
 
 }

@@ -32,6 +32,13 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.2" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/checkoutBottomLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75" />
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/hintBottomLine"
@@ -84,11 +91,11 @@
         android:layout_width="@dimen/dp_72"
         android:layout_height="@dimen/dp_72"
         android:elevation="@dimen/dp_34"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@id/fab"
         app:layout_constraintEnd_toEndOf="@id/fab"
         app:layout_constraintStart_toStartOf="@id/fab"
-        app:layout_constraintTop_toTopOf="@+id/fab"
-        android:orientation="vertical">
+        app:layout_constraintTop_toTopOf="@+id/fab">
 
         <ImageView
             android:id="@+id/filter_icon"
@@ -114,7 +121,6 @@
             app:layout_constraintTop_toBottomOf="@id/filter_icon" />
 
     </LinearLayout>
-
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -182,6 +188,75 @@
         tools:visibility="visible" />
 
 
+    <com.mlsdev.animatedrv.AnimatedRecyclerView
+        android:id="@+id/checkoutRv"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:elevation="@dimen/dp_36"
+        android:fadingEdgeLength="@dimen/dp_50"
+        android:requiresFadingEdge="vertical"
+        android:visibility="invisible"
+        app:animationDuration="500"
+        app:layoutAnimation="@anim/layout_animation_from_right"
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar_card_view"
+        app:layout_constraintEnd_toEndOf="@id/fab"
+        app:layout_constraintStart_toStartOf="@+id/fab"
+        app:layout_constraintTop_toTopOf="@id/fab"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/checkoutBottomViewLine"
+        android:layout_height="@dimen/dp_2"
+        android:layout_width="0dp"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_10"
+        android:background="@color/white"
+        android:elevation="@dimen/dp_36"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/checkoutRv"
+        app:layout_constraintStart_toStartOf="@+id/checkoutRv"
+        app:layout_constraintTop_toBottomOf="@+id/checkoutRv" />
+
+    <TextView
+        android:layout_marginTop="@dimen/dp_2"
+        android:id="@+id/orderTime"
+        app:layout_constraintStart_toStartOf="@+id/checkoutBottomViewLine"
+        app:layout_constraintTop_toBottomOf="@+id/checkoutBottomViewLine"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Order Time: 2021/10/26"
+        android:textSize="@dimen/sp_16"
+        android:elevation="@dimen/dp_36"
+        android:visibility="invisible"
+        android:textColor="@color/white"
+        />
+
+    <TextView
+        android:id="@+id/sumPrice"
+        app:layout_constraintStart_toStartOf="@+id/checkoutBottomViewLine"
+        app:layout_constraintTop_toBottomOf="@+id/orderTime"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="@dimen/sp_16"
+        android:elevation="@dimen/dp_36"
+        android:visibility="invisible"
+        android:textColor="@color/white"
+        />
+
+    <TextView
+        android:id="@+id/payType"
+        app:layout_constraintStart_toStartOf="@+id/checkoutBottomViewLine"
+        app:layout_constraintTop_toBottomOf="@+id/sumPrice"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="@dimen/sp_16"
+        android:elevation="@dimen/dp_36"
+        android:visibility="invisible"
+        android:textColor="@color/white"
+        />
+
+
+
     <LinearLayout
         android:id="@+id/shoppingBagHint"
         android:layout_width="wrap_content"
@@ -221,9 +296,8 @@
         android:id="@+id/payWayRv"
         android:layout_width="0dp"
         android:layout_height="@dimen/dp_90"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_10"
         android:elevation="@dimen/dp_38"
+        android:padding="@dimen/dp_10"
         android:visibility="invisible"
         app:animationDuration="300"
         app:layoutAnimation="@anim/layout_animation_from_right"
@@ -254,21 +328,19 @@
         android:layout_height="0dp"
         android:layout_gravity="center"
         android:elevation="@dimen/dp_34"
+        android:orientation="vertical"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/bottom_bar_card_view"
-        app:srcCompat="@drawable/ic_baseline_close_24"
-        android:orientation="vertical"
-       >
+        app:srcCompat="@drawable/ic_baseline_close_24">
 
         <ImageView
             android:id="@+id/close_icon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:outlineProvider="none"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/ic_baseline_close_24"
-            app:tint="@color/white"
-            android:outlineProvider="none"
-            />
+            app:tint="@color/white" />
 
         <TextView
             android:id="@+id/close_icon_text"
@@ -283,7 +355,6 @@
 
 
     </LinearLayout>
-
 
 
     <androidx.constraintlayout.widget.Barrier

@@ -84,6 +84,12 @@
         motion:constraintSetStart="@id/set4_settle"
         motion:duration="500" />
 
+    <Transition
+        android:id="@+id/set5To6"
+        motion:constraintSetEnd="@id/set6_checkout"
+        motion:constraintSetStart="@id/set5_payWay"
+        motion:duration="500" />
+
 
     <ConstraintSet android:id="@+id/set1_base">
         <Constraint android:id="@id/fab">
@@ -320,7 +326,6 @@
         </Constraint>
 
 
-
         <Constraint android:id="@id/bottom_bar_card_view">
             <CustomAttribute
                 motion:attributeName="cardBackgroundColor"
@@ -398,11 +403,93 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/dp_90"
             motion:layout_constraintBottom_toTopOf="@+id/bottom_bar_card_view"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintStart_toStartOf="parent">
+            motion:layout_constraintEnd_toEndOf="@+id/cartRv"
+            motion:layout_constraintStart_toStartOf="@+id/cartRv">
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
+    </ConstraintSet>
+
+
+    <!-- /////////////////////////////////
+// 6) checkout Set
+///////////////////////////////// -->
+    <ConstraintSet
+        android:id="@+id/set6_checkout"
+        motion:deriveConstraintsFrom="@id/set5_payWay">
+
+        <Constraint android:id="@+id/cartRv">
+            <Layout
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                motion:layout_constraintBottom_toTopOf="@id/payWayRv"
+                motion:layout_constraintEnd_toStartOf="@id/fab"
+                motion:layout_constraintTop_toTopOf="@+id/fab" />
             <PropertySet motion:visibilityMode="ignore" />
         </Constraint>
 
+
+        <Constraint
+            android:id="@+id/payWayRv"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_90"
+            motion:layout_constraintBottom_toTopOf="@+id/bottom_bar_card_view"
+            motion:layout_constraintEnd_toStartOf="@id/fab"
+            motion:layout_constraintStart_toStartOf="@+id/cartRv">
+            <PropertySet motion:visibilityMode="ignore" />
+        </Constraint>
+
+        <Constraint
+            android:layout_marginTop="@dimen/dp_24"
+            android:id="@+id/checkoutRv"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:elevation="@dimen/dp_36"
+            android:visibility="visible"
+            motion:layout_constraintBottom_toTopOf="@id/checkoutBottomLine"
+            motion:layout_constraintEnd_toEndOf="@id/fab"
+            motion:layout_constraintStart_toStartOf="@+id/fab"
+            motion:layout_constraintTop_toTopOf="@id/fab" />
+        <Constraint
+            android:id="@+id/checkoutBottomViewLine"
+            android:elevation="@dimen/dp_36"
+            motion:layout_constraintEnd_toEndOf="@+id/checkoutRv"
+            android:layout_height="@dimen/dp_2"
+            android:layout_width="0dp"
+            android:visibility="visible"
+            android:layout_marginEnd="@dimen/dp_10"
+            motion:layout_constraintTop_toBottomOf="@+id/checkoutRv"
+            android:layout_marginStart="@dimen/dp_10"
+            motion:layout_constraintStart_toStartOf="@+id/checkoutRv" />
+        <Constraint
+            android:layout_marginTop="@dimen/dp_2"
+            android:id="@+id/orderTime"
+            android:elevation="@dimen/dp_36"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="visible"
+            motion:layout_constraintTop_toBottomOf="@+id/checkoutBottomViewLine"
+            motion:layout_constraintStart_toStartOf="@+id/checkoutBottomViewLine" />
+        <Constraint
+            android:id="@+id/sumPrice"
+            android:elevation="@dimen/dp_36"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="visible"
+            motion:layout_constraintTop_toBottomOf="@+id/orderTime"
+            motion:layout_constraintStart_toStartOf="@+id/checkoutBottomViewLine" />
+        <Constraint
+            android:id="@+id/payType"
+            android:elevation="@dimen/dp_36"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="visible"
+            motion:layout_constraintTop_toBottomOf="@+id/sumPrice"
+            motion:layout_constraintStart_toStartOf="@+id/checkoutBottomViewLine" />
+
     </ConstraintSet>
+
+
+
+
 
 </MotionScene>

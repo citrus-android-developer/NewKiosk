@@ -154,6 +154,7 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
                    return@setOnButtonClickListener
                 }
                 item.qty = currentNum
+                item.sPrice = item.price * item.qty
                 sumPriceCount(tvPrice, item.qty, item.price)
             }
         }

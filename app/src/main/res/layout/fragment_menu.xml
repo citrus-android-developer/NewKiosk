@@ -5,10 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorLightGray"
+    android:background="@drawable/plants_bg2"
     tools:context=".ui.menu.MenuFragment">
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/logo"
         android:layout_width="@dimen/dp_100"
         android:layout_height="0dp"
@@ -169,11 +170,14 @@
 
     <com.youth.banner.Banner
         android:id="@+id/banner"
-        app:layout_constraintTop_toBottomOf="@+id/topInfoLine"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/topLine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="@dimen/dp_6"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_10"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         />

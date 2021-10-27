@@ -136,9 +136,14 @@ dependencies {
     implementation 'com.daimajia.easing:library:2.0@aar'
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
 
+    /**PowerSpinner*/
+    implementation "com.github.skydoves:powerspinner:1.1.9"
+
     implementation 'com.google.android:flexbox:0.3.0'
 
     implementation "androidx.viewpager2:viewpager2:1.0.0"
+
+    implementation 'com.airbnb.android:lottie:3.4.1'
 
     /** Test leak */
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'

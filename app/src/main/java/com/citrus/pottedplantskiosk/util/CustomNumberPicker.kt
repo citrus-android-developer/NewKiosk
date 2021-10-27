@@ -2,14 +2,14 @@ package com.citrus.pottedplantskiosk.util
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.citrus.pottedplantskiosk.R
+import com.citrus.pottedplantskiosk.util.base.onSafeClick
 import com.skydoves.elasticviews.ElasticAnimation
-import kotlin.math.roundToInt
+
 
 class CustomNumberPicker @JvmOverloads constructor(
     context: Context,
@@ -34,7 +34,7 @@ class CustomNumberPicker @JvmOverloads constructor(
 
         displayValue.text = "1"
 
-        decrement.setOnClickListener { v ->
+        decrement.onSafeClick { v ->
             ElasticAnimation(v)
                 .setScaleX(0.85f)
                 .setScaleY(0.85f)
@@ -52,7 +52,7 @@ class CustomNumberPicker @JvmOverloads constructor(
         }
 
 
-        increment.setOnClickListener { v ->
+        increment.onSafeClick { v ->
             ElasticAnimation(v)
                 .setScaleX(0.85f)
                 .setScaleY(0.85f)

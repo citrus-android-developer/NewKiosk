@@ -5,7 +5,10 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.citrus.pottedplantskiosk.api.remote.RemoteRepository
+import com.citrus.pottedplantskiosk.api.remote.Resource
 import com.citrus.pottedplantskiosk.api.remote.dto.*
+import com.citrus.pottedplantskiosk.util.Constants
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Job
@@ -53,6 +56,9 @@ class MenuViewModel @Inject constructor(
 
     private var _currentCartGoods = MutableStateFlow<Good?>(null)
     val currentCartGoods: StateFlow<Good?> = _currentCartGoods
+
+    private val _toPrint = MutableSharedFlow<Orders.OrderDeliveryData?>()
+    val toPrint: SharedFlow<Orders.OrderDeliveryData?> = _toPrint
 
 
     private fun tickerFlow() = flow {
@@ -119,6 +125,70 @@ class MenuViewModel @Inject constructor(
 
     fun showBanner(bannerResponse: BannerResponse) = viewModelScope.launch {
         _showBannerData.emit(bannerResponse.data)
+    }
+
+    fun postOrderItem(list: List<Good>, payWay: PayWay) {
+        var sumQty = list.sumOf { goods ->
+            goods.qty
+        }
+        var sumPrice = list.sumOf { goods ->
+            goods.sPrice
+        }
+        var ordersDelivery = Orders.OrdersDelivery(
+            storeID = 0,
+            qty = sumQty,
+            payType = payWay.desc,
+            isPay = "Y",
+            sPrice = sumPrice
+        )
+
+        var ordersItemDeliveryList = listOf<Orders.OrdersItemDelivery>()
+
+        var seq = 1
+        list.forEach { goods ->
+            var ordersItemDelivery =
+                Orders.OrdersItemDelivery(
+                    storeID = 0,
+                    orderSeq = seq,
+                    gid = goods.gID,
+                    sPrice = goods.sPrice,
+                    gPrice = goods.price,
+                    qty = goods.qty,
+                    gkid = goods.gKID,
+                    gType = goods.gType,
+                    gname = goods.gName,
+                    gName2 = goods.gName2
+                )
+            seq++
+            ordersItemDeliveryList = ordersItemDeliveryList + ordersItemDelivery
+        }
+
+        var orderDeliveryData = Orders.OrderDeliveryData(
+            ordersDelivery = ordersDelivery,
+            ordersItemDelivery = ordersItemDeliveryList
+        )
+
+        viewModelScope.launch {
+            repository.postOrders(
+                Constants.BASE_URL + Constants.SET_ORDERS,
+                Gson().toJson(orderDeliveryData)
+            ).collect {
+                when(it){
+                    is Resource.Success -> {
+                        orderDeliveryData.ordersItemDelivery.forEach { item ->
+                            item.orderNO = it.data?.data!!
+                        }
+                        _toPrint.emit(orderDeliveryData)
+
+                    }
+                    is Resource.Error -> {
+                        _toPrint.emit(null)
+                        Log.e("Error",it.message!!)
+                    }
+                    is Resource.Loading -> Unit
+                }
+            }
+        }
     }
 
 

@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_menuFragment_to_zoomPageFragment"
             app:destination="@id/zoomPageFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_printFragment"
+            app:destination="@id/printFragment" />
     </fragment>
 
     <dialog
@@ -34,4 +37,10 @@
             android:id="@+id/action_mainFragment_to_menuFragment"
             app:destination="@id/menuFragment" />
     </fragment>
+
+    <dialog
+        android:id="@+id/printFragment"
+        android:name="com.citrus.pottedplantskiosk.ui.menu.PrintFragment"
+        android:label="fragment_print"
+        tools:layout="@layout/fragment_print" />
 </navigation>

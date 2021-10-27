@@ -2,4 +2,10 @@
 <resources>
     <string name="app_name">PottedPlantsKiosk</string>
     <string name="touch_to_start">触碰以开始</string>
+    <string name="orderTime">预点时间:</string>
+    <string name="orderNo">单号:</string>
+    <string name="printTime">打印时间:</string>
+    <string name="item">品项</string>
+    <string name="qty">数量</string>
+    <string name="Total">总计:</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.citrus.pottedplantskiosk.ui.menu.adapter
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -10,6 +11,7 @@ import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.databinding.BannerImageBinding
 import com.citrus.pottedplantskiosk.util.Constants
 import com.youth.banner.adapter.BannerAdapter
+import com.youth.banner.util.BannerUtils
 
 
 class ImageAdapter(datas: List<BannerData>?):BannerAdapter<BannerData, ImageAdapter.ImageHolder>(
@@ -27,6 +29,11 @@ class ImageAdapter(datas: List<BannerData>?):BannerAdapter<BannerData, ImageAdap
     override fun onBindView(holder: ImageHolder, data: BannerData?, position: Int, size: Int) {
         holder.binding.apply {
             data?.let {
+                //通过裁剪实现圆角
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    BannerUtils.setBannerRound(image, 20f)
+                }
+
                 Glide.with(holder!!.itemView)
                     .load(Constants.IMG_URL + data.pic)
                     .apply(RequestOptions.bitmapTransform( RoundedCorners(60)))

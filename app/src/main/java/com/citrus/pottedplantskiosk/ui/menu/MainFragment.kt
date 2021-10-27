@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -38,13 +39,17 @@ import androidx.viewpager2.widget.ViewPager2
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.base.onSevenClick
 import kotlinx.coroutines.flow.collect
 
 
 @AndroidEntryPoint
 class MainFragment : BindingFragment<FragmentMainBinding>() {
     private val menuViewModel: MenuViewModel by activityViewModels()
-    lateinit var balloon: Balloon
+    private var balloon: Balloon? = null
+
+    private var lastTimeClicked: Long = 0
+    private var settingCount = 0
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMainBinding::inflate
@@ -70,9 +75,13 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
                     .setScaleY(0.85f)
                     .setDuration(100)
                     .setOnFinishListener {
-                        balloon.showAlignTop(v)
+                        balloon?.showAlignTop(v)
                     }
                     .doAction()
+            }
+
+            logo.onSevenClick {
+
             }
         }
 
@@ -116,16 +125,16 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
             setDismissWhenOverlayClicked(false)
         }
 
-        val btnEN = balloon.getContentView().findViewById<Button>(R.id.btnEN)
-        val btnTW = balloon.getContentView().findViewById<Button>(R.id.btnTW)
-        btnEN.setOnClickListener {
+        val btnEN = balloon?.getContentView()?.findViewById<Button>(R.id.btnEN)
+        val btnTW = balloon?.getContentView()?.findViewById<Button>(R.id.btnTW)
+        btnEN?.setOnClickListener {
             prefs.languagePos = 2
-            balloon.dismiss()
+            balloon?.dismiss()
             intentToMenu()
         }
-        btnTW.setOnClickListener {
+        btnTW?.setOnClickListener {
             prefs.languagePos = 1
-            balloon.dismiss()
+            balloon?.dismiss()
             intentToMenu()
         }
 
@@ -162,14 +171,20 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
                         .setScaleY(0.85f)
                         .setDuration(100)
                         .setOnFinishListener {
-                            balloon.showAlignTop(binding.touchStart)
+                            balloon?.showAlignTop(binding.touchStart)
                         }
                         .doAction()
                 }
             }
-        }).addBannerLifecycleObserver(viewLifecycleOwner).indicator = CircleIndicator(requireContext())
+        }).addBannerLifecycleObserver(viewLifecycleOwner).indicator =
+            CircleIndicator(requireContext())
 
     }
 
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        balloon = null
+    }
 
 }

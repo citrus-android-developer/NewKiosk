@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.GroupNameItemViewBinding
+import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -73,14 +74,20 @@ class GroupItemAdapter @Inject constructor(val context: Context) :
                 title.setTextColor(context.resources.getColor(R.color.colorSecondText))
             }
 
-            root.setOnClickListener {
-                if (position != kindIndex) {
-                    kindIndex = position
-                    notifyDataSetChanged()
-                    onDescClickListener?.let { click ->
-                        click(name)
-                    }
-                }
+            root.setOnClickListener { v ->
+                ElasticAnimation(v)
+                    .setScaleX(0.85f)
+                    .setScaleY(0.85f)
+                    .setDuration(50)
+                    .setOnFinishListener {
+                        if (position != kindIndex) {
+                            kindIndex = position
+                            notifyDataSetChanged()
+                            onDescClickListener?.let { click ->
+                                click(name)
+                            }
+                        }
+                    }.doAction()
             }
         }
     }

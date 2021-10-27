@@ -2,8 +2,10 @@ package com.citrus.pottedplantskiosk.api.remote
 
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.MenuBean
+import com.citrus.pottedplantskiosk.api.remote.dto.UploadResponse
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
+import javax.net.ssl.SSLEngineResult
 
 
 interface ApiService {
@@ -22,6 +24,15 @@ interface ApiService {
     @GET
     suspend fun getBanner(@Url url: String,@Query("jsonData") jsonData: String): ApiResponse<BannerResponse>
 
+
+    /**上傳訂單 */
+    @FormUrlEncoded
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @POST
+    suspend fun setOrders(
+        @Url url: String,
+        @Field("jsonData") jsonData: String
+    ): ApiResponse<UploadResponse>
 
 
 }

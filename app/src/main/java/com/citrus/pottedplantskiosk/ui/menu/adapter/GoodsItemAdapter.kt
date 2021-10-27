@@ -11,6 +11,7 @@ import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.GoodsItemViewBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.base.onSafeClick
 import com.skydoves.elasticviews.ElasticAnimation
 import javax.inject.Inject
 
@@ -19,7 +20,6 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
     class GoodsItemViewHolder(val binding: GoodsItemViewBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    private var mLastClickTime: Long = 0
     var goods = listOf<Good>()
 
     fun setGoodsList(newDataset: List<Good>){
@@ -53,12 +53,7 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
 
             tvPrice.text = "$" + item.price.toString()
 
-            root.setOnClickListener { v ->
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
-                    return@setOnClickListener
-                }
-                mLastClickTime = SystemClock.elapsedRealtime()
-
+            root.onSafeClick { v ->
                 ElasticAnimation(v)
                     .setScaleX(0.85f)
                     .setScaleY(0.85f)

@@ -3,6 +3,7 @@ package com.citrus.pottedplantskiosk.api.remote
 
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
+import com.citrus.pottedplantskiosk.api.remote.dto.UploadResponse
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
 import com.skydoves.sandwich.suspendOnSuccess
@@ -18,37 +19,59 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
         flow {
             apiService.getMenu(url, rsNo)
                 .suspendOnSuccess {
-                data?.let {
-                    if (it.status == 1) {
-                        emit(Resource.Success(data.data))
-                    } else {
-                        emit(Resource.Error("UnExpect Error", null))
+                    data?.let {
+                        if (it.status == 1) {
+                            emit(Resource.Success(data.data))
+                        } else {
+                            emit(Resource.Error("UnExpect Error", null))
+                        }
                     }
+                }.suspendOnError {
+                    emit(Resource.Error(this.statusCode.name, null))
+                }.suspendOnException {
+                    emit(Resource.Error(this.exception.message!!, null))
                 }
-            }.suspendOnError {
-                emit(Resource.Error(this.statusCode.name, null))
-            }.suspendOnException {
-                emit(Resource.Error(this.exception.message!!,null))
-            }
         }.onStart { Resource.Loading(true) }.onCompletion { Resource.Loading(false) }
             .flowOn(Dispatchers.IO)
 
 
     override fun getBanner(url: String, jsonData: String): Flow<Resource<BannerResponse>> =
         flow {
-            apiService.getBanner(url,jsonData).suspendOnSuccess {
-                data?.let {
-                    if (it.status == 1) {
-                        emit(Resource.Success(data))
-                    } else {
-                        emit(Resource.Error("UnExpect Error", null))
+            apiService.getBanner(url, jsonData)
+                .suspendOnSuccess {
+                    data?.let {
+                        if (it.status == 1) {
+                            emit(Resource.Success(data))
+                        } else {
+                            emit(Resource.Error("UnExpect Error", null))
+                        }
                     }
+                }.suspendOnError {
+                    emit(Resource.Error(this.statusCode.name, null))
+                }.suspendOnException {
+                    emit(Resource.Error(this.exception.message!!, null))
                 }
-            }.suspendOnError {
-                emit(Resource.Error(this.statusCode.name, null))
-            }.suspendOnException {
-                emit(Resource.Error(this.exception.message!!,null))
-            }
         }.onStart { Resource.Loading(true) }.onCompletion { Resource.Loading(false) }
             .flowOn(Dispatchers.IO)
+
+
+    override fun postOrders(url: String, jsonData: String): Flow<Resource<UploadResponse>> =
+        flow {
+            apiService.setOrders(url, jsonData)
+                .suspendOnSuccess {
+                    data?.let {
+                        if (it.status == 1) {
+                            emit(Resource.Success(data))
+                        } else {
+                            emit(Resource.Error("UnExpect Error", null))
+                        }
+                    }
+                }.suspendOnError {
+                    emit(Resource.Error(this.statusCode.name, null))
+                }.suspendOnException {
+                    emit(Resource.Error(this.exception.message!!, null))
+                }
+        }.onStart { Resource.Loading(true) }.onCompletion { Resource.Loading(false) }
+            .flowOn(Dispatchers.IO)
+
 }

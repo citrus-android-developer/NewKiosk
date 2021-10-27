@@ -13,11 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
+import com.citrus.pottedplantskiosk.api.remote.dto.PayWay
 import com.citrus.pottedplantskiosk.ui.menu.adapter.CartItemAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.CheckoutAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.PayWayAdapter
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.MultiListenerMotionLayout
+import com.daimajia.androidanimations.library.Techniques
+import com.daimajia.androidanimations.library.YoYo
 import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.launch
 
@@ -51,6 +54,7 @@ class CartMotionLayout @JvmOverloads constructor(
     var cartItemAdapter: CartItemAdapter?
     var payWayAdapter: PayWayAdapter?
     var checkoutAdapter: CheckoutAdapter?
+    var currentPayWay: PayWay? = null
 
 
 
@@ -76,6 +80,7 @@ class CartMotionLayout @JvmOverloads constructor(
         tvTotalPrice = findViewById(R.id.tvTotalPrice)
 
         cartItemSize.text = "0"
+
 
 
         payWayAdapter = PayWayAdapter(context)
@@ -113,8 +118,9 @@ class CartMotionLayout @JvmOverloads constructor(
 
 
         payWayAdapter?.setOnPayWayClickListener { payWay ->
-            checkout()
-            payType.text = "Payment Type: " + payWay.desc
+                checkout()
+                payType.text = "Payment Type: " + payWay.desc
+                currentPayWay = payWay
         }
 
         enableClicks()
@@ -151,14 +157,36 @@ class CartMotionLayout @JvmOverloads constructor(
     }
 
 
-    private fun closeSheet(): Unit = performAnimation {
-
+    private fun closeSheet(isDone:Boolean): Unit = performAnimation {
         if (currentState == R.id.set5_payWay) {
             transitionToStart()
             awaitTransitionComplete(R.id.set4_settle)
             setTransition(R.id.set3_reveal, R.id.set4_settle)
             progress = 1f
+        }else if(currentState == R.id.set6_checkout){
+            title.text = "My Cart"
+            title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_shopping_bag_24, 0, 0, 0)
+            tvTotalPrice.visibility = View.VISIBLE
+            transitionToStart()
+            awaitTransitionComplete(R.id.set5_payWay)
+            setTransition(R.id.set4_settle, R.id.set5_payWay)
+            progress = 1f
+            checkoutAdapter?.setList(mutableListOf())
+            transitionToStart()
+            awaitTransitionComplete(R.id.set4_settle)
+            setTransition(R.id.set3_reveal, R.id.set4_settle)
+            progress = 1f
         }
+
+
+
+        if(isDone){
+            onOrderDoneListener?.let { pass ->
+                cartItemAdapter?.getList()?.let { pass(it,currentPayWay!!) }
+            }
+        }
+
+
         cartRv.visibility = View.INVISIBLE
 
         transitionToStart()
@@ -224,7 +252,6 @@ class CartMotionLayout @JvmOverloads constructor(
     }
 
 
-
     private fun enableClicks() = when (currentState) {
         R.id.set1_base -> {
             filterIcon.setImageResource(R.drawable.ic_round_shopping_cart_24)
@@ -234,13 +261,20 @@ class CartMotionLayout @JvmOverloads constructor(
 
         R.id.set4_settle -> {
             filterIcon.setImageResource(R.drawable.ic_baseline_payment_24)
+            filterIconText.text = "Payment Type"
             filterIconArea.setOnClickListener { v ->
                 clickAnimation({
-                    payWay()
+                    if(cartItemAdapter?.getList()?.isNotEmpty() == true) {
+                        payWay()
+                    }else{
+                        YoYo.with(Techniques.Shake).duration(1000).playOn(shoppingBagHint)
+                    }
                 }, v)
             }
+            closeIcon.setImageResource(R.drawable.ic_baseline_close_24)
+            closeIconText.text = "Close"
             closeIconArea.setOnClickListener { v ->
-                clickAnimation({ closeSheet() }, v)
+                clickAnimation({ closeSheet(false) }, v)
             }
         }
 
@@ -255,14 +289,16 @@ class CartMotionLayout @JvmOverloads constructor(
             closeIcon.setImageResource(R.drawable.ic_baseline_close_24)
             closeIconText.text = "Close"
             closeIconArea.setOnClickListener { v ->
-                clickAnimation({ closeSheet() }, v)
+                clickAnimation({ closeSheet(false) }, v)
             }
         }
 
         R.id.set6_checkout -> {
             filterIcon.setImageResource(R.drawable.ic_baseline_price_check_24)
             filterIconText.text = "Done"
-            filterIconArea.setOnClickListener(null)
+            filterIconArea.setOnClickListener { v ->
+                clickAnimation({ closeSheet(true) }, v)
+            }
             closeIcon.setImageResource(R.drawable.ic_baseline_keyboard_backspace_24)
             closeIconText.text = "Back"
             closeIconArea.setOnClickListener { v ->
@@ -297,6 +333,10 @@ class CartMotionLayout @JvmOverloads constructor(
         cartItemAdapter?.updateGoods(cartGoods)
     }
 
+    fun clearCartGoods() {
+        cartItemAdapter?.clearCart()
+    }
+
 
     private fun infoChange() {
         var totalPrice = 0.0
@@ -309,7 +349,7 @@ class CartMotionLayout @JvmOverloads constructor(
         sumPrice.text = "Total Price: $ " + Constants.df.format(totalPrice)
         cartItemSize.text = cartItemAdapter?.getList()?.size.toString()
 
-        if (list?.isEmpty() == true) {
+        if (list?.isEmpty() == true && currentPayWay == null) {
             shoppingBagHint.visibility = View.VISIBLE
         }
     }
@@ -360,6 +400,10 @@ class CartMotionLayout @JvmOverloads constructor(
         onGoodsClickListener = listener
     }
 
+    private var onOrderDoneListener: ((List<Good>,PayWay) -> Unit)? = null
+    fun setonOrderDoneListener(listener: (List<Good>,PayWay) -> Unit) {
+        onOrderDoneListener = listener
+    }
 
     fun releaseAdapter() {
         cartItemAdapter = null

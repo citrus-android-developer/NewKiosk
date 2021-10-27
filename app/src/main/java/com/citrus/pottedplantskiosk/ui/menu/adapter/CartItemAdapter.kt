@@ -15,6 +15,7 @@ import com.citrus.pottedplantskiosk.util.Constants.df
 import com.skydoves.elasticviews.ElasticAnimation
 import javax.inject.Inject
 import android.util.DisplayMetrics
+import com.citrus.pottedplantskiosk.util.base.onSafeClick
 
 
 class CartItemAdapter @Inject constructor(val context: Context) :
@@ -27,6 +28,13 @@ class CartItemAdapter @Inject constructor(val context: Context) :
 
     fun getList(): MutableList<Good> {
         return cartGoods
+    }
+
+    fun clearCart() {
+        cartGoods.clear()
+        onChangedListener?.let { notify ->
+            notify()
+        }
     }
 
     private fun insertGoods(goods: Good?) {
@@ -134,7 +142,7 @@ class CartItemAdapter @Inject constructor(val context: Context) :
             }
 
 
-            deleteBtn.setOnClickListener { v ->
+            deleteBtn.onSafeClick { v ->
                 ElasticAnimation(v)
                     .setScaleX(0.85f)
                     .setScaleY(0.85f)
@@ -147,7 +155,7 @@ class CartItemAdapter @Inject constructor(val context: Context) :
 
             }
 
-            root.setOnClickListener { v ->
+            root.onSafeClick { v ->
                 ElasticAnimation(v)
                     .setScaleX(0.85f)
                     .setScaleY(0.85f)

@@ -46,9 +46,6 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
     private val menuViewModel: MenuViewModel by activityViewModels()
     private var balloon: Balloon? = null
 
-    private var lastTimeClicked: Long = 0
-    private var settingCount = 0
-
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMainBinding::inflate
 

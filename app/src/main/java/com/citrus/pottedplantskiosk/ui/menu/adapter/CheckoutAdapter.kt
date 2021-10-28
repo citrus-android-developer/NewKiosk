@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.databinding.CartItemViewDoneBinding
+import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants.df
 
 
@@ -52,7 +53,13 @@ class CheckoutAdapter (val context: Context) :
             } else {
                 tvSize.text = size
             }
-            tvGoodsName.text = item.gName
+
+            if (prefs.languagePos == 1) {
+                tvGoodsName.text = item.gName2
+            } else {
+                tvGoodsName.text = item.gName
+            }
+
             tvQtyPrice.text = "$" + item.price + " x " + item.qty
 
             Glide.with(holder.itemView)

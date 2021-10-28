@@ -15,6 +15,7 @@ import com.citrus.pottedplantskiosk.util.Constants.df
 import com.skydoves.elasticviews.ElasticAnimation
 import javax.inject.Inject
 import android.util.DisplayMetrics
+import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.base.onSafeClick
 
 
@@ -110,7 +111,11 @@ class CartItemAdapter @Inject constructor(val context: Context) :
                 tvSize.text = size
             }
 
-            tvGoodsName.text = item.gName
+            if (prefs.languagePos == 1) {
+                tvGoodsName.text = item.gName2
+            } else {
+                tvGoodsName.text = item.gName
+            }
 
             Glide.with(holder.itemView)
                 .load(Constants.IMG_URL + item.picName)

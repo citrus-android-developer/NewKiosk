@@ -18,6 +18,7 @@ import com.citrus.pottedplantskiosk.ui.menu.adapter.CartItemAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.CheckoutAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.PayWayAdapter
 import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.Constants.getCurrentTime
 import com.citrus.pottedplantskiosk.util.MultiListenerMotionLayout
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
@@ -235,6 +236,7 @@ class CartMotionLayout @JvmOverloads constructor(
         title.text = "Order Detail"
         title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_checklist_24, 0, 0, 0)
         tvTotalPrice.visibility = View.INVISIBLE
+        orderTime.text = getCurrentTime()
         transitionToState(R.id.set6_checkout)
         awaitTransitionComplete(R.id.set6_checkout)
     }

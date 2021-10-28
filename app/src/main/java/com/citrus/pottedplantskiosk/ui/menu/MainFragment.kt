@@ -13,9 +13,6 @@ import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.DataBean
 import com.citrus.pottedplantskiosk.databinding.FragmentMainBinding
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
-import com.skydoves.balloon.ArrowOrientation
-import com.skydoves.balloon.Balloon
-import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.elasticviews.ElasticAnimation
 import com.youth.banner.Banner
 import com.youth.banner.adapter.BannerImageAdapter
@@ -25,7 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 import com.skydoves.balloon.BalloonSizeSpec.WRAP
-import com.skydoves.balloon.createBalloon
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import com.skydoves.balloon.overlay.BalloonOverlayRect
 import android.view.animation.AlphaAnimation
@@ -40,6 +36,7 @@ import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.base.onSevenClick
+import com.skydoves.balloon.*
 import kotlinx.coroutines.flow.collect
 
 
@@ -80,8 +77,29 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
                     .doAction()
             }
 
-            logo.onSevenClick {
-
+            logo.onSevenClick { v, count ->
+                if(count >= 7) {
+                    findNavController().navigate(
+                        R.id.action_mainFragment_to_settingFragment
+                    )
+                    return@onSevenClick
+                }else if(count >= 3){
+                    val hintBalloon = createBalloon(requireContext()) {
+                        setArrowSize(10)
+                        setWidth(BalloonSizeSpec.WRAP)
+                        setHeight(65)
+                        setArrowPosition(0.7f)
+                        setCornerRadius(4f)
+                        setAlpha(0.9f)
+                        setTextSize(16f)
+                        setText("再點擊"+ (7-count).toString()+ "次進入設定頁面")
+                        setTextColorResource(R.color.white_93)
+                        setBackgroundColorResource(R.color.colorPrimary)
+                        setBalloonAnimation(BalloonAnimation.FADE)
+                        setLifecycleOwner(lifecycleOwner)
+                    }
+                    hintBalloon.showAlignBottom(logo)
+                }
             }
         }
 

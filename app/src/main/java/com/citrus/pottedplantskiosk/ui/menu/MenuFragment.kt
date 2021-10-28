@@ -95,7 +95,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         Log.e("usbInfo",usbInfo.noPermissionDevice.toString())
 
         usbInfo.deviceList.forEach{ item ->
-            Log.e("usbInfo",item.value.deviceName)
+            Log.e("usbInfo",item.value.deviceName + "'-'" + item.value.productName)
         }
 
         usbInfo.noPermissionDevice
@@ -196,7 +196,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
                 orderDeliveryData?.let {
                     binding.cartMotionLayout.clearCartGoods()
-                    PrintOrderInfo(requireContext(), it,usbInfo.deviceList["/dev/bus/usb/002/005"]) { isSuccess, err ->
+                    PrintOrderInfo(requireContext(), it,usbInfo.deviceList["/dev/bus/usb/002/014"]) { isSuccess, err ->
 
                     }.startPrint()
 

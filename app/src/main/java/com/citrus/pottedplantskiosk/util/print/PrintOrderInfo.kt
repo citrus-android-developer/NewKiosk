@@ -88,13 +88,13 @@ class PrintOrderInfo(
 
                 //最多48個字 48-11=37
                 if (item.gname.toByteArray(charset("GBK")).size <= 37) {
-                    data = b(data, twoColumn(item.gname, qtyStr + priceStr, is80mm))
+                    data = b(data, twoColumn( if (prefs.languagePos == 1) item.gName2 else item.gname, qtyStr + priceStr, is80mm))
                 } else {
-                    data = b(data, text(item.gname))
+                    data = b(data, text(if (prefs.languagePos == 1) item.gName2 else item.gname))
                     data = b(data, twoColumn("", qtyStr + priceStr, is80mm))
                 }
             } else {
-                var itemTitle = item.qty.toString() + "x " + item.gname
+                var itemTitle = item.qty.toString() + "x " + if (prefs.languagePos == 1) item.gName2 else item.gname
 
                 if (getStringPixLength(itemTitle + dfShow.format(item.gPrice), 12, 24) / 12 > 33) {
                     data = b(data, text(itemTitle))

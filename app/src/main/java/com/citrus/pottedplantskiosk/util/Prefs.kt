@@ -30,7 +30,7 @@ class Prefs(context: Context) {
         set(value) = prefs.edit().putString(Constants.KEY_STORE_NAME, value).apply()
 
     var printerIs80mm: Boolean
-        get() = prefs.getBoolean(Constants.KEY_PRINTER_IS80MM, false)
+        get() = prefs.getBoolean(Constants.KEY_PRINTER_IS80MM, true)
         set(value) = prefs.edit().putBoolean(Constants.KEY_PRINTER_IS80MM, value).apply()
 
 

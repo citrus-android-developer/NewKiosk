@@ -36,6 +36,9 @@
         <action
             android:id="@+id/action_mainFragment_to_menuFragment"
             app:destination="@id/menuFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
 
     <dialog
@@ -43,4 +46,10 @@
         android:name="com.citrus.pottedplantskiosk.ui.menu.PrintFragment"
         android:label="fragment_print"
         tools:layout="@layout/fragment_print" />
+
+    <dialog
+        android:id="@+id/settingFragment"
+        android:name="com.citrus.pottedplantskiosk.ui.setting.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
 </navigation>

@@ -79,6 +79,13 @@ class MenuViewModel @Inject constructor(
     fun stopTimer() = viewModelScope.launch {
         timerJob?.cancel()
         _currentCartGoods.emit(null)
+        resetMenu()
+    }
+
+    private fun resetMenu()= viewModelScope.launch {
+        var groupList = _menuData.value.map { it.groupName }
+        onGroupChange(groupList[0])
+        currentGroup = _menuData.value.first()
     }
 
     fun showData(data: Data) = viewModelScope.launch {
@@ -173,7 +180,7 @@ class MenuViewModel @Inject constructor(
                 Constants.BASE_URL + Constants.SET_ORDERS,
                 Gson().toJson(orderDeliveryData)
             ).collect {
-                when(it){
+                when (it) {
                     is Resource.Success -> {
                         orderDeliveryData.ordersItemDelivery.forEach { item ->
                             item.orderNO = it.data?.data!!
@@ -183,7 +190,7 @@ class MenuViewModel @Inject constructor(
                     }
                     is Resource.Error -> {
                         _toPrint.emit(null)
-                        Log.e("Error",it.message!!)
+                        Log.e("Error", it.message!!)
                     }
                     is Resource.Loading -> Unit
                 }

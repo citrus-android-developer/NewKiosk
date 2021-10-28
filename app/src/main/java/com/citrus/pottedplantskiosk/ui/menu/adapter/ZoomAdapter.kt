@@ -84,6 +84,7 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
                 addCart.text = "DONE"
             }else{
                 item.qty = 1
+                item.sPrice = item.price
             }
 
             rvSize.isVisible = false

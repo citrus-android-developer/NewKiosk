@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.api.remote.dto.PayWay
 import com.citrus.pottedplantskiosk.api.remote.dto.payWayList
 import com.citrus.pottedplantskiosk.databinding.PayWayItemViewBinding
+import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -38,16 +39,12 @@ class PayWayAdapter(val context: Context) : RecyclerView.Adapter<PayWayAdapter.P
             payWayHint.text = item.desc
 
 
-            root.setOnClickListener { v ->
-                ElasticAnimation(v)
-                    .setScaleX(0.85f)
-                    .setScaleY(0.85f)
-                    .setDuration(50)
-                    .setOnFinishListener {
-                        onPayWayClickListener?.let {  click ->
-                            click(item)
-                        }
-                    }.doAction()
+            root.setOnClickListener {
+                it.clickAnimation {
+                    onPayWayClickListener?.let {  click ->
+                        click(item)
+                    }
+                }
             }
         }
     }

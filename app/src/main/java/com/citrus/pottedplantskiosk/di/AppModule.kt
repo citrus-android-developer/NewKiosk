@@ -72,9 +72,4 @@ object FragmentModule {
         GroupItemAdapter(fragment.requireContext())
 
 
-    @Provides
-    fun provideDescItemAdapter(fragment: Fragment) =
-        DescItemAdapter(fragment.requireContext())
-
-
 }

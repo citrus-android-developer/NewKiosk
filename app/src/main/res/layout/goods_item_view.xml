@@ -55,6 +55,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/droidbold"
             android:textSize="@dimen/sp_8"
+            android:textColor="@color/greenDark"
             app:layout_constraintEnd_toEndOf="@+id/imgCard"
             app:layout_constraintStart_toStartOf="@+id/imgCard"
             app:layout_constraintTop_toBottomOf="@+id/tvItemName"

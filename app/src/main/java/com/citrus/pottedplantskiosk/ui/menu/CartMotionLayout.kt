@@ -129,22 +129,14 @@ class CartMotionLayout @JvmOverloads constructor(
 
 
     private fun openSheet(): Unit = performAnimation {
-        onOpenSheetListener?.let { open ->
-            open()
-        }
-
         setTransition(R.id.set1_base, R.id.set2_path)
-
-
         transitionToState(R.id.set2_path)
         awaitTransitionComplete(R.id.set2_path)
 
         filterIconText.visibility = View.INVISIBLE
-
         if (cartItemAdapter?.getList().isNullOrEmpty()) {
             shoppingBagHint.visibility = View.VISIBLE
         }
-
 
         transitionToState(R.id.set3_reveal)
         awaitTransitionComplete(R.id.set3_reveal)
@@ -181,13 +173,6 @@ class CartMotionLayout @JvmOverloads constructor(
 
 
 
-        if(isDone){
-            onOrderDoneListener?.let { pass ->
-                cartItemAdapter?.getList()?.let { pass(it,currentPayWay!!) }
-            }
-        }
-
-
         cartRv.visibility = View.INVISIBLE
 
         transitionToStart()
@@ -202,16 +187,17 @@ class CartMotionLayout @JvmOverloads constructor(
         closeIconText.visibility = View.INVISIBLE
         shoppingBagHint.visibility = View.INVISIBLE
 
-        onCloseSheetListener?.let { close ->
-            close()
-        }
-
-
         setTransition(R.id.set1_base, R.id.set2_path)
         progress = 1f
         transitionToStart()
         awaitTransitionComplete(R.id.set1_base)
         filterIconText.visibility = View.GONE
+
+        if(isDone){
+            onOrderDoneListener?.let { pass ->
+                cartItemAdapter?.getList()?.let { pass(it,currentPayWay!!) }
+            }
+        }
 
     }
 
@@ -307,8 +293,6 @@ class CartMotionLayout @JvmOverloads constructor(
                 clickAnimation({ checkoutReveal() }, v)
             }
         }
-
-
         else -> throw IllegalStateException("Can be called only for the permitted 3 currentStates")
     }
 
@@ -377,23 +361,6 @@ class CartMotionLayout @JvmOverloads constructor(
                     block()
                 }
             }.doAction()
-    }
-
-
-    private var onOpenSheetListener: (() -> Unit)? = null
-    fun setOnOpenSheetListener(listener: () -> Unit) {
-        onOpenSheetListener = listener
-    }
-
-    private var onCloseSheetListener: (() -> Unit)? = null
-    fun setOnCloseSheetListener(listener: () -> Unit) {
-        onCloseSheetListener = listener
-    }
-
-
-    private var onPayButtonClickListener: ((List<Good>) -> Unit)? = null
-    fun setOnPayButtonClickListener(listener: (List<Good>) -> Unit) {
-        onPayButtonClickListener = listener
     }
 
 

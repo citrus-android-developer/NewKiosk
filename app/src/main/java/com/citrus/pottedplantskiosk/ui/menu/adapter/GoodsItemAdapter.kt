@@ -11,6 +11,7 @@ import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.GoodsItemViewBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.base.onSafeClick
 import com.skydoves.elasticviews.ElasticAnimation
 import javax.inject.Inject
@@ -53,16 +54,12 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
 
             tvPrice.text = "$" + item.price.toString()
 
-            root.onSafeClick { v ->
-                ElasticAnimation(v)
-                    .setScaleX(0.85f)
-                    .setScaleY(0.85f)
-                    .setDuration(50)
-                    .setOnFinishListener {
-                        onClickListener?.let {  click ->
-                            click(item,goods)
-                        }
-                    }.doAction()
+            root.onSafeClick {
+                it.clickAnimation {
+                    onClickListener?.let {  click ->
+                        click(item,goods)
+                    }
+                }
             }
         }
     }

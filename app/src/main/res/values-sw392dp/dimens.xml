@@ -15,7 +15,13 @@
     	
     <dimen name="dp_m_8">-8.7273dp</dimen>
     	
+    <dimen name="dp_m_6">-6.5455dp</dimen>
+    	
     <dimen name="dp_m_5">-5.4545dp</dimen>
+    	
+    <dimen name="dp_m_4">-4.3636dp</dimen>
+    	
+    <dimen name="dp_m_3">-3.2727dp</dimen>
     	
     <dimen name="dp_m_2">-2.1818dp</dimen>
     	

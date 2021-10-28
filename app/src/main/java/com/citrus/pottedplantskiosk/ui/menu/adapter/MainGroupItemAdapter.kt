@@ -64,11 +64,13 @@ class MainGroupItemAdapter @Inject constructor(val context: Context) :
             if (kindIndex == position) {
                 selectLine.visibility = View.VISIBLE
                 mainTitle.setTypeface(mainTitle.typeface, Typeface.BOLD)
-                mainTitle.setTextColor(context.resources.getColor(R.color.colorPrimaryText))
+                mainTitle.setTextColor(context.resources.getColor(R.color.greenDark))
+                mainTitle.alpha = 1f
             } else {
                 selectLine.visibility = View.INVISIBLE
                 mainTitle.typeface = null
-                mainTitle.setTextColor(context.resources.getColor(R.color.colorSecondText))
+                mainTitle.setTextColor(context.resources.getColor(R.color.greenDark))
+                mainTitle.alpha = 0.5f
             }
 
             root.setOnClickListener {

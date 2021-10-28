@@ -16,6 +16,7 @@ import com.skydoves.elasticviews.ElasticAnimation
 import javax.inject.Inject
 import android.util.DisplayMetrics
 import com.citrus.pottedplantskiosk.di.prefs
+import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.base.onSafeClick
 
 
@@ -25,7 +26,7 @@ class CartItemAdapter @Inject constructor(val context: Context) :
         RecyclerView.ViewHolder(binding.root)
 
     private var _cartGoods = mutableListOf<Good>()
-        private val cartGoods get() = _cartGoods
+    private val cartGoods get() = _cartGoods
 
     fun getList(): MutableList<Good> {
         return cartGoods
@@ -52,19 +53,19 @@ class CartItemAdapter @Inject constructor(val context: Context) :
         var position = -1
         for (item in _cartGoods) {
             if (item.gID == goods.gID && item.gKID == goods.gKID && item.size == goods.size) {
-                    position = _cartGoods.indexOf(item)
-                    if (goods.isEdit) {
-                        /**修改的商品覆蓋原品項參數*/
-                        item.qty = goods.qty
-                        item.size = goods.size
-                        item.sPrice = goods.sPrice
-                        item.add = goods.add
-                        item.flavor = goods.flavor
-                    } else {
-                        /**重複購買的商品增加原數量*/
-                        item.qty += goods.qty
-                    }
-                    notifyItemChanged(position)
+                position = _cartGoods.indexOf(item)
+                if (goods.isEdit) {
+                    /**修改的商品覆蓋原品項參數*/
+                    item.qty = goods.qty
+                    item.size = goods.size
+                    item.sPrice = goods.sPrice
+                    item.add = goods.add
+                    item.flavor = goods.flavor
+                } else {
+                    /**重複購買的商品增加原數量*/
+                    item.qty += goods.qty
+                }
+                notifyItemChanged(position)
                 break
             }
         }
@@ -147,31 +148,19 @@ class CartItemAdapter @Inject constructor(val context: Context) :
             }
 
 
-            deleteBtn.onSafeClick { v ->
-                ElasticAnimation(v)
-                    .setScaleX(0.85f)
-                    .setScaleY(0.85f)
-                    .setDuration(100)
-                    .setOnFinishListener {
-                        removeGoods(item)
+            deleteBtn.onSafeClick {
+                it.clickAnimation {
+                    removeGoods(item)
+                }
+            }
+
+            root.onSafeClick {
+                it.clickAnimation {
+                    onGoodsClickListener?.let { click ->
+                        click(item)
                     }
-                    .doAction()
-
-
+                }
             }
-
-            root.onSafeClick { v ->
-                ElasticAnimation(v)
-                    .setScaleX(0.85f)
-                    .setScaleY(0.85f)
-                    .setDuration(50)
-                    .setOnFinishListener {
-                        onGoodsClickListener?.let { click ->
-                            click(item)
-                        }
-                    }.doAction()
-            }
-
         }
     }
 

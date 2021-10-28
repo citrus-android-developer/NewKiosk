@@ -1,16 +1,24 @@
 package com.citrus.pottedplantskiosk.ui.setting
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.AutoCompleteTextView
+import android.widget.EditText
 import android.widget.FrameLayout
 import androidx.navigation.fragment.findNavController
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.FragmentSettingBinding
 import com.citrus.pottedplantskiosk.databinding.FragmentZoomPageBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +37,33 @@ class SettingFragment : BottomSheetDialogFragment() {
         val behavior = BottomSheetBehavior.from(view)
         behavior.peekHeight = resources.getDimension(R.dimen.dp_400).toInt()
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): BottomSheetDialog {
+        return object : BottomSheetDialog(requireContext(), theme) {
+            override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+                val v = currentFocus
+                if (v != null && (ev.action == MotionEvent.ACTION_UP || ev.action == MotionEvent.ACTION_MOVE) &&
+                    v is AutoCompleteTextView
+                ) {
+                    val sourceCoordinates = IntArray(2)
+                    v.getLocationOnScreen(sourceCoordinates)
+                    val x = ev.rawX + v.getLeft() - sourceCoordinates[0]
+                    val y = ev.rawY + v.getTop() - sourceCoordinates[1]
+                    if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom()) {
+                        hideKeyboard(activity, v)
+                    }
+                }
+                return super.dispatchTouchEvent(ev)
+            }
+        }
+    }
+
+    private fun hideKeyboard(activity: Activity?, v: View) {
+        if (activity != null && activity.window != null) {
+            val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(v.windowToken, 0)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

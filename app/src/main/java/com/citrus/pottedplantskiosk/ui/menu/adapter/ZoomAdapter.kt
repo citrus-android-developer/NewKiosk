@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 import com.bumptech.glide.request.RequestOptions
-
+import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 
 
 class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutineScope) :
@@ -101,17 +101,12 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
                 .load(Constants.IMG_URL + item.picName)
                 .into(photo)
 
-            addCart.setOnClickListener { v ->
-                ElasticAnimation(v)
-                    .setScaleX(0.85f)
-                    .setScaleY(0.85f)
-                    .setDuration(50)
-                    .setOnFinishListener {
-                        onItemClickListener?.let { click ->
-                            click(item)
-                        }
+            addCart.setOnClickListener {
+                it.clickAnimation {
+                    onItemClickListener?.let { click ->
+                        click(item)
                     }
-                    .doAction()
+                }
             }
 
             root.setTransitionListener(object : TransitionAdapter() {

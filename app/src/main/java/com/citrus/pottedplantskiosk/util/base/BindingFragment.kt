@@ -5,7 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
+import com.skydoves.elasticviews.ElasticAnimation
+import kotlinx.coroutines.launch
 
 
 abstract class BindingFragment<out T : ViewBinding> : Fragment() {

@@ -2,8 +2,12 @@ package com.citrus.pottedplantskiosk.util
 
 
 import android.annotation.SuppressLint
+import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.skydoves.balloon.Balloon
+import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,6 +63,7 @@ object Constants {
         transitionToStart()
     }
 
+
     @SuppressLint("SimpleDateFormat")
     fun getCurrentTime(): String {
         val currentDate = Calendar.getInstance().time
@@ -90,5 +95,18 @@ object Constants {
             }
             action(i, get(i))
         }
+    }
+
+
+    inline fun View.clickAnimation(crossinline block: suspend () -> Unit) {
+        ElasticAnimation(this)
+            .setScaleX(0.85f)
+            .setScaleY(0.85f)
+            .setDuration(50)
+            .setOnFinishListener {
+                this.findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
+                    block()
+                }
+            }.doAction()
     }
 }

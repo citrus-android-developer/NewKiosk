@@ -2,6 +2,7 @@ package com.citrus.pottedplantskiosk.api.remote.dto
 
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
+import java.io.Serializable
 import java.util.*
 
 data class UsbInfo(
@@ -11,6 +12,6 @@ data class UsbInfo(
     var productIdList: ArrayList<String>,
     var noPermissionDevice: ArrayList<UsbDevice>,
     var usbManager: UsbManager?
-) {
+): Serializable {
     constructor() : this(HashMap(), ArrayList(), ArrayList(), ArrayList(),  ArrayList(), null)
 }

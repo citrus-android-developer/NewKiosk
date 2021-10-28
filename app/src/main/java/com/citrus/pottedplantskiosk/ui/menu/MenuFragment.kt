@@ -25,9 +25,11 @@ import com.citrus.pottedplantskiosk.databinding.FragmentMenuBinding
 import com.citrus.pottedplantskiosk.ui.menu.adapter.*
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.ACTION_USB_PERMISSION
+import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.Constants.forEachReversedWithIndex
 import com.citrus.pottedplantskiosk.util.UsbUtil
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
+import com.citrus.pottedplantskiosk.util.base.onSafeClick
 import com.citrus.pottedplantskiosk.util.print.PrintOrderInfo
 import com.google.android.material.snackbar.Snackbar
 import com.skydoves.elasticviews.ElasticAnimation
@@ -87,15 +89,20 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private fun requestUsbPermission() {
         usbInfo.noPermissionDevice.forEachReversedWithIndex { i, usbDevice ->
             if (usbInfo.usbManager?.hasPermission(usbDevice) == false) {
-                val mPermissionIntent = PendingIntent.getBroadcast(requireContext(), 0, Intent(ACTION_USB_PERMISSION), 0)
+                val mPermissionIntent = PendingIntent.getBroadcast(
+                    requireContext(),
+                    0,
+                    Intent(ACTION_USB_PERMISSION),
+                    0
+                )
                 usbInfo.usbManager?.requestPermission(usbDevice, mPermissionIntent)
             } else usbInfo.noPermissionDevice.removeAt(i)
         }
 
-        Log.e("usbInfo",usbInfo.noPermissionDevice.toString())
+        Log.e("usbInfo", usbInfo.noPermissionDevice.toString())
 
-        usbInfo.deviceList.forEach{ item ->
-            Log.e("usbInfo",item.value.deviceName + "'-'" + item.value.productName)
+        usbInfo.deviceList.forEach { item ->
+            Log.e("usbInfo", item.value.deviceName + "'-'" + item.value.productName)
         }
 
         usbInfo.noPermissionDevice
@@ -124,6 +131,12 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             goodsRv.apply {
                 layoutManager = GridLayoutManager(requireActivity(), 3)
                 adapter = goodsItemAdapter
+            }
+
+            homeBtn.onSafeClick {
+                it.clickAnimation {
+                    backToMain()
+                }
             }
         }
     }
@@ -196,7 +209,11 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
                 orderDeliveryData?.let {
                     binding.cartMotionLayout.clearCartGoods()
-                    PrintOrderInfo(requireContext(), it,usbInfo.deviceList["/dev/bus/usb/002/014"]) { isSuccess, err ->
+                    PrintOrderInfo(
+                        requireContext(),
+                        it,
+                        usbInfo.deviceList["/dev/bus/usb/002/014"]
+                    ) { isSuccess, err ->
 
                     }.startPrint()
 
@@ -247,9 +264,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 }
 
                 if (timer == Constants.TWO_MINUTES) {
-                    menuViewModel.stopTimer()
-                    binding.cartMotionLayout.releaseAdapter()
-                    findNavController().popBackStack(R.id.mainFragment, false)
+                    backToMain()
                 }
             }
         }
@@ -276,16 +291,17 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         }
 
 
-        binding.cartMotionLayout.setOnPayButtonClickListener { list ->
-
-            Log.e("list", list.toString())
-        }
-
         binding.cartMotionLayout.setonOrderDoneListener { list, payWay ->
             menuViewModel.postOrderItem(list, payWay)
         }
 
 
+    }
+
+    private fun backToMain() {
+        menuViewModel.stopTimer()
+        binding.cartMotionLayout.releaseAdapter()
+        findNavController().popBackStack(R.id.mainFragment, false)
     }
 
     private fun releaseSnack() {

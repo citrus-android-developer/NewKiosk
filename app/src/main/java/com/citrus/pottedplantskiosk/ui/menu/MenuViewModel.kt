@@ -61,6 +61,19 @@ class MenuViewModel @Inject constructor(
     val toPrint: SharedFlow<Orders.OrderDeliveryData?> = _toPrint
 
 
+    init{
+        var list = listOf<String>()
+        list = list + "a"
+        list = list + "b"
+        list = list + "c"
+
+        list.apply {
+            var lastIndex =  this.lastIndex
+        }
+
+    }
+
+
     private fun tickerFlow() = flow {
         while (true) {
             emit(timeCount++)

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.GroupNameItemViewBinding
+import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -66,28 +67,26 @@ class GroupItemAdapter @Inject constructor(val context: Context) :
                 cardView.background =
                     ContextCompat.getDrawable(context, R.drawable.button_mid_green_15)
                 title.setTypeface(title.typeface, Typeface.BOLD)
-                title.setTextColor(context.resources.getColor(R.color.colorPrimaryText))
+                title.setTextColor(context.resources.getColor(R.color.colorBrown))
+                title.alpha = 1f
             } else {
                 cardView.background =
                     ContextCompat.getDrawable(context, R.drawable.button_light_45)
                 title.typeface = null
-                title.setTextColor(context.resources.getColor(R.color.colorSecondText))
+                title.setTextColor(context.resources.getColor(R.color.colorBrown))
+                title.alpha = 0.5f
             }
 
-            root.setOnClickListener { v ->
-                ElasticAnimation(v)
-                    .setScaleX(0.85f)
-                    .setScaleY(0.85f)
-                    .setDuration(50)
-                    .setOnFinishListener {
-                        if (position != kindIndex) {
-                            kindIndex = position
-                            notifyDataSetChanged()
-                            onDescClickListener?.let { click ->
-                                click(name)
-                            }
+            root.setOnClickListener {
+                it.clickAnimation {
+                    if (position != kindIndex) {
+                        kindIndex = position
+                        notifyDataSetChanged()
+                        onDescClickListener?.let { click ->
+                            click(name)
                         }
-                    }.doAction()
+                    }
+                }
             }
         }
     }
@@ -96,7 +95,7 @@ class GroupItemAdapter @Inject constructor(val context: Context) :
         return groupTitles.size
     }
 
-    fun resetKindIndex(){
+    fun resetKindIndex() {
         kindIndex = 0
     }
 

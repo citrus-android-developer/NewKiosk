@@ -35,6 +35,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.base.onSevenClick
 import com.skydoves.balloon.*
 import kotlinx.coroutines.flow.collect
@@ -66,24 +67,19 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
             anim.repeatCount = Animation.INFINITE
             tvStart.startAnimation(anim)
 
-            touchStart.setOnClickListener { v ->
-                ElasticAnimation(v)
-                    .setScaleX(0.85f)
-                    .setScaleY(0.85f)
-                    .setDuration(100)
-                    .setOnFinishListener {
-                        balloon?.showAlignTop(v)
-                    }
-                    .doAction()
+            touchStart.setOnClickListener {
+                it.clickAnimation {
+                    balloon?.showAlignTop(it)
+                }
             }
 
             logo.onSevenClick { v, count ->
-                if(count >= 7) {
+                if (count >= 7) {
                     findNavController().navigate(
                         R.id.action_mainFragment_to_settingFragment
                     )
                     return@onSevenClick
-                }else if(count >= 3){
+                } else if (count >= 3) {
                     val hintBalloon = createBalloon(requireContext()) {
                         setArrowSize(10)
                         setWidth(BalloonSizeSpec.WRAP)
@@ -92,7 +88,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
                         setCornerRadius(4f)
                         setAlpha(0.9f)
                         setTextSize(16f)
-                        setText("再點擊"+ (7-count).toString()+ "次進入設定頁面")
+                        setText("再點擊" + (7 - count).toString() + "次進入設定頁面")
                         setTextColorResource(R.color.white_93)
                         setBackgroundColorResource(R.color.colorPrimary)
                         setBalloonAnimation(BalloonAnimation.FADE)
@@ -184,14 +180,9 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
                     .into(holder.imageView)
 
                 holder.imageView.setOnClickListener {
-                    ElasticAnimation(binding.touchStart)
-                        .setScaleX(0.85f)
-                        .setScaleY(0.85f)
-                        .setDuration(100)
-                        .setOnFinishListener {
-                            balloon?.showAlignTop(binding.touchStart)
-                        }
-                        .doAction()
+                    binding.touchStart.clickAnimation {
+                        balloon?.showAlignTop(binding.touchStart)
+                    }
                 }
             }
         }).addBannerLifecycleObserver(viewLifecycleOwner).indicator =

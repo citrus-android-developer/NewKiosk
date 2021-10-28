@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import www.sanju.zoomrecyclerlayout.ZoomRecyclerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
+import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.skydoves.elasticviews.ElasticAnimation
 
@@ -161,16 +162,10 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
                 }
             })
 
-            closeBtn.setOnClickListener { v ->
-                ElasticAnimation(v)
-                    .setScaleX(0.85f)
-                    .setScaleY(0.85f)
-                    .setDuration(50)
-                    .setOnFinishListener {
-                        root.apply {
-                            findNavController().popBackStack()
-                        }
-                    }.doAction()
+            closeBtn.setOnClickListener {
+                it.clickAnimation {
+                        findNavController().popBackStack()
+                }
             }
 
         }

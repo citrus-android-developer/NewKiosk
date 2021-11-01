@@ -10,11 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.Resource
-import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.databinding.ActivitySlashBinding
-import com.citrus.pottedplantskiosk.databinding.LayoutMotionBinding
 import com.citrus.pottedplantskiosk.ui.menu.MenuActivity
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo

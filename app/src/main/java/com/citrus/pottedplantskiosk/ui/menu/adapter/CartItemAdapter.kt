@@ -12,9 +12,9 @@ import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.CartItemViewBinding
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.df
-import com.skydoves.elasticviews.ElasticAnimation
 import javax.inject.Inject
 import android.util.DisplayMetrics
+import android.util.Log
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.base.onSafeClick
@@ -51,10 +51,14 @@ class CartItemAdapter @Inject constructor(val context: Context) :
 
     fun updateGoods(goods: Good) {
         var position = -1
+        Log.e("qty N",goods.toString())
         for (item in _cartGoods) {
+            Log.e("qty O",item.toString())
             if (item.gID == goods.gID && item.gKID == goods.gKID && item.size == goods.size) {
+                Log.e("qty","is equal")
                 position = _cartGoods.indexOf(item)
                 if (goods.isEdit) {
+                    Log.e("qty","wrong place")
                     /**修改的商品覆蓋原品項參數*/
                     item.qty = goods.qty
                     item.size = goods.size
@@ -63,6 +67,8 @@ class CartItemAdapter @Inject constructor(val context: Context) :
                     item.flavor = goods.flavor
                 } else {
                     /**重複購買的商品增加原數量*/
+                    Log.e("item qty",item.qty.toString())
+                    Log.e("goods qty",goods.qty.toString())
                     item.qty += goods.qty
                 }
                 notifyItemChanged(position)

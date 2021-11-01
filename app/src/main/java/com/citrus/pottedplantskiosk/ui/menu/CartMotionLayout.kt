@@ -31,7 +31,6 @@ class CartMotionLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : MultiListenerMotionLayout(context, attrs, defStyleAttr), LifecycleObserver {
 
-
     private lateinit var scope: LifecycleCoroutineScope
     private var cartItemAdapter: CartItemAdapter? = null
     private var payWayAdapter: PayWayAdapter? = null
@@ -321,8 +320,7 @@ class CartMotionLayout @JvmOverloads constructor(
 
             tvTotalPrice.text = "Total Price: $ " + Constants.df.format(totalPrice)
             sumPrice.text = "Total Price: $ " + Constants.df.format(totalPrice)
-            cartItemSize.text = cartItemAdapter?.getList()?.size.toString()
-
+            binding.cartItemSize.text = cartItemAdapter?.getList()?.size.toString()
             if (list?.isEmpty() == true && currentPayWay == null) {
                 shoppingBagHint.visibility = View.VISIBLE
             }
@@ -360,6 +358,11 @@ class CartMotionLayout @JvmOverloads constructor(
     private var onOrderDoneListener: ((List<Good>, PayWay) -> Unit)? = null
     fun setonOrderDoneListener(listener: (List<Good>, PayWay) -> Unit) {
         onOrderDoneListener = listener
+    }
+
+    fun setCartItemSizePulse(){
+        infoChange()
+        YoYo.with(Techniques.Pulse).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT).duration(600).playOn(binding.cartItemSize)
     }
 
     fun releaseAdapter() {

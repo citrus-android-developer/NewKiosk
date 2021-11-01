@@ -13,10 +13,8 @@ import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.util.Constants
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,6 +31,7 @@ class SlashViewModel @Inject constructor(
 
     private val _allData = MutableSharedFlow<Boolean>()
     val allData: SharedFlow<Boolean> = _allData
+
 
 
 

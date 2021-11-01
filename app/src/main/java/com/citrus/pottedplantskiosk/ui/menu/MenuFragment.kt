@@ -1,17 +1,23 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Path
+import android.graphics.PathMeasure
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
+import android.view.animation.LinearInterpolator
+import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -31,6 +37,8 @@ import com.citrus.pottedplantskiosk.util.UsbUtil
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
 import com.citrus.pottedplantskiosk.util.base.onSafeClick
 import com.citrus.pottedplantskiosk.util.print.PrintOrderInfo
+import com.daimajia.androidanimations.library.Techniques
+import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
 import com.skydoves.elasticviews.ElasticAnimation
 import com.skydoves.transformationlayout.onTransformationStartContainer
@@ -38,9 +46,12 @@ import com.youth.banner.indicator.RectangleIndicator
 import com.youth.banner.transformer.AlphaPageTransformer
 import com.youth.banner.util.BannerUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_menu.*
+import kotlinx.android.synthetic.main.goods_item_view.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -55,6 +66,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private var usbInfo = UsbInfo()
     private var snackbar: Snackbar? = null
     private var updateTimerJob: Job? = null
+    private var currentClickView:View? = null
 
     @Inject
     lateinit var mainGroupItemAdapter: MainGroupItemAdapter
@@ -106,6 +118,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         }
 
         usbInfo.noPermissionDevice
+
     }
 
 
@@ -133,6 +146,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 adapter = goodsItemAdapter
             }
 
+
             homeBtn.onSafeClick {
                 it.clickAnimation {
                     backToMain()
@@ -154,11 +168,28 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             }
         }
 
+        lifecycleScope.launchWhenStarted {
+            menuViewModel.zoomPageSlidePos.collect {  pos ->
+                binding.goodsRv.scrollToPosition(pos)
+            }
+        }
 
 
         lifecycleScope.launchWhenStarted {
             menuViewModel.currentCartGoods.collect { cartGoods ->
                 if (cartGoods != null) {
+                    /**非已編輯物件才有購物車動畫*/
+                    if(cartGoods.isEdit.not()) {
+                        var item =
+                            menuViewModel.currentDetailGoodsList.first { it.gID == cartGoods.gID && it.gKID == it.gKID }
+                        var pos = menuViewModel.currentDetailGoodsList.indexOf(item)
+                        currentClickView =
+                            binding.goodsRv.findViewHolderForAdapterPosition(pos)?.itemView
+                        currentClickView?.let {
+                            addGoodToCarAnimation(it)
+                        }
+                    }
+
                     binding.cartMotionLayout.addCartGoods(cartGoods)
                 }
             }
@@ -166,7 +197,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
         lifecycleScope.launchWhenStarted {
-            menuViewModel.menuGroupName.collect { groupList ->
+            menuViewModel.menuGroupName.collectLatest { groupList ->
                 updateMainGroupItemJob?.cancel()
                 updateMainGroupItemJob = lifecycleScope.launch {
                     mainGroupItemAdapter.updateDataset(groupList)
@@ -182,6 +213,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     groupItemAdapter.resetKindIndex()
                     groupItemAdapter.updateDataset(result)
                     binding.groupRv.scrollToPosition(0)
+                    binding.groupRvArea.isVisible = true
                 }
             }
         }
@@ -279,7 +311,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             menuViewModel.onDescChange(desc)
         }
 
-        goodsItemAdapter.setOnGoodsClickListener { good, list ->
+        goodsItemAdapter.setOnGoodsClickListener { good, list, _->
             menuViewModel.onGoodsClick(good, list)
         }
 
@@ -309,6 +341,70 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         updateTimerJob = null
         snackbar?.dismiss()
         snackbar = null
+    }
+
+    private fun addGoodToCarAnimation(goodView: View) {
+        val mCurrentPosition = FloatArray(2)
+
+        val view = View.inflate(requireContext(), R.layout.goods_item_view, null)
+        view.itemImage.setImageDrawable(goodView.itemImage.drawable)
+        view.itemImage.scaleType = ImageView.ScaleType.CENTER_CROP
+        view.itemImage.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 100)
+        view.tvItemName.text = goodView.tvItemName.text
+        view.tvItemName.textSize = 9f
+        view.tvItemName.setPadding(0)
+        view.tvPrice.visibility = View.GONE
+
+        val layoutParams = FrameLayout.LayoutParams(150, 150)
+        binding.outSideCons.addView(view, layoutParams)
+
+        //二、计算动画开始/结束点的坐标的准备工作
+        //得到父佈局的起始點坐標（用於輔助計算動畫開始/結束時的點的坐標）
+        val parentLoc = IntArray(2)
+        binding.outSideCons.getLocationInWindow(parentLoc)
+
+        //得到商品圖片的坐標（用於計算動畫開始的坐標）
+        val startLoc = IntArray(2)
+        goodView.getLocationInWindow(startLoc)
+
+        //得到購物車圖片的坐標(用於計算動畫結束後的坐標)
+        val endLoc = IntArray(2)
+        binding.flyItemTarget.getLocationInWindow(endLoc)
+        val startX = startLoc[0] - parentLoc[0] + goodView.width / 2.toFloat()
+        val startY = startLoc[1] - parentLoc[1] + goodView.height / 2.toFloat()
+
+        //商品掉落後的終點坐標：購物車起始點-父佈局起始點+購物車圖片的1/5
+        val toX = endLoc[0] - parentLoc[0] + binding.flyItemTarget.width / 5.toFloat()
+        val toY = endLoc[1] - parentLoc[1].toFloat()
+        //開始繪製貝塞爾曲線
+        val path = Path()
+        path.moveTo(startX, startY)
+        //使用二次薩貝爾曲線：注意第一個起始坐標越大，貝塞爾曲線的橫向距離就會越大，一般按照下面的式子取即可
+        path.quadTo((startX + toX) / 2, startY, toX, toY)
+        val mPathMeasure = PathMeasure(path, false)
+        //屬性動畫
+        val valueAnimator = ValueAnimator.ofFloat(0f, mPathMeasure.length)
+        valueAnimator.duration = 500
+        valueAnimator.interpolator = LinearInterpolator()
+        valueAnimator.addUpdateListener { animation ->
+            val value = animation.animatedValue as Float
+            mPathMeasure.getPosTan(value, mCurrentPosition, null)
+            view.translationX = mCurrentPosition[0]
+            view.translationY = mCurrentPosition[1]
+        }
+        valueAnimator.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {
+                YoYo.with(Techniques.ZoomOut).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT).duration(1000).playOn(view)
+            }
+            override fun onAnimationEnd(animation: Animator) {
+                binding.cartMotionLayout.setCartItemSizePulse()
+                //把移動的圖片view從父佈局裡移除
+                binding.outSideCons.removeView(view)
+            }
+            override fun onAnimationCancel(animation: Animator) {}
+            override fun onAnimationRepeat(animation: Animator) {}
+        })
+        valueAnimator.start()
     }
 
 }

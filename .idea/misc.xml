@@ -26,6 +26,7 @@
         <entry key="app/src/main/res/drawable-v24/text_btn_shape_home.xml" value="0.15138888888888888" />
         <entry key="app/src/main/res/drawable-v24/text_size_bg.xml" value="0.27361111111111114" />
         <entry key="app/src/main/res/drawable/arrow_balloon_library_skydoves.xml" value="0.18489583333333334" />
+        <entry key="app/src/main/res/drawable/bg_add_btn.xml" value="0.15046296296296297" />
         <entry key="app/src/main/res/drawable/bg_screen.xml" value="0.262037037037037" />
         <entry key="app/src/main/res/drawable/button.xml" value="0.18489583333333334" />
         <entry key="app/src/main/res/drawable/cart_item_bg.xml" value="0.1875" />
@@ -35,6 +36,7 @@
         <entry key="app/src/main/res/drawable/divider_shape.xml" value="0.2898148148148148" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.15185185185185185" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_shopping_cart_24.xml" value="0.15296803652968036" />
+        <entry key="app/src/main/res/drawable/ic_baseline_arrow_drop_down_24.xml" value="0.15185185185185185" />
         <entry key="app/src/main/res/drawable/ic_baseline_attach_money_24.xml" value="0.14444444444444443" />
         <entry key="app/src/main/res/drawable/ic_baseline_checklist_24.xml" value="0.1986111111111111" />
         <entry key="app/src/main/res/drawable/ic_baseline_chevron_left_24.xml" value="0.19907407407407407" />
@@ -50,9 +52,12 @@
         <entry key="app/src/main/res/drawable/ic_baseline_remove_24.xml" value="0.15185185185185185" />
         <entry key="app/src/main/res/drawable/ic_baseline_shopping_bag_24.xml" value="0.26986301369863014" />
         <entry key="app/src/main/res/drawable/ic_language_black_24dp.xml" value="0.18489583333333334" />
+        <entry key="app/src/main/res/drawable/ic_round_connected_tv_24.xml" value="0.1287037037037037" />
         <entry key="app/src/main/res/drawable/ic_round_home_24.xml" value="0.15138888888888888" />
+        <entry key="app/src/main/res/drawable/ic_round_monetization_on_24.xml" value="0.11574074074074074" />
         <entry key="app/src/main/res/drawable/ic_round_shopping_cart_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_round_store_24.xml" value="0.1587962962962963" />
+        <entry key="app/src/main/res/drawable/ic_sharp_access_time_filled_24.xml" value="0.1287037037037037" />
         <entry key="app/src/main/res/drawable/ic_shopping_bag.xml" value="0.10601851851851851" />
         <entry key="app/src/main/res/drawable/ic_tag.xml" value="0.19953703703703704" />
         <entry key="app/src/main/res/drawable/layout_bg.xml" value="0.1259259259259259" />
@@ -78,9 +83,9 @@
         <entry key="app/src/main/res/layout/fragment_goods_detail.xml" value="0.13333333333333333" />
         <entry key="app/src/main/res/layout/fragment_goods_view.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_main.xml" value="0.22871376811594202" />
-        <entry key="app/src/main/res/layout/fragment_menu.xml" value="0.75" />
+        <entry key="app/src/main/res/layout/fragment_menu.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_print.xml" value="0.1162037037037037" />
-        <entry key="app/src/main/res/layout/fragment_setting.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_setting.xml" value="0.3451322269361075" />
         <entry key="app/src/main/res/layout/fragment_test.xml" value="0.20677083333333332" />
         <entry key="app/src/main/res/layout/fragment_zoom_page.xml" value="0.335" />
         <entry key="app/src/main/res/layout/goods_header_view.xml" value="0.27546296296296297" />
@@ -90,13 +95,14 @@
         <entry key="app/src/main/res/layout/inside_recycler_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_container_goods.xml" value="0.125" />
         <entry key="app/src/main/res/layout/item_size.xml" value="0.17546296296296296" />
-        <entry key="app/src/main/res/layout/layout_cart_sheet.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/layout_cart_sheet.xml" value="0.15407407407407409" />
         <entry key="app/src/main/res/layout/layout_motion.xml" value="0.25" />
         <entry key="app/src/main/res/layout/layout_motion_test.xml" value="0.2222222222222222" />
         <entry key="app/src/main/res/layout/main_group_item_view.xml" value="0.25925925925925924" />
         <entry key="app/src/main/res/layout/number_picker_addition.xml" value="0.3250517598343685" />
         <entry key="app/src/main/res/layout/pay_way_item_view.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/zoom_item_view.xml" value="0.3" />
+        <entry key="app/src/main/res/layout/test_setting.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/zoom_item_view.xml" value="0.10294117647058823" />
       </map>
     </option>
   </component>

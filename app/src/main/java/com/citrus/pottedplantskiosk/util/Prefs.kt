@@ -29,6 +29,30 @@ class Prefs(context: Context) {
         get() = prefs.getString(Constants.KEY_STORE_NAME, "")?: ""
         set(value) = prefs.edit().putString(Constants.KEY_STORE_NAME, value).apply()
 
+    var storeId: String
+        get() = prefs.getString(Constants.KEY_STORE_ID, "")?: ""
+        set(value) = prefs.edit().putString(Constants.KEY_STORE_ID, value).apply()
+
+    var serverIp: String
+        get() = prefs.getString(Constants.KEY_SEVER_IP, "")?: ""
+        set(value) = prefs.edit().putString(Constants.KEY_SEVER_IP, value).apply()
+
+    var idleTime: Int
+        get() = prefs.getInt(Constants.KEY_IDLE_TIME, 120)
+        set(value) = prefs.edit().putInt(Constants.KEY_IDLE_TIME, value).apply()
+
+    var decimalPlace: Int
+        get() = prefs.getInt(Constants.KEY_DECIMAL_PLACES, 0)
+        set(value) = prefs.edit().putInt(Constants.KEY_DECIMAL_PLACES, value).apply()
+
+    var taxFunction: String
+        get() = prefs.getString(Constants.KEY_TAX_FUNCTION, "Free tax")?: ""
+        set(value) = prefs.edit().putString(Constants.KEY_TAX_FUNCTION, value).apply()
+
+    var methodOfOperation: String
+        get() = prefs.getString(Constants.KEY_METHOD_OF_OPERATION, "Round up or down")?: ""
+        set(value) = prefs.edit().putString(Constants.KEY_METHOD_OF_OPERATION, value).apply()
+
     var printerIs80mm: Boolean
         get() = prefs.getBoolean(Constants.KEY_PRINTER_IS80MM, true)
         set(value) = prefs.edit().putBoolean(Constants.KEY_PRINTER_IS80MM, value).apply()

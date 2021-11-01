@@ -70,29 +70,10 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
                 }
             }
 
-            logo.onSevenClick { v, count ->
-                if (count >= 7) {
-                    findNavController().navigate(
-                        R.id.action_mainFragment_to_settingFragment
-                    )
-                    return@onSevenClick
-                } else if (count >= 3) {
-                    val hintBalloon = createBalloon(requireContext()) {
-                        setArrowSize(10)
-                        setWidth(BalloonSizeSpec.WRAP)
-                        setHeight(65)
-                        setArrowPosition(0.7f)
-                        setCornerRadius(4f)
-                        setAlpha(0.9f)
-                        setTextSize(16f)
-                        setText("再點擊" + (7 - count).toString() + "次進入設定頁面")
-                        setTextColorResource(R.color.white_93)
-                        setBackgroundColorResource(R.color.colorPrimary)
-                        setBalloonAnimation(BalloonAnimation.FADE)
-                        setLifecycleOwner(lifecycleOwner)
-                    }
-                    hintBalloon.showAlignBottom(logo)
-                }
+            logo.onSevenClick {
+                findNavController().navigate(
+                    R.id.action_mainFragment_to_settingFragment
+                )
             }
         }
 

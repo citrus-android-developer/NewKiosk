@@ -118,9 +118,6 @@
                 motion:layout_constraintEnd_toEndOf="@id/fab"
                 motion:layout_constraintStart_toStartOf="@id/fab" />
 
-            <CustomAttribute
-                motion:attributeName="colorFilter"
-                motion:customColorValue="#fff" />
         </Constraint>
 
         <Constraint android:id="@id/close_icon_area">

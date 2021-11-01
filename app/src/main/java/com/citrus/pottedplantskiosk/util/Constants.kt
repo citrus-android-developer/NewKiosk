@@ -34,12 +34,24 @@ object Constants {
     const val ACTION_USB_PERMISSION = "com.citrus.kiosk.USB_PERMISSION"
 
     /**Prefs*/
+    const val KEY_METHOD_OF_OPERATION = "KEY_METHOD_OF_OPERATION"
+    const val KEY_DECIMAL_PLACES = "KEY_DECIMAL_PLACES"
+    const val KEY_TAX_FUNCTION = "KEY_TAX_FUNCTION"
+    const val KEY_IDLE_TIME = "KEY_IDLE_TIME"
+    const val KEY_SEVER_IP = "KEY_SEVER_IP"
     const val KEY_STORE_NAME = "KEY_STORE_NAME"
+    const val KEY_STORE_ID = "KEY_STORE_ID"
     const val KEY_PRINTER_IS80MM = "KEY_PRINTER_IS80MM"
     const val KEY_LANGUAGE_POS = "KEY_LANGUAGE_POS"
     sealed class LanguageType {
         object SimpleChinese: LanguageType()
         object English: LanguageType()
+    }
+
+
+
+    fun String.trimSpace():String {
+        return this.replace("\\s".toRegex(), "")
     }
 
      fun Balloon.setDuration(sec: Long) {

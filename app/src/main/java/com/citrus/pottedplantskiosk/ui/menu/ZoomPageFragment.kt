@@ -193,6 +193,7 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
                 binding.next.visibility = View.VISIBLE
             }
         }
+        menuViewModel.setZoomPagePos(pos)
     }
 
 

@@ -14,6 +14,9 @@ class SafeClickListener(
             return
         }
         lastTimeClicked = SystemClock.elapsedRealtime()
+
+
+
         onSafeCLick(v)
     }
 }

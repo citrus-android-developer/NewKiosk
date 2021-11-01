@@ -87,7 +87,7 @@ open class MultiListenerMotionLayout @JvmOverloads constructor(context: Context,
         }
     }
 
-    fun mAddTransitionListener(listener: TransitionListener) {
+    private fun mAddTransitionListener(listener: TransitionListener) {
         listeners.addIfAbsent(listener)
     }
 

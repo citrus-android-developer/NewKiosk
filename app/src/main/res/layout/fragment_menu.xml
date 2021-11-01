@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/plants_bg2"
-    tools:context=".ui.menu.MenuFragment">
+    tools:context=".ui.menu.MenuFragment"
+    android:id="@+id/outSideCons">
 
     <ImageView
         android:visibility="gone"
@@ -57,6 +58,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
+        android:visibility="invisible"
         android:id="@+id/mainGroupRv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -134,6 +136,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="invisible"
         android:id="@+id/groupRvArea"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -180,6 +183,17 @@
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/fly_item_target"
+        android:layout_width="@dimen/dp_36"
+        android:layout_height="@dimen/dp_36"
+        android:layout_marginEnd="@dimen/dp_18"
+        android:layout_marginBottom="@dimen/dp_18"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+       ></View>
 
 
     <androidx.constraintlayout.widget.Guideline

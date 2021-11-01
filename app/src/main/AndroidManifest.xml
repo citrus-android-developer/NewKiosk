@@ -15,10 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PottedPlantsKiosk">
         <activity
+            android:screenOrientation="sensorPortrait"
             android:name=".ui.menu.MenuActivity"
             android:exported="true"
           />
-        <activity android:name=".ui.slash.SlashActivity"
+        <activity
+            android:screenOrientation="sensorPortrait"
+            android:name=".ui.slash.SlashActivity"
             android:exported = "true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

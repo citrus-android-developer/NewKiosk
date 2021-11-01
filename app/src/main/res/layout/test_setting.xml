@@ -26,13 +26,11 @@
     </LinearLayout>
 
     <TextView
-        android:textColor="@color/black"
         android:id="@+id/tvBasicTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_10"
         android:drawableEnd="@drawable/ic_baseline_arrow_drop_down_24"
-        android:drawableTint="@color/black"
         android:text="Basic Setting"
         android:textSize="@dimen/sp_20"
         android:textStyle="bold"
@@ -83,10 +81,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:padding="@dimen/dp_2"
+                    android:paddingTop="@dimen/dp_2"
+                    android:paddingBottom="@dimen/dp_2"
                     android:singleLine="true"
-                    android:textSize="@dimen/sp_14"
-                    android:textColor="@color/greenDark"
+                    android:textSize="@dimen/sp_15"
                     android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -112,14 +110,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/storeIdTitle">
 
                 <AutoCompleteTextView
-                    android:id="@+id/etStoreId"
+                    android:id="@+id/etDeviceId"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:padding="@dimen/dp_2"
+                    android:paddingTop="@dimen/dp_2"
+                    android:paddingBottom="@dimen/dp_2"
                     android:singleLine="true"
-                    android:textColor="@color/greenDark"
-                    android:textSize="@dimen/sp_14"
+                    android:textSize="@dimen/sp_15"
                     android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -174,7 +172,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/storeIdInputLayout" />
 
             <com.skydoves.powerspinner.PowerSpinnerView
-                android:id="@+id/taxSpinner"
+                android:id="@+id/TaxSpinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/greenDark"
@@ -240,7 +238,7 @@
                 app:spinner_popup_elevation="@dimen/dp_10" />
 
             <TextView
-                android:id="@+id/operationTitle"
+                android:id="@+id/OperationTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/dp_10"
@@ -249,7 +247,7 @@
                 android:textSize="@dimen/sp_15"
                 app:layout_constraintStart_toEndOf="@id/per50GuildInsideBasic"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/taxSpinner" />
+                app:layout_constraintTop_toBottomOf="@+id/TaxSpinner" />
 
             <com.skydoves.powerspinner.PowerSpinnerView
                 android:id="@+id/operationSpinner"
@@ -264,16 +262,16 @@
                 android:textColorHint="@color/white_70"
                 android:textSize="@dimen/sp_15"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/operationTitle"
-                app:layout_constraintStart_toStartOf="@+id/operationTitle"
-                app:layout_constraintTop_toBottomOf="@+id/operationTitle"
+                app:layout_constraintEnd_toEndOf="@+id/OperationTitle"
+                app:layout_constraintStart_toStartOf="@+id/OperationTitle"
+                app:layout_constraintTop_toBottomOf="@+id/OperationTitle"
                 app:spinner_arrow_gravity="end"
                 app:spinner_arrow_padding="8dp"
                 app:spinner_arrow_tint="@color/white"
                 app:spinner_divider_color="@color/white_70"
                 app:spinner_divider_show="true"
                 app:spinner_divider_size="0.4dp"
-                app:spinner_item_array="@array/MethodOfOperation"
+                app:spinner_item_array="@array/DecimalPlaces"
                 app:spinner_popup_animation="dropdown"
                 app:spinner_popup_background="@color/background800"
                 app:spinner_popup_elevation="@dimen/dp_10" />
@@ -295,64 +293,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.5" />
-
-    <TextView
-        android:textColor="@color/black"
-        android:id="@+id/tvPrintTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
-        android:drawableEnd="@drawable/ic_baseline_arrow_drop_down_24"
-        android:drawableTint="@color/black"
-        android:text="Printer Setting"
-        android:textSize="@dimen/sp_20"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pageH50Guild" />
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/applyBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPrintTitle">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/per50GuildInsidePrint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-
-    <TextView
-        android:id="@+id/applyBtn"
-        android:layout_width="@dimen/dp_70"
-        android:layout_height="@dimen/dp_38"
-        android:background="@drawable/bg_add_btn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:text="Done"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:fontFamily="@font/droidbold"
-        android:padding="@dimen/dp_10"
-        android:gravity="center"
-        android:textSize="@dimen/sp_14"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

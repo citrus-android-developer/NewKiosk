@@ -14,23 +14,24 @@ import com.skydoves.balloon.createBalloon
 
 class SevenClickListener(
     private var defaultInterval: Int = 1000,
-    private val onSafeClick: (View,Int) -> Unit
+    private val onSafeClick: () -> Unit
 ) : View.OnClickListener {
-    private var count = 0
+    private var count = 1
     private var lastTimeClicked: Long = 0
     override fun onClick(v: View) {
 
         if (SystemClock.elapsedRealtime() - lastTimeClicked < defaultInterval) {
             count++
         } else {
-            count = 0
+            count = 1
         }
 
         lastTimeClicked = SystemClock.elapsedRealtime()
 
-        onSafeClick(v, count)
+        Log.e("count",count.toString())
 
-        if (count >= 7) {
+        if (count > 6) {
+            onSafeClick()
             count = 0
             lastTimeClicked = 0
         }
@@ -38,9 +39,9 @@ class SevenClickListener(
 }
 
 fun View.onSevenClick(
-    onSafeClick: (View, Int) -> Unit
+    onSafeClick: () -> Unit
 ) {
-    val safeClickListener = SevenClickListener { view,count ->
-        onSafeClick(view,count) }
+    val safeClickListener = SevenClickListener {
+        onSafeClick() }
     setOnClickListener(safeClickListener)
 }

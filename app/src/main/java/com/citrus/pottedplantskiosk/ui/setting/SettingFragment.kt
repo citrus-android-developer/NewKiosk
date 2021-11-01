@@ -17,6 +17,9 @@ import androidx.navigation.fragment.findNavController
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.FragmentSettingBinding
 import com.citrus.pottedplantskiosk.databinding.FragmentZoomPageBinding
+import com.citrus.pottedplantskiosk.di.prefs
+import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
+import com.citrus.pottedplantskiosk.util.Constants.trimSpace
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -33,9 +36,9 @@ class SettingFragment : BottomSheetDialogFragment() {
         super.onStart()
         val view: FrameLayout = dialog?.findViewById(R.id.design_bottom_sheet)!!
 
-        view.layoutParams.height = resources.getDimension(R.dimen.dp_400).toInt()
+        view.layoutParams.height = resources.getDimension(R.dimen.dp_500).toInt()
         val behavior = BottomSheetBehavior.from(view)
-        behavior.peekHeight = resources.getDimension(R.dimen.dp_400).toInt()
+        behavior.peekHeight = resources.getDimension(R.dimen.dp_500).toInt()
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
@@ -93,22 +96,56 @@ class SettingFragment : BottomSheetDialogFragment() {
     private fun initView() {
         binding.apply {
             closeBtn.setOnClickListener { v ->
-                ElasticAnimation(v)
-                    .setScaleX(0.85f)
-                    .setScaleY(0.85f)
-                    .setDuration(50)
-                    .setOnFinishListener {
-                        root.apply {
-                            findNavController().popBackStack()
-                        }
-                    }.doAction()
+                v.clickAnimation {
+                    findNavController().popBackStack()
+                }
             }
+
+            etServerIp.setText(prefs.serverIp)
+            etStoreId.setText(prefs.storeId)
+
+            idleSpinner.hint = prefs.idleTime.toString()
+            taxSpinner.hint = prefs.taxFunction
+            decimalSpinner.hint = prefs.decimalPlace.toString()
+            operationSpinner.hint = prefs.methodOfOperation
+
+
+            applyBtn.setOnClickListener { v ->
+                v.clickAnimation {
+                    var serverIp = etServerIp.text.toString().trimSpace()
+                    var storeId = etStoreId.text.toString().trimSpace()
+
+                    prefs.serverIp = serverIp
+                    prefs.storeId = storeId
+
+                    findNavController().popBackStack()
+                }
+            }
+
+
+
+
         }
 
     }
 
     private fun initAction() {
-
+        binding.idleSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
+            var idleTime = newItem
+            prefs.idleTime = idleTime.toInt()
+        }
+        binding.taxSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
+            var taxFunction = newItem
+            prefs.taxFunction = taxFunction
+        }
+        binding.decimalSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
+            var decimalType = newItem
+            prefs.decimalPlace = decimalType.toInt()
+        }
+        binding.operationSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
+            var methodOfOperation = newItem
+            prefs.methodOfOperation = methodOfOperation
+        }
     }
 
 

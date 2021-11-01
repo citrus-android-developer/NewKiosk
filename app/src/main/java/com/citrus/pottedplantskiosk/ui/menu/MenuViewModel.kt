@@ -17,6 +17,10 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+
+
+
 @HiltViewModel
 class MenuViewModel @Inject constructor(
     private val repository: RemoteRepository,
@@ -28,6 +32,10 @@ class MenuViewModel @Inject constructor(
     var timeCount = 0
     private val _tikTok = MutableStateFlow(0)
     val tikTok: StateFlow<Int> = _tikTok
+
+    private val _zoomPageSlidePos = MutableSharedFlow<Int>()
+    val zoomPageSlidePos: SharedFlow<Int> = _zoomPageSlidePos
+
 
 
     private val _menuData = MutableStateFlow<List<MainGroup>>(listOf())
@@ -48,30 +56,20 @@ class MenuViewModel @Inject constructor(
     private val _showDetailEvent = MutableSharedFlow<Good>()
     val showDetailEvent: SharedFlow<Good> = _showDetailEvent
 
+
     private val _showBannerData = MutableStateFlow<List<BannerData>>(listOf())
     val showBannerData: StateFlow<List<BannerData>> = _showBannerData
 
     var currentDetailGoodsList: List<Good> = listOf()
     private var currentGroup: MainGroup? = null
 
-    private var _currentCartGoods = MutableStateFlow<Good?>(null)
-    val currentCartGoods: StateFlow<Good?> = _currentCartGoods
+    private var _currentCartGoods = MutableSharedFlow<Good?>()
+    val currentCartGoods: SharedFlow<Good?> = _currentCartGoods
 
     private val _toPrint = MutableSharedFlow<Orders.OrderDeliveryData?>()
     val toPrint: SharedFlow<Orders.OrderDeliveryData?> = _toPrint
 
 
-    init{
-        var list = listOf<String>()
-        list = list + "a"
-        list = list + "b"
-        list = list + "c"
-
-        list.apply {
-            var lastIndex =  this.lastIndex
-        }
-
-    }
 
 
     private fun tickerFlow() = flow {
@@ -105,16 +103,23 @@ class MenuViewModel @Inject constructor(
         _menuData.emit(data.mainGroup)
         var groupList = data.mainGroup.map { it.groupName }
 
-        _menuGroupName.emit(groupList)
-
-        onGroupChange(groupList[0])
+        if(groupList.isNotEmpty() && groupList[0] != ""){
+            _menuGroupName.emit(groupList)
+            onGroupChange(groupList[0])
+        }else {
+            onGroupChange("")
+        }
 
         currentGroup = data.mainGroup.first()
     }
 
     fun onGroupChange(groupName: String) = viewModelScope.launch {
 
-        currentGroup = _menuData.value.find { it.groupName == groupName }
+        currentGroup = if(groupName != ""){
+            _menuData.value.find { it.groupName == groupName }
+        }else{
+            _menuData.value[0]
+        }
 
         currentGroup?.let { mainGroup ->
             var list = mainGroup.kind.map { it.desc }
@@ -139,6 +144,10 @@ class MenuViewModel @Inject constructor(
         startTimer()
     }
 
+    fun setZoomPagePos(pos:Int) = viewModelScope.launch {
+        _zoomPageSlidePos.emit(pos)
+    }
+
     fun setCartGoods(good: Good) = viewModelScope.launch {
         _currentCartGoods.emit(good)
     }
@@ -147,13 +156,18 @@ class MenuViewModel @Inject constructor(
         _showBannerData.emit(bannerResponse.data)
     }
 
-    fun postOrderItem(list: List<Good>, payWay: PayWay) {
+    fun postOrderItem(list: List<Good>, payWay: PayWay) = viewModelScope.launch {
         var sumQty = list.sumOf { goods ->
             goods.qty
         }
+
+
+
         var sumPrice = list.sumOf { goods ->
             goods.sPrice
         }
+
+        Log.e("test",sumPrice.toString())
         var ordersDelivery = Orders.OrdersDelivery(
             storeID = 0,
             qty = sumQty,
@@ -188,27 +202,27 @@ class MenuViewModel @Inject constructor(
             ordersItemDelivery = ordersItemDeliveryList
         )
 
-        viewModelScope.launch {
-            repository.postOrders(
-                Constants.BASE_URL + Constants.SET_ORDERS,
-                Gson().toJson(orderDeliveryData)
-            ).collect {
-                when (it) {
-                    is Resource.Success -> {
-                        orderDeliveryData.ordersItemDelivery.forEach { item ->
-                            item.orderNO = it.data?.data!!
-                        }
-                        _toPrint.emit(orderDeliveryData)
-
-                    }
-                    is Resource.Error -> {
-                        _toPrint.emit(null)
-                        Log.e("Error", it.message!!)
-                    }
-                    is Resource.Loading -> Unit
-                }
-            }
-        }
+//        viewModelScope.launch {
+//            repository.postOrders(
+//                Constants.BASE_URL + Constants.SET_ORDERS,
+//                Gson().toJson(orderDeliveryData)
+//            ).collect {
+//                when (it) {
+//                    is Resource.Success -> {
+//                        orderDeliveryData.ordersItemDelivery.forEach { item ->
+//                            item.orderNO = it.data?.data!!
+//                        }
+//                        _toPrint.emit(orderDeliveryData)
+//
+//                    }
+//                    is Resource.Error -> {
+//                        _toPrint.emit(null)
+//                        Log.e("Error", it.message!!)
+//                    }
+//                    is Resource.Loading -> Unit
+//                }
+//            }
+//        }
     }
 
 

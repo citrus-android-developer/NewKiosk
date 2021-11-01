@@ -41,6 +41,7 @@
             android:layout_marginTop="@dimen/dp_5"
             android:fontFamily="@font/droidbold"
             android:textSize="@dimen/sp_8"
+            android:textColor="@color/black"
             android:gravity="center"
             android:maxLines="2"
             android:minLines="2"

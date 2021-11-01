@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.SystemClock
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -57,7 +58,7 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
             root.onSafeClick {
                 it.clickAnimation {
                     onClickListener?.let {  click ->
-                        click(item,goods)
+                        click(item,goods,holder.itemView)
                     }
                 }
             }
@@ -68,9 +69,9 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
         return goods.size
     }
 
-    private var onClickListener: ((Good,List<Good>) -> Unit)? = null
+    private var onClickListener: ((Good, List<Good>, View) -> Unit)? = null
 
-    fun setOnGoodsClickListener(listener: (Good,List<Good>) -> Unit) {
+    fun setOnGoodsClickListener(listener: (Good,List<Good>,View) -> Unit) {
         onClickListener = listener
     }
 

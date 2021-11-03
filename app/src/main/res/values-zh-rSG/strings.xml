@@ -8,4 +8,9 @@
     <string name="item">品项</string>
     <string name="qty">数量</string>
     <string name="Total">总计:</string>
+    <string name="SubTotal">未稅总计:</string>
+    <string name="gst">稅額:</string>
+    <string name="grandTotal">含税总计:</string>
+
+
 </resources>

@@ -60,6 +60,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:visibility="invisible"
         android:id="@+id/mainGroupRv"
+        android:splitMotionEvents="false"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fadingEdgeLength="@dimen/dp_60"
@@ -123,6 +124,7 @@
             android:fadingEdgeLength="@dimen/dp_50"
             android:requiresFadingEdge="vertical"
             app:animationDuration="300"
+            android:splitMotionEvents="false"
             app:layoutAnimation="@anim/layout_animation_from_bottom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -165,6 +167,7 @@
             android:fadingEdgeLength="@dimen/dp_50"
             android:requiresFadingEdge="vertical"
             app:animationDuration="300"
+            android:splitMotionEvents="false"
             app:layoutAnimation="@anim/layout_animation_from_bottom"
             tools:itemCount="5"
             tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

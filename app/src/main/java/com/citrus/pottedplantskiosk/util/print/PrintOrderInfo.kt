@@ -44,20 +44,39 @@ class PrintOrderInfo(
 
         var data: ByteArray
         data = initCmd()
-        data = b(data, fontSizeCmd(FontSize.Big))
+        data = b(data, fontSizeCmd(FontSize.SuperBig))
+        data = b(data, alignCmd(1))
         data = b(data, boldCmd(true))
+        data = b(
+            data,
+            text(deliveryInfo.ordersItemDelivery[0].orderNO)
+        )
+
         data = b(data, setLineSpace(55))
-        if (prefs.storeName.isNotEmpty()) data = b(data, text(prefs.storeName))
+        //if (prefs.storeName.isNotEmpty()) data = b(data, text(prefs.storeName))
+        data = b(data, fontSizeCmd(FontSize.Big))
+        data = b(data, alignCmd(0))
+        data = b(
+            data,
+            text("Take Away: " + "K01 - 2002")
+        )
         data = b(data, fontSizeCmd(FontSize.Normal))
+        data = b(data, text("Soramen Store"))
+        data = b(
+            data,
+            text("330 Royal Gorge Blvd, Canon City, CO 81212")
+        )
         data = b(data, boldCmd(false))
+        data = b(data, text("\n"))
+
         data = b(
             data,
             text(context.resources.getString(R.string.orderTime) + Constants.getCurrentTime())
         )
-        data = b(
-            data,
-            text(context.resources.getString(R.string.orderNo) + deliveryInfo.ordersItemDelivery[0].orderNO)
-        )
+//        data = b(
+//            data,
+//            text(context.resources.getString(R.string.orderNo) + deliveryInfo.ordersItemDelivery[0].orderNO)
+//        )
         data = b(
             data,
             text(context.resources.getString(R.string.printTime) + Constants.getCurrentTime())
@@ -114,14 +133,55 @@ class PrintOrderInfo(
         }
         data = b(data, dashLine(is80mm))
 
-        var orgAmtStr = String.format("%7s", dfShow.format(deliveryInfo.ordersDelivery.sPrice))
+        var orgAmtStr = String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.sPrice))
         val qtyStr = String.format("%-3s", sum)
+        val gst = String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.totaltax))
+        val grandTotal = String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.gPrice))
 
         data = if (is80mm) {
             b(data, twoColumn(context.getString(R.string.Total), qtyStr + orgAmtStr, is80mm))
         } else {
             b(data, twoColumn(context.getString(R.string.Total), "$qtyStr $orgAmtStr", is80mm))
         }
+
+        data = b(data, dashLine(is80mm))
+
+        data = if (is80mm) {
+            b(data, twoColumn(context.getString(R.string.SubTotal), orgAmtStr, is80mm))
+        } else {
+            b(data, twoColumn(context.getString(R.string.SubTotal), "$orgAmtStr", is80mm))
+        }
+
+        data = if (is80mm) {
+            b(data, twoColumn(context.getString(R.string.gst), gst, is80mm))
+        } else {
+            b(data, twoColumn(context.getString(R.string.gst), "$gst", is80mm))
+        }
+
+
+        data = b(data, fontSizeCmd(FontSize.Big))
+        data = b(data, alignCmd(1))
+        data = b(data, boldCmd(true))
+
+        data = if (is80mm) {
+            b(data, twoColumnBig(context.getString(R.string.grandTotal), grandTotal, is80mm))
+        } else {
+            b(data, twoColumnBig(context.getString(R.string.grandTotal), "$grandTotal", is80mm))
+        }
+
+
+        data = b(data, fontSizeCmd(FontSize.Normal))
+        data = b(data, boldCmd(false))
+        data = b(data, dashLine(is80mm))
+        data = b(
+            data,
+            text("Thank you for coming")
+        )
+        data = b(
+            data,
+            text("See you again")
+        )
+
         data = b(data, text("\n"))
 
         if (data.isEmpty()) {

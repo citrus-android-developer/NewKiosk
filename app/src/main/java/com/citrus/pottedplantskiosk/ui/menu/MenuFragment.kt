@@ -19,7 +19,9 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,6 +38,7 @@ import com.citrus.pottedplantskiosk.util.Constants.forEachReversedWithIndex
 import com.citrus.pottedplantskiosk.util.UsbUtil
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
 import com.citrus.pottedplantskiosk.util.base.onSafeClick
+import com.citrus.pottedplantskiosk.util.navigateSafely
 import com.citrus.pottedplantskiosk.util.print.PrintOrderInfo
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
@@ -66,7 +69,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private var usbInfo = UsbInfo()
     private var snackbar: Snackbar? = null
     private var updateTimerJob: Job? = null
-    private var currentClickView:View? = null
+    private var currentClickView: View? = null
 
     @Inject
     lateinit var mainGroupItemAdapter: MainGroupItemAdapter
@@ -156,147 +159,165 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     }
 
     override fun initObserve() {
-        lifecycleScope.launchWhenStarted {
-            menuViewModel.showBannerData.collect { banners ->
-                binding.banner.adapter = ImageAdapter(banners)
-                binding.banner.indicator = RectangleIndicator(activity)
-                binding.banner.setIndicatorSpace(BannerUtils.dp2px(4f).toInt())
-                binding.banner.setIndicatorRadius(0)
-                binding.banner.start()
-                binding.banner.setBannerGalleryEffect(50, 10)
-                binding.banner.addPageTransformer(AlphaPageTransformer())
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                menuViewModel.showBannerData.collect { banners ->
+                    binding.banner.adapter = ImageAdapter(banners)
+                    binding.banner.indicator = RectangleIndicator(activity)
+                    binding.banner.setIndicatorSpace(BannerUtils.dp2px(4f).toInt())
+                    binding.banner.setIndicatorRadius(0)
+                    binding.banner.start()
+                    binding.banner.setBannerGalleryEffect(50, 10)
+                    binding.banner.addPageTransformer(AlphaPageTransformer())
+                }
             }
         }
 
-        lifecycleScope.launchWhenStarted {
-            menuViewModel.zoomPageSlidePos.collect {  pos ->
-                binding.goodsRv.scrollToPosition(pos)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                menuViewModel.zoomPageSlidePos.collect { pos ->
+                    binding.goodsRv.scrollToPosition(pos)
+                }
             }
         }
 
 
-        lifecycleScope.launchWhenStarted {
-            menuViewModel.currentCartGoods.collect { cartGoods ->
-                if (cartGoods != null) {
-                    /**非已編輯物件才有購物車動畫*/
-                    if(cartGoods.isEdit.not()) {
-                        var item =
-                            menuViewModel.currentDetailGoodsList.first { it.gID == cartGoods.gID && it.gKID == it.gKID }
-                        var pos = menuViewModel.currentDetailGoodsList.indexOf(item)
-                        currentClickView =
-                            binding.goodsRv.findViewHolderForAdapterPosition(pos)?.itemView
-                        currentClickView?.let {
-                            addGoodToCarAnimation(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                menuViewModel.currentCartGoods.collect { cartGoods ->
+                    if (cartGoods != null) {
+                        /**非已編輯物件才有購物車動畫*/
+                        if (cartGoods.isEdit.not()) {
+                            var item =
+                                menuViewModel.currentDetailGoodsList.first { it.gID == cartGoods.gID && it.gKID == it.gKID }
+                            var pos = menuViewModel.currentDetailGoodsList.indexOf(item)
+                            currentClickView =
+                                binding.goodsRv.findViewHolderForAdapterPosition(pos)?.itemView
+                            currentClickView?.let {
+                                addGoodToCarAnimation(it)
+                            }
                         }
+
+                        binding.cartMotionLayout.addCartGoods(cartGoods)
                     }
-
-                    binding.cartMotionLayout.addCartGoods(cartGoods)
                 }
             }
         }
 
 
-        lifecycleScope.launchWhenStarted {
-            menuViewModel.menuGroupName.collectLatest { groupList ->
-                updateMainGroupItemJob?.cancel()
-                updateMainGroupItemJob = lifecycleScope.launch {
-                    mainGroupItemAdapter.updateDataset(groupList)
-                    binding.mainGroupRv.isVisible = true
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                menuViewModel.menuGroupName.collectLatest { groupList ->
+                    updateMainGroupItemJob?.cancel()
+                    updateMainGroupItemJob = lifecycleScope.launch {
+                        mainGroupItemAdapter.updateDataset(groupList)
+                        binding.mainGroupRv.isVisible = true
+                    }
                 }
             }
         }
 
-        lifecycleScope.launchWhenStarted {
-            menuViewModel.groupDescName.collect { result ->
-                updateGroupItemJob?.cancel()
-                updateGroupItemJob = lifecycleScope.launch {
-                    groupItemAdapter.resetKindIndex()
-                    groupItemAdapter.updateDataset(result)
-                    binding.groupRv.scrollToPosition(0)
-                    binding.groupRvArea.isVisible = true
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                menuViewModel.groupDescName.collect { result ->
+                    updateGroupItemJob?.cancel()
+                    updateGroupItemJob = lifecycleScope.launch {
+                        groupItemAdapter.resetKindIndex()
+                        groupItemAdapter.updateDataset(result)
+                        binding.groupRv.scrollToPosition(0)
+                        binding.groupRvArea.isVisible = true
+                    }
                 }
             }
         }
 
-        lifecycleScope.launchWhenStarted {
-            menuViewModel.allGoods.collect { goodsList ->
-                goodsItemAdapter.setGoodsList(goodsList)
-                binding.goodsRv.scrollToPosition(0)
-                binding.goodsRv.scheduleLayoutAnimation()
-            }
-
-        }
-
-        lifecycleScope.launchWhenStarted {
-            menuViewModel.showDetailEvent.collect { goods ->
-                findNavController().navigate(
-                    R.id.action_menuFragment_to_zoomPageFragment,
-                    bundleOf("goods" to goods.deepCopy())
-                )
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                menuViewModel.allGoods.collect { goodsList ->
+                    goodsItemAdapter.setGoodsList(goodsList)
+                    binding.goodsRv.scrollToPosition(0)
+                    binding.goodsRv.scheduleLayoutAnimation()
+                }
             }
         }
 
-        lifecycleScope.launchWhenStarted {
-            menuViewModel.toPrint.collect { orderDeliveryData ->
-
-                orderDeliveryData?.let {
-                    binding.cartMotionLayout.clearCartGoods()
-                    PrintOrderInfo(
-                        requireContext(),
-                        it,
-                        usbInfo.deviceList["/dev/bus/usb/002/014"]
-                    ) { isSuccess, err ->
-
-                    }.startPrint()
-
-                    findNavController().navigate(
-                        R.id.action_menuFragment_to_printFragment
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                menuViewModel.showDetailEvent.collect { goods ->
+                    findNavController().navigateSafely(
+                        R.id.action_menuFragment_to_zoomPageFragment,
+                        args = bundleOf("goods" to goods.deepCopy())
                     )
                 }
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                menuViewModel.toPrint.collect { orderDeliveryData ->
 
-        lifecycleScope.launchWhenStarted {
-            menuViewModel.tikTok.collect { timer ->
-                if (timer == 0) {
-                    releaseSnack()
+                    orderDeliveryData?.let {
+                        binding.cartMotionLayout.clearCartGoods()
+                        PrintOrderInfo(
+                            requireContext(),
+                            it,
+                            usbInfo.deviceList["/dev/bus/usb/002/003"]
+                        ) { isSuccess, err ->
+
+                        }.startPrint()
+
+                        findNavController().navigate(
+                            R.id.action_menuFragment_to_printFragment
+                        )
+                    }
                 }
+            }
+        }
 
-                if (timer == 100) {
-                    var temp = 100
-                    snackbar = Snackbar.make(requireView(), "", 20000)
-                    val customSnackView: View =
-                        layoutInflater.inflate(R.layout.custom_snackbar_view, null)
-                    snackbar!!.view.setBackgroundColor(Color.TRANSPARENT)
-                    val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
-                    snackbarLayout.setPadding(0, 0, 0, 50)
-                    val bGotoWebsite: Button = customSnackView.findViewById(R.id.gotoWebsiteButton)
-                    val timerHint: TextView = customSnackView.findViewById(R.id.textView2)
-                    updateTimerJob = lifecycleScope.launch {
-                        while (temp < 120) {
-                            delay(1000)
-                            temp++
-                            timerHint.text = (120 - temp).toString() + "秒後將返回主畫面"
-                        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                menuViewModel.tikTok.collect { timer ->
+                    if (timer == 0) {
+                        releaseSnack()
                     }
 
-                    bGotoWebsite.setOnClickListener { v ->
-                        ElasticAnimation(v)
-                            .setScaleX(0.85f)
-                            .setScaleY(0.85f)
-                            .setDuration(100)
-                            .setOnFinishListener {
-                                releaseSnack()
+                    if (timer == 100) {
+                        var temp = 100
+                        snackbar = Snackbar.make(requireView(), "", 20000)
+                        val customSnackView: View =
+                            layoutInflater.inflate(R.layout.custom_snackbar_view, null)
+                        snackbar!!.view.setBackgroundColor(Color.TRANSPARENT)
+                        val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
+                        snackbarLayout.setPadding(0, 0, 0, 50)
+                        val bGotoWebsite: Button =
+                            customSnackView.findViewById(R.id.gotoWebsiteButton)
+                        val timerHint: TextView = customSnackView.findViewById(R.id.textView2)
+                        updateTimerJob = lifecycleScope.launch {
+                            while (temp < 120) {
+                                delay(1000)
+                                temp++
+                                timerHint.text = (120 - temp).toString() + "秒後將返回主畫面"
                             }
-                            .doAction()
-                    }
-                    snackbarLayout.addView(customSnackView, 0)
-                    snackbar!!.show()
-                }
+                        }
 
-                if (timer == Constants.TWO_MINUTES) {
-                    backToMain()
+                        bGotoWebsite.setOnClickListener { v ->
+                            ElasticAnimation(v)
+                                .setScaleX(0.85f)
+                                .setScaleY(0.85f)
+                                .setDuration(100)
+                                .setOnFinishListener {
+                                    releaseSnack()
+                                }
+                                .doAction()
+                        }
+                        snackbarLayout.addView(customSnackView, 0)
+                        snackbar!!.show()
+                    }
+
+                    if (timer == Constants.TWO_MINUTES) {
+                        backToMain()
+                    }
                 }
             }
         }
@@ -311,7 +332,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             menuViewModel.onDescChange(desc)
         }
 
-        goodsItemAdapter.setOnGoodsClickListener { good, list, _->
+        goodsItemAdapter.setOnGoodsClickListener { good, list, _ ->
             menuViewModel.onGoodsClick(good, list)
         }
 
@@ -323,8 +344,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         }
 
 
-        binding.cartMotionLayout.setonOrderDoneListener { list, payWay ->
-            menuViewModel.postOrderItem(list, payWay)
+        binding.cartMotionLayout.setonOrderDoneListener { deliveryInfo ->
+            menuViewModel.postOrderItem(deliveryInfo)
         }
 
 
@@ -349,7 +370,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         val view = View.inflate(requireContext(), R.layout.goods_item_view, null)
         view.itemImage.setImageDrawable(goodView.itemImage.drawable)
         view.itemImage.scaleType = ImageView.ScaleType.CENTER_CROP
-        view.itemImage.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 100)
+        view.itemImage.layoutParams =
+            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 100)
         view.tvItemName.text = goodView.tvItemName.text
         view.tvItemName.textSize = 9f
         view.tvItemName.setPadding(0)
@@ -394,13 +416,16 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         }
         valueAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
-                YoYo.with(Techniques.ZoomOut).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT).duration(1000).playOn(view)
+                YoYo.with(Techniques.ZoomOut).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT)
+                    .duration(1000).playOn(view)
             }
+
             override fun onAnimationEnd(animation: Animator) {
                 binding.cartMotionLayout.setCartItemSizePulse()
                 //把移動的圖片view從父佈局裡移除
                 binding.outSideCons.removeView(view)
             }
+
             override fun onAnimationCancel(animation: Animator) {}
             override fun onAnimationRepeat(animation: Animator) {}
         })

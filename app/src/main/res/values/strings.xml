@@ -8,8 +8,10 @@
     <string name="item">item</string>
     <string name="qty">qty</string>
     <string name="Total">Total:</string>
+    <string name="SubTotal">Sub Total:</string>
+    <string name="gst">GST:</string>
+    <string name="grandTotal">Grand Total</string>
     <!-- TODO: Remove or change this placeholder text -->
-
 
 
     <string-array name="IdleTime">
@@ -32,10 +34,17 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="printerType">
+        <item>80mm</item>
+        <item>58mm</item>
+    </string-array>
+
     <string-array name="MethodOfOperation">
         <item>Round up or down</item>
         <item>Round up</item>
         <item>Round down</item>
         <item>Special rounding</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -45,17 +45,21 @@ class Prefs(context: Context) {
         get() = prefs.getInt(Constants.KEY_DECIMAL_PLACES, 0)
         set(value) = prefs.edit().putInt(Constants.KEY_DECIMAL_PLACES, value).apply()
 
-    var taxFunction: String
-        get() = prefs.getString(Constants.KEY_TAX_FUNCTION, "Free tax")?: ""
-        set(value) = prefs.edit().putString(Constants.KEY_TAX_FUNCTION, value).apply()
+    var taxFunction: Int
+        get() = prefs.getInt(Constants.KEY_TAX_FUNCTION, 0)
+        set(value) = prefs.edit().putInt(Constants.KEY_TAX_FUNCTION, value).apply()
 
-    var methodOfOperation: String
-        get() = prefs.getString(Constants.KEY_METHOD_OF_OPERATION, "Round up or down")?: ""
-        set(value) = prefs.edit().putString(Constants.KEY_METHOD_OF_OPERATION, value).apply()
+    var methodOfOperation: Int
+        get() = prefs.getInt(Constants.KEY_METHOD_OF_OPERATION, 0)
+        set(value) = prefs.edit().putInt(Constants.KEY_METHOD_OF_OPERATION, value).apply()
 
     var printerIs80mm: Boolean
         get() = prefs.getBoolean(Constants.KEY_PRINTER_IS80MM, true)
         set(value) = prefs.edit().putBoolean(Constants.KEY_PRINTER_IS80MM, value).apply()
+
+    var tax: Int
+        get() = prefs.getInt(Constants.KEY_TAX, 0)
+        set(value) = prefs.edit().putInt(Constants.KEY_TAX, value).apply()
 
 
 }

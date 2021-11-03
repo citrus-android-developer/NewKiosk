@@ -177,6 +177,7 @@
         android:elevation="@dimen/dp_36"
         android:fadingEdgeLength="@dimen/dp_50"
         android:padding="@dimen/dp_10"
+        android:splitMotionEvents="false"
         android:requiresFadingEdge="vertical"
         android:visibility="invisible"
         app:animationDuration="500"
@@ -197,6 +198,7 @@
         android:requiresFadingEdge="vertical"
         android:visibility="invisible"
         app:animationDuration="500"
+        android:splitMotionEvents="false"
         app:layoutAnimation="@anim/layout_animation_from_right"
         app:layout_constraintBottom_toTopOf="@id/bottom_bar_card_view"
         app:layout_constraintEnd_toEndOf="@id/fab"
@@ -206,8 +208,8 @@
 
     <View
         android:id="@+id/checkoutBottomViewLine"
-        android:layout_height="@dimen/dp_2"
         android:layout_width="0dp"
+        android:layout_height="@dimen/dp_2"
         android:layout_marginStart="@dimen/dp_10"
         android:layout_marginEnd="@dimen/dp_10"
         android:background="@color/white"
@@ -217,44 +219,69 @@
         app:layout_constraintStart_toStartOf="@+id/checkoutRv"
         app:layout_constraintTop_toBottomOf="@+id/checkoutRv" />
 
-    <TextView
+    <androidx.core.widget.NestedScrollView
+        android:elevation="@dimen/dp_36"
+        android:id="@+id/priceInfo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/dp_2"
-        android:id="@+id/orderTime"
-        app:layout_constraintStart_toStartOf="@+id/checkoutBottomViewLine"
-        app:layout_constraintTop_toBottomOf="@+id/checkoutBottomViewLine"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Order Time: 2021/10/26"
-        android:textSize="@dimen/sp_16"
-        android:elevation="@dimen/dp_36"
+        android:orientation="vertical"
         android:visibility="invisible"
-        android:textColor="@color/white"
-        />
-
-    <TextView
-        android:id="@+id/sumPrice"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_bar_card_view"
+        app:layout_constraintEnd_toEndOf="@+id/checkoutBottomViewLine"
         app:layout_constraintStart_toStartOf="@+id/checkoutBottomViewLine"
-        app:layout_constraintTop_toBottomOf="@+id/orderTime"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:textSize="@dimen/sp_16"
-        android:elevation="@dimen/dp_36"
-        android:visibility="invisible"
-        android:textColor="@color/white"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/checkoutBottomViewLine">
 
-    <TextView
-        android:id="@+id/payType"
-        app:layout_constraintStart_toStartOf="@+id/checkoutBottomViewLine"
-        app:layout_constraintTop_toBottomOf="@+id/sumPrice"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:textSize="@dimen/sp_16"
-        android:elevation="@dimen/dp_36"
-        android:visibility="invisible"
-        android:textColor="@color/white"
-        />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="@dimen/dp_36">
 
+            <TextView
+                android:id="@+id/sumPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_2"
+                android:elevation="@dimen/dp_36"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_14"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/gts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="@dimen/dp_36"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_14"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sumPrice" />
+
+            <TextView
+                android:id="@+id/grandTotal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="@dimen/dp_36"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_14"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gts" />
+
+
+            <TextView
+                android:id="@+id/payType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="@dimen/dp_36"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_14"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/grandTotal" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 
     <LinearLayout

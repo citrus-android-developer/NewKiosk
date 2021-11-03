@@ -25,274 +25,53 @@
             app:tint="@color/black" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvBasicTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+
+    <com.google.android.material.tabs.TabLayout
         android:layout_marginTop="@dimen/dp_10"
-        android:drawableEnd="@drawable/ic_baseline_arrow_drop_down_24"
-        android:text="Basic Setting"
-        android:textSize="@dimen/sp_20"
-        android:textStyle="bold"
+        android:id="@+id/tab_layout"
+        style="@style/Widget.MaterialComponents.TabLayout.PrimarySurface"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:background="@color/lightGreen"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/closeBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/closeBtn"
+        app:tabIndicatorColor="@color/greenDark"
+        app:tabIndicatorHeight="@dimen/dp_2"
+        app:tabRippleColor="@color/black"
+        app:tabSelectedTextColor="@color/black"
+        app:tabTextAppearance="@style/MyTabStyle"
+        app:tabTextColor="@color/lightGray" />
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.viewpager2.widget.ViewPager2
+        android:layout_marginBottom="@dimen/dp_10"
+        android:layout_marginRight="2dp"
+        android:layout_marginLeft="2dp"
+        android:id="@+id/viewPager2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/pageH50Guild"
+        app:layout_constraintBottom_toTopOf="@+id/applyBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvBasicTitle">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/serverIpTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dp_10"
-                android:layout_marginTop="@dimen/dp_10"
-                android:text="Server IP"
-                android:textSize="@dimen/sp_15"
-                app:layout_constraintEnd_toStartOf="@+id/per50GuildInsideBasic"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/serverIpInputLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:endIconMode="clear_text"
-                app:layout_constraintEnd_toEndOf="@+id/serverIpTitle"
-                app:layout_constraintStart_toStartOf="@+id/serverIpTitle"
-                app:layout_constraintTop_toBottomOf="@+id/serverIpTitle">
-
-                <AutoCompleteTextView
-                    android:id="@+id/etServerIp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:paddingTop="@dimen/dp_2"
-                    android:paddingBottom="@dimen/dp_2"
-                    android:singleLine="true"
-                    android:textSize="@dimen/sp_15"
-                    android:textStyle="bold" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                android:id="@+id/storeIdTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dp_10"
-                android:text="Store ID"
-                android:textSize="@dimen/sp_15"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/per50GuildInsideBasic"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/storeIdInputLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:endIconMode="clear_text"
-                app:layout_constraintEnd_toEndOf="@+id/storeIdTitle"
-                app:layout_constraintStart_toStartOf="@+id/storeIdTitle"
-                app:layout_constraintTop_toBottomOf="@+id/storeIdTitle">
-
-                <AutoCompleteTextView
-                    android:id="@+id/etDeviceId"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:paddingTop="@dimen/dp_2"
-                    android:paddingBottom="@dimen/dp_2"
-                    android:singleLine="true"
-                    android:textSize="@dimen/sp_15"
-                    android:textStyle="bold" />
-            </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
 
 
-            <TextView
-                android:id="@+id/idleTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:text="Idle Time (sec)"
-                android:textSize="@dimen/sp_15"
-                app:layout_constraintEnd_toEndOf="@+id/serverIpTitle"
-                app:layout_constraintStart_toStartOf="@+id/serverIpTitle"
-                app:layout_constraintTop_toBottomOf="@+id/serverIpInputLayout" />
-
-            <com.skydoves.powerspinner.PowerSpinnerView
-                android:id="@+id/idleSpinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@color/greenDark"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:hint="120"
-                android:padding="@dimen/dp_5"
-                android:textColor="@color/white_93"
-                android:textColorHint="@color/white_70"
-                android:textSize="@dimen/sp_15"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/idleTitle"
-                app:layout_constraintStart_toStartOf="@+id/idleTitle"
-                app:layout_constraintTop_toBottomOf="@+id/idleTitle"
-                app:spinner_arrow_gravity="end"
-                app:spinner_arrow_padding="8dp"
-                app:spinner_arrow_tint="@color/white"
-                app:spinner_divider_color="@color/white_70"
-                app:spinner_divider_show="true"
-                app:spinner_divider_size="0.4dp"
-                app:spinner_item_array="@array/IdleTime"
-                app:spinner_popup_animation="dropdown"
-                app:spinner_popup_background="@color/background800"
-                app:spinner_popup_elevation="@dimen/dp_10" />
-
-            <TextView
-                android:id="@+id/taxTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dp_10"
-                android:text="Tax Function "
-                android:textSize="@dimen/sp_15"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/per50GuildInsideBasic"
-                app:layout_constraintTop_toBottomOf="@+id/storeIdInputLayout" />
-
-            <com.skydoves.powerspinner.PowerSpinnerView
-                android:id="@+id/TaxSpinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@color/greenDark"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:hint="Free tax"
-                android:padding="@dimen/dp_5"
-                android:textColor="@color/white_93"
-                android:textColorHint="@color/white_70"
-                android:textSize="@dimen/sp_15"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/taxTitle"
-                app:layout_constraintStart_toStartOf="@+id/taxTitle"
-                app:layout_constraintTop_toBottomOf="@+id/taxTitle"
-                app:spinner_arrow_gravity="end"
-                app:spinner_arrow_padding="8dp"
-                app:spinner_arrow_tint="@color/white"
-                app:spinner_divider_color="@color/white_70"
-                app:spinner_divider_show="true"
-                app:spinner_divider_size="0.4dp"
-                app:spinner_item_array="@array/TaxFunction"
-                app:spinner_popup_animation="dropdown"
-                app:spinner_popup_background="@color/background800"
-                app:spinner_popup_elevation="@dimen/dp_10" />
-
-            <TextView
-                android:id="@+id/decimalTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dp_10"
-                android:drawablePadding="@dimen/dp_2"
-                android:text="Decimal Places "
-                android:textSize="@dimen/sp_15"
-                app:layout_constraintEnd_toStartOf="@id/per50GuildInsideBasic"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/idleSpinner" />
-
-            <com.skydoves.powerspinner.PowerSpinnerView
-                android:id="@+id/decimalSpinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@color/greenDark"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:hint="0"
-                android:padding="@dimen/dp_5"
-                android:textColor="@color/white_93"
-                android:textColorHint="@color/white_70"
-                android:textSize="@dimen/sp_15"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/decimalTitle"
-                app:layout_constraintStart_toStartOf="@+id/decimalTitle"
-                app:layout_constraintTop_toBottomOf="@+id/decimalTitle"
-                app:spinner_arrow_gravity="end"
-                app:spinner_arrow_padding="8dp"
-                app:spinner_arrow_tint="@color/white"
-                app:spinner_divider_color="@color/white_70"
-                app:spinner_divider_show="true"
-                app:spinner_divider_size="0.4dp"
-                app:spinner_item_array="@array/DecimalPlaces"
-                app:spinner_popup_animation="dropdown"
-                app:spinner_popup_background="@color/background800"
-                app:spinner_popup_elevation="@dimen/dp_10" />
-
-            <TextView
-                android:id="@+id/OperationTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dp_10"
-                android:drawablePadding="@dimen/dp_2"
-                android:text="Method of operation"
-                android:textSize="@dimen/sp_15"
-                app:layout_constraintStart_toEndOf="@id/per50GuildInsideBasic"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/TaxSpinner" />
-
-            <com.skydoves.powerspinner.PowerSpinnerView
-                android:id="@+id/operationSpinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@color/greenDark"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:hint="Round up or down"
-                android:padding="@dimen/dp_5"
-                android:textColor="@color/white_93"
-                android:textColorHint="@color/white_70"
-                android:textSize="@dimen/sp_15"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/OperationTitle"
-                app:layout_constraintStart_toStartOf="@+id/OperationTitle"
-                app:layout_constraintTop_toBottomOf="@+id/OperationTitle"
-                app:spinner_arrow_gravity="end"
-                app:spinner_arrow_padding="8dp"
-                app:spinner_arrow_tint="@color/white"
-                app:spinner_divider_color="@color/white_70"
-                app:spinner_divider_show="true"
-                app:spinner_divider_size="0.4dp"
-                app:spinner_item_array="@array/DecimalPlaces"
-                app:spinner_popup_animation="dropdown"
-                app:spinner_popup_background="@color/background800"
-                app:spinner_popup_elevation="@dimen/dp_10" />
-
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/per50GuildInsideBasic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/pageH50Guild"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
-
+    <TextView
+        android:id="@+id/applyBtn"
+        android:layout_width="@dimen/dp_70"
+        android:layout_height="@dimen/dp_38"
+        android:background="@drawable/bg_add_btn"
+        android:fontFamily="@font/droidbold"
+        android:gravity="center"
+        android:padding="@dimen/dp_10"
+        android:text="Done"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_14"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

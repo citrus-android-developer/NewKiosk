@@ -14,8 +14,6 @@ import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.databinding.ActivitySlashBinding
 import com.citrus.pottedplantskiosk.ui.menu.MenuActivity
-import com.daimajia.androidanimations.library.Techniques
-import com.daimajia.androidanimations.library.YoYo
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -31,10 +29,6 @@ class SlashActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         setFullScreen()
-        YoYo.with(Techniques.Landing).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT).duration(1500)
-            .playOn(binding.ivLogo)
-        YoYo.with(Techniques.Landing).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT).duration(1500)
-            .playOn(binding.tvKiosk)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +36,6 @@ class SlashActivity : AppCompatActivity() {
         binding = ActivitySlashBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initObserve()
-        startTimer()
     }
 
     private fun initObserve() {
@@ -51,10 +44,14 @@ class SlashActivity : AppCompatActivity() {
                 when (result) {
                     is Resource.Loading -> Unit
                     is Resource.Success -> {
+                        Log.e("getMenu","fetch success")
                         menuData = result.data
                         checkEachFun()
                     }
-                    is Resource.Error -> Unit
+                    is Resource.Error -> {
+                        viewModel.fetchError()
+                        Log.e("error",result.message!!)
+                    }
                 }
             }
         }
@@ -92,19 +89,6 @@ class SlashActivity : AppCompatActivity() {
         }
     }
 
-    private fun startTimer() {
-        val timer = object : Thread() {
-            override fun run() {
-                try {
-                    sleep(1500)
-                    viewModel.asyncTask()
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
-            }
-        }
-        timer.start()
-    }
 
     private fun checkEachFun() {
         if (menuData != null && bannerData != null) {

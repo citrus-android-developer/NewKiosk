@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.api.remote
 
 
+import android.util.Log
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.api.remote.dto.UploadResponse
@@ -31,7 +32,10 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
                 }.suspendOnException {
                     emit(Resource.Error(this.exception.message!!, null))
                 }
-        }.onStart { Resource.Loading(true) }.onCompletion { Resource.Loading(false) }
+        }.onStart {
+            Log.e("onStart","---")
+            Resource.Loading(true)
+        }.onCompletion { Resource.Loading(false) }
             .flowOn(Dispatchers.IO)
 
 

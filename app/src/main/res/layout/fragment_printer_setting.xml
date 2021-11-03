@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+
+    <TextView
+        android:id="@+id/storeNameTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="Store Name"
+        android:textSize="@dimen/sp_15"
+        app:layout_constraintEnd_toStartOf="@+id/per50GuildInsidePrint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/storeNameInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="@+id/storeNameTitle"
+        app:layout_constraintStart_toStartOf="@+id/storeNameTitle"
+        app:layout_constraintTop_toBottomOf="@+id/storeNameTitle">
+
+        <AutoCompleteTextView
+            android:id="@+id/etStoreName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:padding="@dimen/dp_2"
+            android:singleLine="true"
+            android:textColor="@color/greenDark"
+            android:textSize="@dimen/sp_14"
+            android:textStyle="bold" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/kioskIdTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="Kiosk ID"
+        android:textSize="@dimen/sp_15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/per50GuildInsidePrint"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/kioskIdInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="@+id/kioskIdTitle"
+        app:layout_constraintStart_toStartOf="@+id/kioskIdTitle"
+        app:layout_constraintTop_toBottomOf="@+id/kioskIdTitle">
+
+        <AutoCompleteTextView
+            android:id="@+id/etKioskId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:padding="@dimen/dp_2"
+            android:singleLine="true"
+            android:textColor="@color/greenDark"
+            android:textSize="@dimen/sp_14"
+            android:textStyle="bold" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <TextView
+        android:id="@+id/storeAddressTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="Store Address"
+        android:textSize="@dimen/sp_15"
+        app:layout_constraintEnd_toStartOf="@id/per50GuildInsidePrint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/storeNameInputLayout" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/storeAddressInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="@+id/storeAddressTitle"
+        app:layout_constraintStart_toStartOf="@+id/storeAddressTitle"
+        app:layout_constraintTop_toBottomOf="@+id/storeAddressTitle">
+
+        <AutoCompleteTextView
+            android:id="@+id/etStoreAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:padding="@dimen/dp_2"
+            android:singleLine="true"
+            android:textColor="@color/greenDark"
+            android:textSize="@dimen/sp_14"
+            android:textStyle="bold" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <TextView
+        android:id="@+id/headerTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="Header"
+        android:textSize="@dimen/sp_15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/per50GuildInsidePrint"
+        app:layout_constraintTop_toBottomOf="@id/kioskIdInputLayout" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/headerInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="@+id/headerTitle"
+        app:layout_constraintStart_toStartOf="@+id/headerTitle"
+        app:layout_constraintTop_toBottomOf="@+id/headerTitle">
+
+        <AutoCompleteTextView
+            android:id="@+id/etHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:padding="@dimen/dp_2"
+            android:singleLine="true"
+            android:textColor="@color/greenDark"
+            android:textSize="@dimen/sp_14"
+            android:textStyle="bold" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <TextView
+        android:id="@+id/printerTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="Select Printer"
+        android:textSize="@dimen/sp_15"
+        app:layout_constraintEnd_toEndOf="@+id/storeNameTitle"
+        app:layout_constraintStart_toStartOf="@+id/storeNameTitle"
+        app:layout_constraintTop_toBottomOf="@+id/storeAddressInputLayout" />
+
+    <com.skydoves.powerspinner.PowerSpinnerView
+        android:id="@+id/printerSpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/greenDark"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center"
+        android:hint="none selected"
+        android:padding="@dimen/dp_5"
+        android:textColor="@color/white_93"
+        android:textColorHint="@color/white_70"
+        android:textSize="@dimen/sp_15"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/printerTitle"
+        app:layout_constraintStart_toStartOf="@+id/printerTitle"
+        app:layout_constraintTop_toBottomOf="@+id/printerTitle"
+        app:spinner_arrow_gravity="end"
+        app:spinner_arrow_padding="8dp"
+        app:spinner_arrow_tint="@color/white"
+        app:spinner_divider_color="@color/white_70"
+        app:spinner_divider_show="true"
+        app:spinner_divider_size="0.4dp"
+        app:spinner_popup_animation="dropdown"
+        app:spinner_popup_background="@color/background800"
+        app:spinner_popup_elevation="@dimen/dp_10" />
+
+    <TextView
+        android:id="@+id/is80mmTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:text="Select Printer"
+        android:textSize="@dimen/sp_15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/per50GuildInsidePrint"
+        app:layout_constraintTop_toBottomOf="@+id/headerInputLayout" />
+
+    <com.skydoves.powerspinner.PowerSpinnerView
+        android:id="@+id/is80mmSpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/greenDark"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center"
+        android:hint="80mm"
+        android:padding="@dimen/dp_5"
+        android:textColor="@color/white_93"
+        android:textColorHint="@color/white_70"
+        android:textSize="@dimen/sp_15"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/is80mmTitle"
+        app:layout_constraintStart_toStartOf="@+id/is80mmTitle"
+        app:layout_constraintTop_toBottomOf="@+id/is80mmTitle"
+        app:spinner_arrow_gravity="end"
+        app:spinner_arrow_padding="8dp"
+        app:spinner_arrow_tint="@color/white"
+        app:spinner_item_array="@array/printerType"
+        app:spinner_divider_color="@color/white_70"
+        app:spinner_divider_show="true"
+        app:spinner_divider_size="0.4dp"
+        app:spinner_popup_animation="dropdown"
+        app:spinner_popup_background="@color/background800"
+        app:spinner_popup_elevation="@dimen/dp_10" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/per50GuildInsidePrint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

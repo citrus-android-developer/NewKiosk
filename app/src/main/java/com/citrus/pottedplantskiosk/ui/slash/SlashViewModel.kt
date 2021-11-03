@@ -10,6 +10,7 @@ import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerRequest
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
+import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +33,8 @@ class SlashViewModel @Inject constructor(
     private val _allData = MutableSharedFlow<Boolean>()
     val allData: SharedFlow<Boolean> = _allData
 
+    private val _errorNotify = MutableSharedFlow<Boolean>()
+    val errorNotify: SharedFlow<Boolean> = _errorNotify
 
 
 
@@ -47,7 +50,8 @@ class SlashViewModel @Inject constructor(
 
     private fun getMenu() =
         viewModelScope.launch {
-            repository.getMenu(Constants.BASE_URL + Constants.GET_MENU, "").collect { result ->
+            Log.e("info",prefs.serverIp + Constants.GET_MENU)
+            repository.getMenu(prefs.serverIp + Constants.GET_MENU, "").collect { result ->
                 _allMenuData.emit(result)
             }
         }
@@ -55,7 +59,7 @@ class SlashViewModel @Inject constructor(
     private fun getBanner() =
         viewModelScope.launch {
             repository.getBanner(
-                Constants.BASE_URL + Constants.GET_BANNER,
+                prefs.serverIp + Constants.GET_BANNER,
                 Gson().toJson(BannerRequest(rsno = "33014"))
             ).collect { result ->
                 _allBannerData.emit(result)
@@ -64,6 +68,14 @@ class SlashViewModel @Inject constructor(
 
     fun intentNext() = viewModelScope.launch {
         _allData.emit(true)
+    }
+
+    fun fetchError() = viewModelScope.launch {
+        _errorNotify.emit(true)
+    }
+
+    fun reFetch() {
+        asyncTask()
     }
 
 }

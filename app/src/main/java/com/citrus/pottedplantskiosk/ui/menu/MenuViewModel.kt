@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.citrus.pottedplantskiosk.api.remote.RemoteRepository
 import com.citrus.pottedplantskiosk.api.remote.Resource
 import com.citrus.pottedplantskiosk.api.remote.dto.*
+import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -156,24 +157,26 @@ class MenuViewModel @Inject constructor(
         _showBannerData.emit(bannerResponse.data)
     }
 
-    fun postOrderItem(list: List<Good>, payWay: PayWay) = viewModelScope.launch {
+    fun postOrderItem(deliveryInfo: DeliveryInfo) = viewModelScope.launch {
+
+        var list = deliveryInfo.goodsList
         var sumQty = list.sumOf { goods ->
             goods.qty
         }
-
-
 
         var sumPrice = list.sumOf { goods ->
             goods.sPrice
         }
 
-        Log.e("test",sumPrice.toString())
         var ordersDelivery = Orders.OrdersDelivery(
             storeID = 0,
             qty = sumQty,
-            payType = payWay.desc,
+            payType = deliveryInfo.payWay.desc,
             isPay = "Y",
-            sPrice = sumPrice
+            gPrice = deliveryInfo.grandTotal,
+            sPrice = sumPrice,
+            totaltax = deliveryInfo.gst
+
         )
 
         var ordersItemDeliveryList = listOf<Orders.OrdersItemDelivery>()
@@ -202,28 +205,26 @@ class MenuViewModel @Inject constructor(
             ordersItemDelivery = ordersItemDeliveryList
         )
 
-//        viewModelScope.launch {
-//            repository.postOrders(
-//                Constants.BASE_URL + Constants.SET_ORDERS,
-//                Gson().toJson(orderDeliveryData)
-//            ).collect {
-//                when (it) {
-//                    is Resource.Success -> {
-//                        orderDeliveryData.ordersItemDelivery.forEach { item ->
-//                            item.orderNO = it.data?.data!!
-//                        }
-//                        _toPrint.emit(orderDeliveryData)
-//
-//                    }
-//                    is Resource.Error -> {
-//                        _toPrint.emit(null)
-//                        Log.e("Error", it.message!!)
-//                    }
-//                    is Resource.Loading -> Unit
-//                }
-//            }
-//        }
+        viewModelScope.launch {
+            repository.postOrders(
+                prefs.serverIp + Constants.SET_ORDERS,
+                Gson().toJson(orderDeliveryData)
+            ).collect {
+                when (it) {
+                    is Resource.Success -> {
+                        orderDeliveryData.ordersItemDelivery.forEach { item ->
+                            item.orderNO = it.data?.data!!
+                        }
+                        _toPrint.emit(orderDeliveryData)
+
+                    }
+                    is Resource.Error -> {
+                        _toPrint.emit(null)
+                        Log.e("Error", it.message!!)
+                    }
+                    is Resource.Loading -> Unit
+                }
+            }
+        }
     }
-
-
 }

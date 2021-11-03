@@ -66,7 +66,7 @@ data class Good(
     @SerializedName("Stock")
     val stock: Int,
     @SerializedName("Tax")
-    val tax: Int,
+    var tax: Double,
     @SerializedName("TaxID")
     val taxID: String,
     var isEdit: Boolean = false,

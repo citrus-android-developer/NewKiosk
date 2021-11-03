@@ -15,7 +15,8 @@ enum class FontSize {
     Normal,
     Big,
     Height,
-    Width
+    Width,
+    SuperBig
 }
 
 enum class PrintAction {
@@ -114,6 +115,9 @@ fun fontSizeCmd(fontSize: FontSize): ByteArray {
         }
         FontSize.Big -> {
             data[2] = 0x11.toByte()
+        }
+        FontSize.SuperBig -> {
+            data[2] = 0x22.toByte()
         }
         FontSize.Height -> {
             data[2] = 0x01.toByte()

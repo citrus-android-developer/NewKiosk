@@ -13,24 +13,36 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.FrameLayout
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.FragmentSettingBinding
 import com.citrus.pottedplantskiosk.databinding.FragmentZoomPageBinding
 import com.citrus.pottedplantskiosk.di.prefs
+import com.citrus.pottedplantskiosk.ui.menu.ZoomPageFragmentArgs
+import com.citrus.pottedplantskiosk.ui.slash.SlashViewModel
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.Constants.trimSpace
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SettingFragment : BottomSheetDialogFragment() {
+    private val viewModel: SlashViewModel by activityViewModels()
 
     private var _binding: FragmentSettingBinding? = null
     private val binding get() = _binding!!
+    private val args: SettingFragmentArgs by navArgs()
+    private lateinit var titles: Array<String>
+    private  var collectionAdapter:CollectionAdapter? = null
 
     override fun onStart() {
         super.onStart()
@@ -56,6 +68,7 @@ class SettingFragment : BottomSheetDialogFragment() {
                     if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom()) {
                         hideKeyboard(activity, v)
                     }
+                    v.clearFocus()
                 }
                 return super.dispatchTouchEvent(ev)
             }
@@ -94,29 +107,35 @@ class SettingFragment : BottomSheetDialogFragment() {
 
 
     private fun initView() {
+        collectionAdapter = CollectionAdapter(this)
+
         binding.apply {
+            viewPager2.offscreenPageLimit = 1
+            viewPager2.adapter = collectionAdapter
+
+            TabLayoutMediator(
+                binding.tabLayout, binding.viewPager2
+            ) { tab: TabLayout.Tab, position: Int ->
+                titles = arrayOf("Basic", "Printer")
+                tab.text = titles[position]
+            }.attach()
+
+
+
             closeBtn.setOnClickListener { v ->
                 v.clickAnimation {
                     findNavController().popBackStack()
                 }
             }
 
-            etServerIp.setText(prefs.serverIp)
-            etStoreId.setText(prefs.storeId)
 
-            idleSpinner.hint = prefs.idleTime.toString()
-            taxSpinner.hint = prefs.taxFunction
-            decimalSpinner.hint = prefs.decimalPlace.toString()
-            operationSpinner.hint = prefs.methodOfOperation
 
 
             applyBtn.setOnClickListener { v ->
                 v.clickAnimation {
-                    var serverIp = etServerIp.text.toString().trimSpace()
-                    var storeId = etStoreId.text.toString().trimSpace()
-
-                    prefs.serverIp = serverIp
-                    prefs.storeId = storeId
+                    if(args.isFromSlash){
+                        viewModel.reFetch()
+                    }
 
                     findNavController().popBackStack()
                 }
@@ -130,27 +149,16 @@ class SettingFragment : BottomSheetDialogFragment() {
     }
 
     private fun initAction() {
-        binding.idleSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
-            var idleTime = newItem
-            prefs.idleTime = idleTime.toInt()
-        }
-        binding.taxSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
-            var taxFunction = newItem
-            prefs.taxFunction = taxFunction
-        }
-        binding.decimalSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
-            var decimalType = newItem
-            prefs.decimalPlace = decimalType.toInt()
-        }
-        binding.operationSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
-            var methodOfOperation = newItem
-            prefs.methodOfOperation = methodOfOperation
-        }
+
     }
+
+
 
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding?.viewPager2?.adapter = null
+        collectionAdapter = null
         _binding = null
     }
 
@@ -175,5 +183,23 @@ class SettingFragment : BottomSheetDialogFragment() {
         decorView?.systemUiVisibility = options
         return decorView
     }
+
+
+    inner class CollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+        override fun getItemCount(): Int = 2
+
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> BasicSettingFragment()
+                1 -> PrinterSettingFragment()
+                else -> BasicSettingFragment()
+            }
+        }
+    }
+
+
+
+
+
 
 }

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="@dimen/dp_50">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/serverIpTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_20"
+                android:text="Server IP"
+                android:textSize="@dimen/sp_15"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/serverIpInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="@+id/serverIpTitle"
+                app:layout_constraintStart_toStartOf="@+id/serverIpTitle"
+                app:layout_constraintTop_toBottomOf="@+id/serverIpTitle">
+
+                <AutoCompleteTextView
+                    android:id="@+id/etServerIp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:padding="@dimen/dp_2"
+                    android:singleLine="true"
+                    android:textColor="@color/greenDark"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/storeIdTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_20"
+                android:text="Store ID"
+                android:textSize="@dimen/sp_15"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/serverIpInputLayout" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/storeIdInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="@+id/storeIdTitle"
+                app:layout_constraintStart_toStartOf="@+id/storeIdTitle"
+                app:layout_constraintTop_toBottomOf="@+id/storeIdTitle">
+
+                <AutoCompleteTextView
+                    android:id="@+id/etStoreId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:padding="@dimen/dp_2"
+                    android:singleLine="true"
+                    android:textColor="@color/greenDark"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <TextView
+                android:id="@+id/idleTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_20"
+                android:text="Idle Time (sec)"
+                android:textSize="@dimen/sp_15"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/storeIdInputLayout" />
+
+            <com.skydoves.powerspinner.PowerSpinnerView
+                android:id="@+id/idleSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/greenDark"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:hint="120"
+                android:padding="@dimen/dp_5"
+                android:textColor="@color/white_93"
+                android:textColorHint="@color/white_70"
+                android:textSize="@dimen/sp_15"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/idleTitle"
+                app:layout_constraintStart_toStartOf="@+id/idleTitle"
+                app:layout_constraintTop_toBottomOf="@+id/idleTitle"
+                app:spinner_arrow_gravity="end"
+                app:spinner_arrow_padding="8dp"
+                app:spinner_arrow_tint="@color/white"
+                app:spinner_divider_color="@color/white_70"
+                app:spinner_divider_show="true"
+                app:spinner_divider_size="0.4dp"
+                app:spinner_item_array="@array/IdleTime"
+                app:spinner_popup_animation="dropdown"
+                app:spinner_popup_background="@color/background800"
+                app:spinner_popup_elevation="@dimen/dp_10" />
+
+            <TextView
+                android:id="@+id/taxTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_20"
+                android:text="Tax Function "
+                android:textSize="@dimen/sp_15"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/idleSpinner" />
+
+            <com.skydoves.powerspinner.PowerSpinnerView
+                android:id="@+id/taxSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/greenDark"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:hint="Free tax"
+                android:padding="@dimen/dp_5"
+                android:textColor="@color/white_93"
+                android:textColorHint="@color/white_70"
+                android:textSize="@dimen/sp_15"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/taxTitle"
+                app:layout_constraintStart_toStartOf="@+id/taxTitle"
+                app:layout_constraintTop_toBottomOf="@+id/taxTitle"
+                app:spinner_arrow_gravity="end"
+                app:spinner_arrow_padding="8dp"
+                app:spinner_arrow_tint="@color/white"
+                app:spinner_divider_color="@color/white_70"
+                app:spinner_divider_show="true"
+                app:spinner_divider_size="0.4dp"
+                app:spinner_item_array="@array/TaxFunction"
+                app:spinner_popup_animation="dropdown"
+                app:spinner_popup_background="@color/background800"
+                app:spinner_popup_elevation="@dimen/dp_10" />
+
+
+
+            <TextView
+                android:id="@+id/decimalTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_20"
+                android:drawablePadding="@dimen/dp_2"
+                android:text="Decimal Places "
+                android:textSize="@dimen/sp_15"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/taxSpinner" />
+
+            <com.skydoves.powerspinner.PowerSpinnerView
+                android:id="@+id/decimalSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/greenDark"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:hint="0"
+                android:padding="@dimen/dp_5"
+                android:textColor="@color/white_93"
+                android:textColorHint="@color/white_70"
+                android:textSize="@dimen/sp_15"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/decimalTitle"
+                app:layout_constraintStart_toStartOf="@+id/decimalTitle"
+                app:layout_constraintTop_toBottomOf="@+id/decimalTitle"
+                app:spinner_arrow_gravity="end"
+                app:spinner_arrow_padding="8dp"
+                app:spinner_arrow_tint="@color/white"
+                app:spinner_divider_color="@color/white_70"
+                app:spinner_divider_show="true"
+                app:spinner_divider_size="0.4dp"
+                app:spinner_item_array="@array/DecimalPlaces"
+                app:spinner_popup_animation="dropdown"
+                app:spinner_popup_background="@color/background800"
+                app:spinner_popup_elevation="@dimen/dp_10" />
+
+            <TextView
+                android:id="@+id/operationTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_20"
+                android:drawablePadding="@dimen/dp_2"
+                android:text="Method of operation"
+                android:textSize="@dimen/sp_15"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/decimalSpinner" />
+
+            <com.skydoves.powerspinner.PowerSpinnerView
+                android:id="@+id/operationSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/greenDark"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:hint="Round up or down"
+                android:padding="@dimen/dp_5"
+                android:textColor="@color/white_93"
+                android:textColorHint="@color/white_70"
+                android:textSize="@dimen/sp_15"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/operationTitle"
+                app:layout_constraintStart_toStartOf="@+id/operationTitle"
+                app:layout_constraintTop_toBottomOf="@+id/operationTitle"
+                app:spinner_arrow_gravity="end"
+                app:spinner_arrow_padding="8dp"
+                app:spinner_arrow_tint="@color/white"
+                app:spinner_divider_color="@color/white_70"
+                app:spinner_divider_show="true"
+                app:spinner_divider_size="0.4dp"
+                app:spinner_item_array="@array/MethodOfOperation"
+                app:spinner_popup_animation="dropdown"
+                app:spinner_popup_background="@color/background800"
+                app:spinner_popup_elevation="@dimen/dp_10" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

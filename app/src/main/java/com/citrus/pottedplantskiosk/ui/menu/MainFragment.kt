@@ -28,6 +28,7 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.Button
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -72,7 +73,8 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
 
             logo.onSevenClick {
                 findNavController().navigate(
-                    R.id.action_mainFragment_to_settingFragment
+                    R.id.action_mainFragment_to_settingFragment,
+                    bundleOf("isFromSlash" to false)
                 )
             }
         }

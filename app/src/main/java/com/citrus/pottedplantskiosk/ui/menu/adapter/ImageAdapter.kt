@@ -29,7 +29,6 @@ class ImageAdapter(datas: List<BannerData>?):BannerAdapter<BannerData, ImageAdap
     override fun onBindView(holder: ImageHolder, data: BannerData?, position: Int, size: Int) {
         holder.binding.apply {
             data?.let {
-                //通过裁剪实现圆角
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     BannerUtils.setBannerRound(image, 20f)
                 }

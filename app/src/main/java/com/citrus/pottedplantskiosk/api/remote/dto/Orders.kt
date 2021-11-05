@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.api.remote.dto
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 class Orders {
 
@@ -10,7 +11,7 @@ class Orders {
 
         @SerializedName("OrdersItemDelivery")
         val ordersItemDelivery: List<OrdersItemDelivery>
-    )
+    ):Serializable
 
 
     data class OrdersDelivery (
@@ -134,7 +135,7 @@ class Orders {
         val isPay: String,
 
         val tkey: String = ""
-    )
+    ):Serializable
 
 
     data class OrdersItemDelivery (
@@ -259,6 +260,6 @@ class Orders {
 
         @SerializedName("FlavorDesc2")
         val flavorDesc2: String  = ""
-    )
+    ):Serializable
 
 }

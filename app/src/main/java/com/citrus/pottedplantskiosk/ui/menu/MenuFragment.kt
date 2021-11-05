@@ -30,7 +30,9 @@ import androidx.viewbinding.ViewBinding
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.UsbInfo
 import com.citrus.pottedplantskiosk.databinding.FragmentMenuBinding
+import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.ui.menu.adapter.*
+import com.citrus.pottedplantskiosk.ui.setting.adapter.UsbNameWithID
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.ACTION_USB_PERMISSION
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
@@ -97,7 +99,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
     private fun refreshUsbDevice() {
         usbInfo = UsbUtil.getDevice(requireContext())
-
         requestUsbPermission()
     }
 
@@ -113,15 +114,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 usbInfo.usbManager?.requestPermission(usbDevice, mPermissionIntent)
             } else usbInfo.noPermissionDevice.removeAt(i)
         }
-
-        Log.e("usbInfo", usbInfo.noPermissionDevice.toString())
-
-        usbInfo.deviceList.forEach { item ->
-            Log.e("usbInfo", item.value.deviceName + "'-'" + item.value.productName)
-        }
-
-        usbInfo.noPermissionDevice
-
     }
 
 
@@ -254,21 +246,34 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                menuViewModel.clearCartGoods.collect {
+                    binding.cartMotionLayout.clearCartGoods()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 menuViewModel.toPrint.collect { orderDeliveryData ->
 
-                    orderDeliveryData?.let {
-                        binding.cartMotionLayout.clearCartGoods()
-                        PrintOrderInfo(
-                            requireContext(),
-                            it,
-                            usbInfo.deviceList["/dev/bus/usb/002/003"]
-                        ) { isSuccess, err ->
+                    if (usbInfo.deviceList.isEmpty()) {
+                        return@collect
+                    }
 
-                        }.startPrint()
-
-                        findNavController().navigate(
-                            R.id.action_menuFragment_to_printFragment
+                    usbInfo.deviceList.map {
+                        UsbNameWithID(
+                            it.value.deviceName,
+                            it.value.productId
                         )
+                    }.find { it.id.toString() == prefs.printer } ?: return@collect
+
+
+                    orderDeliveryData?.let {
+                        findNavController().navigateSafely(
+                            R.id.action_menuFragment_to_printFragment,
+                            args = bundleOf("orders" to it , "usbInfo" to usbInfo)
+                        )
+
                     }
                 }
             }

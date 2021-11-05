@@ -45,7 +45,14 @@
         android:id="@+id/printFragment"
         android:name="com.citrus.pottedplantskiosk.ui.menu.PrintFragment"
         android:label="fragment_print"
-        tools:layout="@layout/fragment_print" />
+        tools:layout="@layout/fragment_print" >
+        <argument
+            android:name="orders"
+            app:argType="com.citrus.pottedplantskiosk.api.remote.dto.Orders$OrderDeliveryData" />
+        <argument
+            android:name="usbInfo"
+            app:argType="com.citrus.pottedplantskiosk.api.remote.dto.UsbInfo" />
+    </dialog>
 
     <dialog
         android:id="@+id/settingFragment"

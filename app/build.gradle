@@ -46,7 +46,7 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
@@ -65,7 +65,7 @@ dependencies {
     implementation "androidx.activity:activity-ktx:$activityVersion"
 
     /** Lifecycle + ViewModel & LiveData */
-    def lifecycle_version = "2.4.0-beta01"
+    def lifecycle_version = "2.4.0"
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
@@ -110,7 +110,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glide"
 
     /** Balloon */
-    def balloon = "1.3.9"
+    def balloon = "1.4.0"
     implementation "com.github.skydoves:balloon:$balloon"
 
     /** ElasticViews */

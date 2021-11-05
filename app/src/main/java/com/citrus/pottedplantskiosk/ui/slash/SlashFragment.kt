@@ -51,7 +51,6 @@ class SlashFragment : BindingFragment<FragmentSlashBinding>(){
                 }
             }
         }
-
     }
 
     override fun initAction() {

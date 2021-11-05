@@ -31,12 +31,9 @@ class PrintOrderInfo(
     private val onResult: (isSuccess: Boolean, err: String?) -> Unit
 ) {
 
-    //USB
     private var endpoint: UsbEndpoint? = null
     private var mDeviceConnection: UsbDeviceConnection? = null
 
-    private var mOutputStream: OutputStream? = null
-    private var socket: Socket? = null
 
     fun startPrint() {
         val is80mm = prefs.printerIs80mm
@@ -53,30 +50,17 @@ class PrintOrderInfo(
         )
 
         data = b(data, setLineSpace(55))
-        //if (prefs.storeName.isNotEmpty()) data = b(data, text(prefs.storeName))
+
         data = b(data, fontSizeCmd(FontSize.Big))
         data = b(data, alignCmd(0))
-        data = b(
-            data,
-            text("Take Away: " + "K01 - 2002")
-        )
+        if (prefs.header.isNotEmpty()) data = b(data, text(prefs.header))
+        if (prefs.kioskId.isNotEmpty()) data = b(data, text("Take Away: " + prefs.kioskId))
         data = b(data, fontSizeCmd(FontSize.Normal))
-        data = b(data, text("Soramen Store"))
-        data = b(
-            data,
-            text("330 Royal Gorge Blvd, Canon City, CO 81212")
-        )
+        if (prefs.storeName.isNotEmpty()) data = b(data, text(prefs.storeName))
+        if (prefs.storeAddress.isNotEmpty()) data = b(data, text(prefs.storeAddress))
         data = b(data, boldCmd(false))
         data = b(data, text("\n"))
 
-        data = b(
-            data,
-            text(context.resources.getString(R.string.orderTime) + Constants.getCurrentTime())
-        )
-//        data = b(
-//            data,
-//            text(context.resources.getString(R.string.orderNo) + deliveryInfo.ordersItemDelivery[0].orderNO)
-//        )
         data = b(
             data,
             text(context.resources.getString(R.string.printTime) + Constants.getCurrentTime())
@@ -107,13 +91,21 @@ class PrintOrderInfo(
 
                 //最多48個字 48-11=37
                 if (item.gname.toByteArray(charset("GBK")).size <= 37) {
-                    data = b(data, twoColumn( if (prefs.languagePos == 1) item.gName2 else item.gname, qtyStr + priceStr, is80mm))
+                    data = b(
+                        data,
+                        twoColumn(
+                            if (prefs.languagePos == 1) item.gName2 else item.gname,
+                            qtyStr + priceStr,
+                            is80mm
+                        )
+                    )
                 } else {
                     data = b(data, text(if (prefs.languagePos == 1) item.gName2 else item.gname))
                     data = b(data, twoColumn("", qtyStr + priceStr, is80mm))
                 }
             } else {
-                var itemTitle = item.qty.toString() + "x " + if (prefs.languagePos == 1) item.gName2 else item.gname
+                var itemTitle =
+                    item.qty.toString() + "x " + if (prefs.languagePos == 1) item.gName2 else item.gname
 
                 if (getStringPixLength(itemTitle + dfShow.format(item.gPrice), 12, 24) / 12 > 33) {
                     data = b(data, text(itemTitle))
@@ -133,10 +125,13 @@ class PrintOrderInfo(
         }
         data = b(data, dashLine(is80mm))
 
-        var orgAmtStr = String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.sPrice))
+        var orgAmtStr =
+            String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.sPrice))
         val qtyStr = String.format("%-3s", sum)
-        val gst = String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.totaltax))
-        val grandTotal = String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.gPrice))
+        val gst =
+            String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.totaltax))
+        val grandTotal =
+            String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.gPrice))
 
         data = if (is80mm) {
             b(data, twoColumn(context.getString(R.string.Total), qtyStr + orgAmtStr, is80mm))
@@ -173,14 +168,8 @@ class PrintOrderInfo(
         data = b(data, fontSizeCmd(FontSize.Normal))
         data = b(data, boldCmd(false))
         data = b(data, dashLine(is80mm))
-        data = b(
-            data,
-            text("Thank you for coming")
-        )
-        data = b(
-            data,
-            text("See you again")
-        )
+
+        if (prefs.footer.isNotEmpty()) data = b(data, text(prefs.footer))
 
         data = b(data, text("\n"))
 

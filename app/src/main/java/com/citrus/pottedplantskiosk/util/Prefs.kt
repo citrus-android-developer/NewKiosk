@@ -21,13 +21,34 @@ class Prefs(context: Context) {
         get() = prefs.getString("charSet", "UTF-8") ?: ""
         set(value) = prefs.edit().putString("charSet", value).apply()
 
+    var printer: String
+        get() = prefs.getString("printer", "None Selected") ?: "None Selected"
+        set(value) = prefs.edit().putString("printer", value).apply()
+
     var isLargeLineSpacing: Boolean
         get() = prefs.getBoolean("isLargeLineSpacing", false)
         set(value) = prefs.edit().putBoolean("isLargeLineSpacing", value).apply()
 
+
+    var header: String
+        get() = prefs.getString(Constants.KEY_HEADER, "")?: ""
+        set(value) = prefs.edit().putString(Constants.KEY_HEADER, value).apply()
+
+    var footer: String
+        get() = prefs.getString(Constants.KEY_FOOTER, "")?: ""
+        set(value) = prefs.edit().putString(Constants.KEY_FOOTER, value).apply()
+
+    var kioskId: String
+        get() = prefs.getString(Constants.KEY_KIOSK_ID, "")?: ""
+        set(value) = prefs.edit().putString(Constants.KEY_KIOSK_ID, value).apply()
+
     var storeName: String
         get() = prefs.getString(Constants.KEY_STORE_NAME, "")?: ""
         set(value) = prefs.edit().putString(Constants.KEY_STORE_NAME, value).apply()
+
+    var storeAddress: String
+        get() = prefs.getString(Constants.KEY_STORE_ADDRESS, "")?: ""
+        set(value) = prefs.edit().putString(Constants.KEY_STORE_ADDRESS, value).apply()
 
     var storeId: String
         get() = prefs.getString(Constants.KEY_STORE_ID, "")?: ""
@@ -60,6 +81,5 @@ class Prefs(context: Context) {
     var tax: Int
         get() = prefs.getInt(Constants.KEY_TAX, 0)
         set(value) = prefs.edit().putInt(Constants.KEY_TAX, value).apply()
-
 
 }

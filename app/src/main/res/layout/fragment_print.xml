@@ -8,8 +8,9 @@
     >
 
     <com.airbnb.lottie.LottieAnimationView
+        android:visibility="gone"
         android:layout_margin="@dimen/dp_30"
-        android:id="@+id/animation_view"
+        android:id="@+id/printing"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
@@ -22,6 +23,42 @@
         app:lottie_loop="true"
         android:tint="@color/lightGreen"
         />
+
+    <LinearLayout
+        android:id="@+id/success"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
+    >
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_margin="@dimen/dp_30"
+            android:id="@+id/animation_success"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="success.json"
+            app:lottie_loop="true"
+            android:tint="@color/lightGreen"
+            />
+
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sp_24"
+            android:text="Thank you for coming!"
+            android:textStyle="bold"
+            android:minLines="2"
+            android:maxLines="2"
+            />
+    </LinearLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

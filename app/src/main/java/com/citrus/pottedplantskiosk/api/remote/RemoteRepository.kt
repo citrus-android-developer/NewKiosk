@@ -1,14 +1,13 @@
 package com.citrus.pottedplantskiosk.api.remote
 
 
-import android.util.Log
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.api.remote.dto.UploadResponse
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
 import com.skydoves.sandwich.suspendOnSuccess
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,22 +20,19 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
             apiService.getMenu(url, rsNo)
                 .suspendOnSuccess {
                     data?.let {
-                        if (it.status == 1) {
-                            emit(Resource.Success(data.data))
-                        } else {
+                        if (it.status != 1) {
                             emit(Resource.Error("UnExpect Error", null))
+                            return@suspendOnSuccess
                         }
+                        emit(Resource.Success(data.data))
                     }
                 }.suspendOnError {
                     emit(Resource.Error(this.statusCode.name, null))
                 }.suspendOnException {
                     emit(Resource.Error(this.exception.message!!, null))
                 }
-        }.onStart {
-            Log.e("onStart","---")
-            Resource.Loading(true)
-        }.onCompletion { Resource.Loading(false) }
-            .flowOn(Dispatchers.IO)
+        }.onStart { Resource.Loading(true) }.onCompletion { Resource.Loading(false) }
+            .flowOn(IO)
 
 
     override fun getBanner(url: String, jsonData: String): Flow<Resource<BannerResponse>> =
@@ -44,11 +40,11 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
             apiService.getBanner(url, jsonData)
                 .suspendOnSuccess {
                     data?.let {
-                        if (it.status == 1) {
-                            emit(Resource.Success(data))
-                        } else {
+                        if (it.status != 1) {
                             emit(Resource.Error("UnExpect Error", null))
+                            return@suspendOnSuccess
                         }
+                        emit(Resource.Success(data))
                     }
                 }.suspendOnError {
                     emit(Resource.Error(this.statusCode.name, null))
@@ -56,7 +52,7 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
                     emit(Resource.Error(this.exception.message!!, null))
                 }
         }.onStart { Resource.Loading(true) }.onCompletion { Resource.Loading(false) }
-            .flowOn(Dispatchers.IO)
+            .flowOn(IO)
 
 
     override fun postOrders(url: String, jsonData: String): Flow<Resource<UploadResponse>> =
@@ -64,11 +60,11 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
             apiService.setOrders(url, jsonData)
                 .suspendOnSuccess {
                     data?.let {
-                        if (it.status == 1) {
-                            emit(Resource.Success(data))
-                        } else {
+                        if (it.status != 1) {
                             emit(Resource.Error("UnExpect Error", null))
+                            return@suspendOnSuccess
                         }
+                        emit(Resource.Success(data))
                     }
                 }.suspendOnError {
                     emit(Resource.Error(this.statusCode.name, null))
@@ -76,7 +72,8 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
                     emit(Resource.Error(this.exception.message!!, null))
                 }
         }.onStart { Resource.Loading(true) }.onCompletion { Resource.Loading(false) }
-            .flowOn(Dispatchers.IO)
+            .flowOn(IO)
+
 
 
 }

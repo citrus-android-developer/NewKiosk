@@ -45,7 +45,7 @@ import kotlinx.coroutines.flow.collect
 @AndroidEntryPoint
 class MainFragment : BindingFragment<FragmentMainBinding>() {
     private val menuViewModel: MenuViewModel by activityViewModels()
-    private var balloon: Balloon? = null
+    lateinit var balloon: Balloon
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMainBinding::inflate
@@ -67,7 +67,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
 
             touchStart.setOnClickListener {
                 it.clickAnimation {
-                    balloon?.showAlignTop(it)
+                    balloon.showAlignTop(it)
                 }
             }
 
@@ -78,12 +78,9 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
                 )
             }
         }
-
-        Log.e("initView", "notDefine")
     }
 
     override fun initObserve() {
-        Log.e("initObserve", "notDefine")
         lifecycleScope.launchWhenStarted {
             menuViewModel.showBannerData.collect { banners ->
                 showBanner(
@@ -110,7 +107,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
             setAlpha(0.9f)
             setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
             setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-            setLifecycleOwner(lifecycleOwner)
+            setLifecycleOwner(viewLifecycleOwner)
             setIsVisibleOverlay(true)
             setOverlayColorResource(R.color.overlay)
             setOverlayPadding(5f)
@@ -119,16 +116,16 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
             setDismissWhenOverlayClicked(false)
         }
 
-        val btnEN = balloon?.getContentView()?.findViewById<Button>(R.id.btnEN)
-        val btnTW = balloon?.getContentView()?.findViewById<Button>(R.id.btnTW)
+        val btnEN = balloon.getContentView().findViewById<Button>(R.id.btnEN)
+        val btnTW = balloon.getContentView().findViewById<Button>(R.id.btnTW)
         btnEN?.setOnClickListener {
             prefs.languagePos = 2
-            balloon?.dismiss()
+            balloon.dismiss()
             intentToMenu()
         }
         btnTW?.setOnClickListener {
             prefs.languagePos = 1
-            balloon?.dismiss()
+            balloon.dismiss()
             intentToMenu()
         }
 
@@ -161,7 +158,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
 
                 holder.imageView.setOnClickListener {
                     binding.touchStart.clickAnimation {
-                        balloon?.showAlignTop(binding.touchStart)
+                        balloon.showAlignTop(binding.touchStart)
                     }
                 }
             }
@@ -169,11 +166,4 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
             CircleIndicator(requireContext())
 
     }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        balloon = null
-    }
-
 }

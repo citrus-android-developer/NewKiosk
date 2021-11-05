@@ -44,13 +44,11 @@ class SlashActivity : AppCompatActivity() {
                 when (result) {
                     is Resource.Loading -> Unit
                     is Resource.Success -> {
-                        Log.e("getMenu","fetch success")
                         menuData = result.data
                         checkEachFun()
                     }
                     is Resource.Error -> {
                         viewModel.fetchError()
-                        Log.e("error",result.message!!)
                     }
                 }
             }

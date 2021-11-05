@@ -28,9 +28,7 @@ class SevenClickListener(
 
         lastTimeClicked = SystemClock.elapsedRealtime()
 
-        Log.e("count",count.toString())
-
-        if (count > 6) {
+        if (count > 3) {
             onSafeClick()
             count = 0
             lastTimeClicked = 0

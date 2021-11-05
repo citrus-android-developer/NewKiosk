@@ -36,31 +36,55 @@ class BasicSettingFragment : BindingFragment<FragmentBasicSettingBinding>() {
     }
 
     override fun initAction() {
+        binding.apply {
+            binding.etServerIp.doOnTextChanged { text, _, _, _ ->
+                prefs.serverIp = text.toString()
+            }
 
-        binding.etServerIp.doOnTextChanged { text, _, _, _ ->
-            prefs.serverIp = text.toString()
-        }
+            binding.etStoreId.doOnTextChanged { text, _, _, _ ->
+                prefs.storeId = text.toString()
+            }
 
-        binding.etStoreId.doOnTextChanged { text, _, _, _ ->
-            prefs.storeId = text.toString()
-        }
 
-        binding.idleSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
-            var idleTime = newItem
-            prefs.idleTime = idleTime.toInt()
-        }
-        binding.taxSpinner.setOnSpinnerItemSelectedListener<String> { _, _, newIndex, _ ->
-            prefs.taxFunction = newIndex
-        }
-        binding.decimalSpinner.setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
-            var decimalType = newItem
-            prefs.decimalPlace = decimalType.toInt()
-        }
-        binding.operationSpinner.setOnSpinnerItemSelectedListener<String> { _, _, newIndex, _ ->
-            prefs.methodOfOperation = newIndex
+            idleSpinner.apply {
+                lifecycleOwner = viewLifecycleOwner
+                setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
+                    prefs.idleTime = newItem.toInt()
+                }
+                setOnSpinnerOutsideTouchListener { _, _ ->
+                    idleSpinner.dismiss()
+                }
+            }
+
+            taxSpinner.apply {
+                lifecycleOwner = viewLifecycleOwner
+                setOnSpinnerItemSelectedListener<String> { _, _, newIndex, _ ->
+                    prefs.taxFunction = newIndex
+                }
+                setOnSpinnerOutsideTouchListener { _, _ ->
+                    taxSpinner.dismiss()
+                }
+            }
+
+            decimalSpinner.apply {
+                lifecycleOwner = viewLifecycleOwner
+                setOnSpinnerItemSelectedListener<String> { _, _, _, newItem ->
+                    prefs.decimalPlace = newItem.toInt()
+                }
+                setOnSpinnerOutsideTouchListener { _, _ ->
+                    decimalSpinner.dismiss()
+                }
+            }
+
+            operationSpinner.apply {
+                lifecycleOwner = viewLifecycleOwner
+                setOnSpinnerItemSelectedListener<String> { _, _, newIndex, _ ->
+                    prefs.methodOfOperation = newIndex
+                }
+                setOnSpinnerOutsideTouchListener { _, _ ->
+                    operationSpinner.dismiss()
+                }
+            }
         }
     }
-
-
-
 }

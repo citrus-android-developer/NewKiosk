@@ -46,6 +46,10 @@ object Constants {
     const val KEY_STORE_ID = "KEY_STORE_ID"
     const val KEY_PRINTER_IS80MM = "KEY_PRINTER_IS80MM"
     const val KEY_LANGUAGE_POS = "KEY_LANGUAGE_POS"
+    const val KEY_KIOSK_ID = "KEY_KIOSK_ID"
+    const val KEY_STORE_ADDRESS = "KEY_STORE_ADDRESS"
+    const val KEY_HEADER = "KEY_HEADER"
+    const val KEY_FOOTER = "KEY_FOOTER"
     sealed class LanguageType {
         object SimpleChinese: LanguageType()
         object English: LanguageType()

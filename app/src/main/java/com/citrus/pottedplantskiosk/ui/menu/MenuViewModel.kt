@@ -19,15 +19,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-
-
-
 @HiltViewModel
 class MenuViewModel @Inject constructor(
     private val repository: RemoteRepository,
     application: Application
 ) : AndroidViewModel(application) {
-
 
     private var timerJob: Job? = null
     var timeCount = 0
@@ -37,7 +33,11 @@ class MenuViewModel @Inject constructor(
     private val _zoomPageSlidePos = MutableSharedFlow<Int>()
     val zoomPageSlidePos: SharedFlow<Int> = _zoomPageSlidePos
 
+    private val _printStatus = MutableSharedFlow<Int>()
+    val printStatus: SharedFlow<Int> = _printStatus
 
+    private val _clearCartGoods = MutableSharedFlow<Boolean>()
+    val clearCartGoods: SharedFlow<Boolean> = _clearCartGoods
 
     private val _menuData = MutableStateFlow<List<MainGroup>>(listOf())
     val menuData: StateFlow<List<MainGroup>> = _menuData
@@ -71,8 +71,6 @@ class MenuViewModel @Inject constructor(
     val toPrint: SharedFlow<Orders.OrderDeliveryData?> = _toPrint
 
 
-
-
     private fun tickerFlow() = flow {
         while (true) {
             emit(timeCount++)
@@ -94,7 +92,7 @@ class MenuViewModel @Inject constructor(
         resetMenu()
     }
 
-    private fun resetMenu()= viewModelScope.launch {
+    private fun resetMenu() = viewModelScope.launch {
         var groupList = _menuData.value.map { it.groupName }
         onGroupChange(groupList[0])
         currentGroup = _menuData.value.first()
@@ -104,10 +102,10 @@ class MenuViewModel @Inject constructor(
         _menuData.emit(data.mainGroup)
         var groupList = data.mainGroup.map { it.groupName }
 
-        if(groupList.isNotEmpty() && groupList[0] != ""){
+        if (groupList.isNotEmpty() && groupList[0] != "") {
             _menuGroupName.emit(groupList)
             onGroupChange(groupList[0])
-        }else {
+        } else {
             onGroupChange("")
         }
 
@@ -116,9 +114,9 @@ class MenuViewModel @Inject constructor(
 
     fun onGroupChange(groupName: String) = viewModelScope.launch {
 
-        currentGroup = if(groupName != ""){
+        currentGroup = if (groupName != "") {
             _menuData.value.find { it.groupName == groupName }
-        }else{
+        } else {
             _menuData.value[0]
         }
 
@@ -145,7 +143,7 @@ class MenuViewModel @Inject constructor(
         startTimer()
     }
 
-    fun setZoomPagePos(pos:Int) = viewModelScope.launch {
+    fun setZoomPagePos(pos: Int) = viewModelScope.launch {
         _zoomPageSlidePos.emit(pos)
     }
 
@@ -220,11 +218,18 @@ class MenuViewModel @Inject constructor(
                     }
                     is Resource.Error -> {
                         _toPrint.emit(null)
-                        Log.e("Error", it.message!!)
                     }
                     is Resource.Loading -> Unit
                 }
             }
         }
+    }
+
+    fun setPrintStatus(status: Int) = viewModelScope.launch {
+        if (status == 1) {
+            _clearCartGoods.emit(true)
+        }
+        _printStatus.emit(status)
+
     }
 }

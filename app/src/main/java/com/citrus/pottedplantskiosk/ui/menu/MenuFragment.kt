@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.citrus.pottedplantskiosk.R
+import com.citrus.pottedplantskiosk.api.remote.dto.TransactionState
 import com.citrus.pottedplantskiosk.api.remote.dto.UsbInfo
 import com.citrus.pottedplantskiosk.databinding.FragmentMenuBinding
 import com.citrus.pottedplantskiosk.di.prefs
@@ -189,7 +190,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                                 addGoodToCarAnimation(it)
                             }
                         }
-
                         binding.cartMotionLayout.addCartGoods(cartGoods)
                     }
                 }
@@ -199,7 +199,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                menuViewModel.menuGroupName.collectLatest { groupList ->
+                menuViewModel.menuGroupName.collect { groupList ->
                     updateMainGroupItemJob?.cancel()
                     updateMainGroupItemJob = lifecycleScope.launch {
                         mainGroupItemAdapter.updateDataset(groupList)
@@ -254,27 +254,31 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                menuViewModel.toPrint.collect { orderDeliveryData ->
+                menuViewModel.toPrint.collect { transactionData ->
 
                     if (usbInfo.deviceList.isEmpty()) {
-                        return@collect
+                        transactionData.state = TransactionState.PrinterNotFoundIssue
                     }
 
-                    usbInfo.deviceList.map {
+                    var item = usbInfo.deviceList.map {
                         UsbNameWithID(
                             it.value.deviceName,
                             it.value.productId
                         )
-                    }.find { it.id.toString() == prefs.printer } ?: return@collect
+                    }.find { it.id.toString() == prefs.printer }
 
 
-                    orderDeliveryData?.let {
-                        findNavController().navigateSafely(
-                            R.id.action_menuFragment_to_printFragment,
-                            args = bundleOf("orders" to it , "usbInfo" to usbInfo)
-                        )
-
+                    item?.let {
+                        transactionData.printer = usbInfo.deviceList[item.name]
+                    } ?: run {
+                        transactionData.state = TransactionState.PrinterNotFoundIssue
                     }
+
+
+                    findNavController().navigateSafely(
+                        R.id.action_menuFragment_to_printFragment,
+                        args = bundleOf("transaction" to transactionData)
+                    )
                 }
             }
         }

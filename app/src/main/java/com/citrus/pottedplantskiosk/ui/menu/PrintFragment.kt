@@ -1,7 +1,6 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -9,21 +8,20 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.citrus.pottedplantskiosk.R
+import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
+import com.citrus.pottedplantskiosk.api.remote.dto.TransactionState
 import com.citrus.pottedplantskiosk.databinding.FragmentPrintBinding
-import com.citrus.pottedplantskiosk.databinding.FragmentZoomPageBinding
-import com.citrus.pottedplantskiosk.di.prefs
-import com.citrus.pottedplantskiosk.ui.setting.adapter.UsbNameWithID
 import com.citrus.pottedplantskiosk.util.print.PrintOrderInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -33,6 +31,8 @@ class PrintFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentPrintBinding? = null
     private val binding get() = _binding!!
     private val args: PrintFragmentArgs by navArgs()
+    var job: Job? = null
+    var data:TransactionData? = null
 
     override fun onStart() {
         super.onStart()
@@ -42,7 +42,6 @@ class PrintFragment : BottomSheetDialogFragment() {
         val behavior = BottomSheetBehavior.from(view)
         behavior.peekHeight = resources.getDimension(R.dimen.dp_400).toInt()
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
-
 
     }
 
@@ -72,52 +71,84 @@ class PrintFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setFullScreen()
-        initObserve()
-        binding.printing.isVisible = true
+       binding.printing.isVisible = true
 
-        var item: UsbNameWithID? = args.usbInfo.deviceList.map {
-            UsbNameWithID(
-                it.value.deviceName,
-                it.value.productId
-            )
-        }.find { it.id.toString() == prefs.printer }
+        data = args.transaction
 
+        when(data!!.state){
+            is TransactionState.NetworkIssue -> {
+                showError()
+            }
+
+            is TransactionState.PrinterNotFoundIssue -> {
+                showError()
+            }
+
+            is TransactionState.WorkFine -> {
+                printStart(data!!)
+            }
+        }
+    }
+
+
+    private fun showError() {
+        binding.apply {
+            menuViewModel.setPrintStatus(0)
+            lottieHint.setAnimation("error.json")
+            printing.isVisible = false
+            hintArea.isVisible = true
+
+            if(data!!.state == TransactionState.NetworkIssue){
+                tvHint.text = "The transaction has failed, please contact the service staff"
+            }else{
+                tvHint.text = "Please contact the service staff to confirm the problem"
+            }
+
+        }
+    }
+
+    private fun showSuccess() {
+        binding.apply {
+            menuViewModel.setPrintStatus(1)
+            lottieHint.setAnimation("success.json")
+            printing.isVisible = false
+            hintArea.isVisible = true
+            tvHint.text = "Thank you for coming!"
+        }
+
+    }
+
+
+    private fun printStart(data: TransactionData) {
         PrintOrderInfo(
             requireContext(),
-            args.orders,
-            args.usbInfo.deviceList[item!!.name]
+            data.orders!!,
+            data.printer
         ) { isSuccess, err ->
             if (!isSuccess) {
-                menuViewModel.setPrintStatus(0)
+                showError()
                 return@PrintOrderInfo
             }
-            menuViewModel.setPrintStatus(1)
+            showSuccess()
+            job = MainScope().launch {
+                delay(8000)
+                findNavController().popBackStack(R.id.mainFragment, false)
+            }
+            job?.start()
         }.startPrint()
     }
 
-    private fun initObserve() {
-       viewLifecycleOwner.lifecycleScope.launch {
-           viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
-               menuViewModel.printStatus.collect { status ->
-                   when(status) {
-                       1 -> {
-                           binding.printing.isVisible = false
-                           binding.success.isVisible = true
-                       }
-                       0 -> {
-
-                       }
-                   }
-               }
-           }
-       }
-    }
 
     private fun setFullScreen() {
         val decorView = setSystemUiVisibilityMode()
         decorView?.setOnSystemUiVisibilityChangeListener {
             setSystemUiVisibilityMode() // Needed to avoid exiting immersive_sticky when keyboard is displayed
         }
+    }
+
+    override fun onDestroyView() {
+        job?.cancel()
+        super.onDestroyView()
     }
 
     private fun setSystemUiVisibilityMode(): View? {

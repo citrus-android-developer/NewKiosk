@@ -50,6 +50,7 @@ class SlashViewModel @Inject constructor(
 
     private fun getMenu() =
         viewModelScope.launch {
+            Log.e("url",prefs.serverIp + Constants.GET_MENU)
             repository.getMenu(prefs.serverIp + Constants.GET_MENU, "").collect { result ->
                 _allMenuData.emit(result)
             }

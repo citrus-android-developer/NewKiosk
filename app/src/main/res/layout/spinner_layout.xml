@@ -9,7 +9,7 @@
         android:textColor="@color/white"
         android:gravity="center"
         android:textStyle="bold"
-        android:textSize="@dimen/sp_20"
+        android:textSize="@dimen/sp_15"
         tools:text="TEST"
         android:id="@+id/title"
         android:layout_width="0dp"

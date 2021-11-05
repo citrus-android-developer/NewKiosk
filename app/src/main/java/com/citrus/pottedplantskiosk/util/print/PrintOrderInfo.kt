@@ -177,7 +177,8 @@ class PrintOrderInfo(
             onResult(true, null)
         } else {
             data = b(data, cutPaperCmd())
-            send(data)
+            //send(data)
+            onResult(true, null)
         }
     }
 

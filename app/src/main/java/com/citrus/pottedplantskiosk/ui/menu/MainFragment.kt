@@ -38,6 +38,7 @@ import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.base.onSevenClick
+import com.citrus.pottedplantskiosk.util.navigateSafely
 import com.skydoves.balloon.*
 import kotlinx.coroutines.flow.collect
 
@@ -65,6 +66,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
             anim.repeatCount = Animation.INFINITE
             tvStart.startAnimation(anim)
 
+
             touchStart.setOnClickListener {
                 it.clickAnimation {
                     balloon.showAlignTop(it)
@@ -72,7 +74,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
             }
 
             logo.onSevenClick {
-                findNavController().navigate(
+                findNavController().navigateSafely(
                     R.id.action_mainFragment_to_settingFragment,
                     bundleOf("isFromSlash" to false)
                 )
@@ -91,9 +93,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
         }
     }
 
-    override fun initAction() {
-        Log.e("initAction", "notDefine")
-    }
+    override fun initAction() = Unit
 
     private fun initBalloon() {
         balloon = createBalloon(requireContext()) {
@@ -133,7 +133,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
 
     private fun intentToMenu() {
         menuViewModel.intentNavigateToMenu()
-        findNavController().navigate(R.id.action_mainFragment_to_menuFragment)
+        findNavController().navigateSafely(R.id.action_mainFragment_to_menuFragment)
     }
 
     private fun showBanner(

@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
+
 @HiltViewModel
 class MenuViewModel @Inject constructor(
     private val repository: RemoteRepository,
@@ -67,8 +68,8 @@ class MenuViewModel @Inject constructor(
     private var _currentCartGoods = MutableSharedFlow<Good?>()
     val currentCartGoods: SharedFlow<Good?> = _currentCartGoods
 
-    private val _toPrint = MutableSharedFlow<Orders.OrderDeliveryData?>()
-    val toPrint: SharedFlow<Orders.OrderDeliveryData?> = _toPrint
+    private val _toPrint = MutableSharedFlow<TransactionData>()
+    val toPrint: SharedFlow<TransactionData> = _toPrint
 
 
     private fun tickerFlow() = flow {
@@ -208,19 +209,20 @@ class MenuViewModel @Inject constructor(
                 prefs.serverIp + Constants.SET_ORDERS,
                 Gson().toJson(orderDeliveryData)
             ).collect {
+                var printerData : TransactionData? = null
                 when (it) {
                     is Resource.Success -> {
                         orderDeliveryData.ordersItemDelivery.forEach { item ->
                             item.orderNO = it.data?.data!!
                         }
-                        _toPrint.emit(orderDeliveryData)
-
+                       printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null)
                     }
                     is Resource.Error -> {
-                        _toPrint.emit(null)
+                         printerData =   TransactionData(orders = null,state = TransactionState.NetworkIssue, null)
                     }
                     is Resource.Loading -> Unit
                 }
+                _toPrint.emit(printerData!!)
             }
         }
     }
@@ -229,7 +231,5 @@ class MenuViewModel @Inject constructor(
         if (status == 1) {
             _clearCartGoods.emit(true)
         }
-        _printStatus.emit(status)
-
     }
 }

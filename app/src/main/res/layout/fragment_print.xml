@@ -4,61 +4,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/shape_sheet_dialog_bg_print"
-    >
+    android:background="@drawable/shape_sheet_dialog_bg_print">
 
     <com.airbnb.lottie.LottieAnimationView
-        android:visibility="gone"
-        android:layout_margin="@dimen/dp_30"
         android:id="@+id/printing"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="@dimen/dp_30"
         android:scaleType="centerCrop"
+        android:tint="@color/lightGreen"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_fileName="invoice_printing.json"
-        app:lottie_loop="true"
-        android:tint="@color/lightGreen"
-        />
+        app:lottie_loop="true" />
 
     <LinearLayout
-        android:id="@+id/success"
-        android:visibility="gone"
+        android:id="@+id/hintArea"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical"
-    >
+        tools:visibility="visible"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
         <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieHint"
+            android:layout_width="@dimen/dp_200"
+            android:layout_height="@dimen/dp_200"
             android:layout_margin="@dimen/dp_30"
-            android:id="@+id/animation_success"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:scaleType="centerCrop"
+            android:tint="@color/lightGreen"
             app:lottie_autoPlay="true"
             app:lottie_fileName="success.json"
-            app:lottie_loop="true"
-            android:tint="@color/lightGreen"
-            />
+            app:lottie_loop="true" />
 
         <TextView
-            android:gravity="center"
+            android:id="@+id/tvHint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/sp_24"
-            android:text="Thank you for coming!"
-            android:textStyle="bold"
+            android:gravity="center"
+            android:maxLines="3"
             android:minLines="2"
-            android:maxLines="2"
-            />
-    </LinearLayout>
+            android:text="Thank you for coming!"
+            android:textSize="@dimen/sp_16"
+            android:textStyle="bold" />
 
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

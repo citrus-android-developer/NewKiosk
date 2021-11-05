@@ -8,9 +8,11 @@ import androidx.viewbinding.ViewBinding
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.FragmentBasicSettingBinding
 import com.citrus.pottedplantskiosk.di.prefs
+import com.citrus.pottedplantskiosk.util.Constants.trimSpace
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
 
 class BasicSettingFragment : BindingFragment<FragmentBasicSettingBinding>() {
+
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentBasicSettingBinding::inflate
@@ -31,18 +33,16 @@ class BasicSettingFragment : BindingFragment<FragmentBasicSettingBinding>() {
         }
     }
 
-    override fun initObserve() {
-       Log.e("--","--")
-    }
+    override fun initObserve() = Unit
 
     override fun initAction() {
         binding.apply {
             binding.etServerIp.doOnTextChanged { text, _, _, _ ->
-                prefs.serverIp = text.toString()
+                prefs.serverIp = text.toString().trimSpace()
             }
 
             binding.etStoreId.doOnTextChanged { text, _, _, _ ->
-                prefs.storeId = text.toString()
+                prefs.storeId = text.toString().trimSpace()
             }
 
 

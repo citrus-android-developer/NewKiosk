@@ -316,10 +316,6 @@
                 motion:layout_constraintStart_toStartOf="@id/guideline2"
                 motion:layout_constraintTop_toTopOf="@id/bottom_bar_card_view" />
 
-
-            <CustomAttribute
-                motion:attributeName="colorFilter"
-                motion:customColorValue="#FFFFFF" />
         </Constraint>
 
 

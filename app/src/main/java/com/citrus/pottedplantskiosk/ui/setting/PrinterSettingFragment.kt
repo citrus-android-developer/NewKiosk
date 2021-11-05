@@ -22,10 +22,12 @@ import com.skydoves.powerspinner.IconSpinnerItem
 
 class PrinterSettingFragment : BindingFragment<FragmentPrinterSettingBinding>() {
 
+
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentPrinterSettingBinding::inflate
 
     private var usbInfo = UsbInfo()
+    private var adapter:MySpinnerAdapter? = null
 
     override fun initView() {
         binding.apply {
@@ -40,9 +42,7 @@ class PrinterSettingFragment : BindingFragment<FragmentPrinterSettingBinding>() 
         }
     }
 
-    override fun initObserve() {
-        Log.e("--","--")
-    }
+    override fun initObserve() = Unit
 
     override fun initAction() {
         refreshUsbDevice()
@@ -105,27 +105,31 @@ class PrinterSettingFragment : BindingFragment<FragmentPrinterSettingBinding>() 
         setupPrinterSpinner()
     }
 
-    fun setupPrinterSpinner(){
+    private fun setupPrinterSpinner(){
         val collectList =   usbInfo.deviceList.map { UsbNameWithID(name = it.value.productName!!, id = it.value.productId) }
-        val adapter = MySpinnerAdapter(binding.printerSpinner)
-
-        binding.printerSpinner.setSpinnerAdapter(adapter)
-        binding.printerSpinner.getSpinnerRecyclerView().layoutManager = GridLayoutManager(context, 2)
+        adapter = MySpinnerAdapter(binding.printerSpinner)
 
         binding.printerSpinner.apply {
+            lifecycleOwner = viewLifecycleOwner
+            adapter?.let {
+                this.setSpinnerAdapter(it)
+            }
             setOnSpinnerOutsideTouchListener { _, _ ->
                 binding.printerSpinner.dismiss()
             }
-            setSpinnerAdapter(MySpinnerAdapter(this))
             setItems(collectList)
             getSpinnerRecyclerView().layoutManager = GridLayoutManager(context, 1)
-            lifecycleOwner = viewLifecycleOwner
             var item = collectList.find { it.id.toString() == prefs.printer }
             hint = item?.name ?: "None Selected"
             setOnSpinnerItemSelectedListener<UsbNameWithID> { _, _, _, newItem ->
                 prefs.printer = newItem.id.toString()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        adapter = null
+        super.onDestroyView()
     }
 
 }

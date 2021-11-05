@@ -116,7 +116,7 @@ class SettingFragment : BottomSheetDialogFragment() {
             TabLayoutMediator(
                 binding.tabLayout, binding.viewPager2
             ) { tab: TabLayout.Tab, position: Int ->
-                titles = arrayOf("Basic", "Printer")
+                titles = arrayOf("Basic", "Printer","Payment")
                 tab.text = titles[position]
             }.attach()
 
@@ -171,7 +171,6 @@ class SettingFragment : BottomSheetDialogFragment() {
     }
 
     private fun setSystemUiVisibilityMode(): View? {
-
         val decorView = dialog?.window?.decorView
         val options = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -186,12 +185,13 @@ class SettingFragment : BottomSheetDialogFragment() {
 
 
     inner class CollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
-        override fun getItemCount(): Int = 2
+        override fun getItemCount(): Int = 3
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> BasicSettingFragment()
                 1 -> PrinterSettingFragment()
+                2 -> PaymentSettingFragment()
                 else -> BasicSettingFragment()
             }
         }

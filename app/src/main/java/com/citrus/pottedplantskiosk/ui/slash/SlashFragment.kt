@@ -13,6 +13,7 @@ import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.FragmentSlashBinding
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
 import com.citrus.pottedplantskiosk.util.base.onSevenClick
+import com.citrus.pottedplantskiosk.util.navigateSafely
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +45,7 @@ class SlashFragment : BindingFragment<FragmentSlashBinding>(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.errorNotify.collect {
-                    findNavController().navigate(
+                    findNavController().navigateSafely(
                         R.id.action_slashFragment_to_settingFragment2,
                         bundleOf("isFromSlash" to true)
                     )
@@ -55,7 +56,7 @@ class SlashFragment : BindingFragment<FragmentSlashBinding>(){
 
     override fun initAction() {
         binding.ivLogo.onSevenClick {
-            findNavController().navigate(
+            findNavController().navigateSafely(
                 R.id.action_slashFragment_to_settingFragment2,
                 bundleOf("isFromSlash" to true)
             )

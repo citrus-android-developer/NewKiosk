@@ -39,7 +39,7 @@ interface AppModule {
         @Singleton
         fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
             Retrofit.Builder()
-                .baseUrl("http://cms.citrus.tw/soramenLAB/")
+                .baseUrl("http://cms.citrus.tw/")
                 .client(okHttpClient)
                 .addCallAdapterFactory(CoroutinesResponseCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())

@@ -62,9 +62,7 @@ class SlashActivity : AppCompatActivity() {
                         bannerData = result.data
                         checkEachFun()
                     }
-                    is Resource.Error -> {
-                        Log.e("banner",result.message.toString())
-                    }
+                    is Resource.Error -> Unit
                 }
             }
         }

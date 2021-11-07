@@ -1,8 +1,6 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
 import android.os.Bundle
-import android.os.SystemClock
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -10,10 +8,8 @@ import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.citrus.pottedplantskiosk.R
-import com.citrus.pottedplantskiosk.api.remote.dto.DataBean
 import com.citrus.pottedplantskiosk.databinding.FragmentMainBinding
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
-import com.skydoves.elasticviews.ElasticAnimation
 import com.youth.banner.Banner
 import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
@@ -27,12 +23,10 @@ import com.skydoves.balloon.overlay.BalloonOverlayRect
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.Button
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.widget.ViewPager2
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants

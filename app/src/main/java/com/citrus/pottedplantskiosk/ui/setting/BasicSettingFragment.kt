@@ -1,8 +1,6 @@
 package com.citrus.pottedplantskiosk.ui.setting
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import androidx.core.widget.doOnTextChanged
 import androidx.viewbinding.ViewBinding
 import com.citrus.pottedplantskiosk.R
@@ -37,11 +35,11 @@ class BasicSettingFragment : BindingFragment<FragmentBasicSettingBinding>() {
 
     override fun initAction() {
         binding.apply {
-            binding.etServerIp.doOnTextChanged { text, _, _, _ ->
+            etServerIp.doOnTextChanged { text, _, _, _ ->
                 prefs.serverIp = text.toString().trimSpace()
             }
 
-            binding.etStoreId.doOnTextChanged { text, _, _, _ ->
+            etStoreId.doOnTextChanged { text, _, _, _ ->
                 prefs.storeId = text.toString().trimSpace()
             }
 

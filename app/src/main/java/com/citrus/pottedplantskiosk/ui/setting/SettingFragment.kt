@@ -40,9 +40,8 @@ class SettingFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentSettingBinding? = null
     private val binding get() = _binding!!
-    private val args: SettingFragmentArgs by navArgs()
     private lateinit var titles: Array<String>
-    private  var collectionAdapter:CollectionAdapter? = null
+    private var collectionAdapter: CollectionAdapter? = null
 
     override fun onStart() {
         super.onStart()
@@ -116,43 +115,28 @@ class SettingFragment : BottomSheetDialogFragment() {
             TabLayoutMediator(
                 binding.tabLayout, binding.viewPager2
             ) { tab: TabLayout.Tab, position: Int ->
-                titles = arrayOf("Basic", "Printer","Payment")
+                titles = arrayOf("Basic", "Printer", "Payment")
                 tab.text = titles[position]
             }.attach()
 
 
 
             closeBtn.setOnClickListener { v ->
-                v.clickAnimation {
-                    findNavController().popBackStack()
-                }
+                dismiss()
             }
-
-
 
 
             applyBtn.setOnClickListener { v ->
                 v.clickAnimation {
-                    if(args.isFromSlash){
-                        viewModel.reFetch()
-                    }
-
-                    findNavController().popBackStack()
+                    dismiss()
                 }
             }
-
-
-
-
         }
-
     }
 
     private fun initAction() {
 
     }
-
-
 
 
     override fun onDestroyView() {
@@ -196,10 +180,6 @@ class SettingFragment : BottomSheetDialogFragment() {
             }
         }
     }
-
-
-
-
 
 
 }

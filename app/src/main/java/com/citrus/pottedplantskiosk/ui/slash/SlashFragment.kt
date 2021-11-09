@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.FragmentSlashBinding
+import com.citrus.pottedplantskiosk.ui.setting.SettingFragment
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
 import com.citrus.pottedplantskiosk.util.base.onSevenClick
 import com.citrus.pottedplantskiosk.util.navigateSafely
@@ -56,10 +57,8 @@ class SlashFragment : BindingFragment<FragmentSlashBinding>(){
 
     override fun initAction() {
         binding.ivLogo.onSevenClick {
-            findNavController().navigateSafely(
-                R.id.action_slashFragment_to_settingFragment2,
-                bundleOf("isFromSlash" to true)
-            )
+            val dialog = SettingFragment()
+            dialog.show(childFragmentManager, "SettingFragment")
         }
     }
 

@@ -14,17 +14,6 @@ import com.citrus.pottedplantskiosk.util.base.BindingFragment
 
 class BasicSettingFragment : BindingFragment<FragmentBasicSettingBinding>() {
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.e("BasicSetting","view created")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.e("BasicSetting","view destroy")
-    }
-
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentBasicSettingBinding::inflate
 

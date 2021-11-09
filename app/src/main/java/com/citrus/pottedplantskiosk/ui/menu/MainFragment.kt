@@ -29,6 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.di.prefs
+import com.citrus.pottedplantskiosk.ui.setting.SettingFragment
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.base.onSevenClick
@@ -72,10 +73,8 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
             }
 
             logo.onSevenClick {
-                findNavController().navigateSafely(
-                    R.id.action_mainFragment_to_settingFragment,
-                    bundleOf("isFromSlash" to false)
-                )
+                val dialog = SettingFragment()
+                dialog.show(childFragmentManager, "SettingFragment")
             }
         }
     }

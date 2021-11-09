@@ -96,7 +96,6 @@ data class Good(
 
         setsPriceChangedListener { sPrice ->
             _sPrice = sPrice
-            Log.e("_sPrice",_sPrice.toString())
             val itemTaxPct = tax
             if (itemTaxPct != 0.0) {
                 var taxBase = 0.0

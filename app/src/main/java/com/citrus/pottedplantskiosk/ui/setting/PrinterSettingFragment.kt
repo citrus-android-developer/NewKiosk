@@ -31,11 +31,6 @@ class PrinterSettingFragment : BindingFragment<FragmentPrinterSettingBinding>() 
     private var usbInfo = UsbInfo()
     private var adapter:MySpinnerAdapter? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.e("PrinterSetting","view created")
-    }
-
 
     override fun initView() {
         binding.apply {
@@ -137,7 +132,6 @@ class PrinterSettingFragment : BindingFragment<FragmentPrinterSettingBinding>() 
 
     override fun onDestroyView() {
         adapter = null
-        Log.e("PrinterSetting","view destroy")
         super.onDestroyView()
     }
 

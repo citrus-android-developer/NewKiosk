@@ -8,6 +8,9 @@ import android.content.SharedPreferences
 
 class Prefs(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+    var isNavigate: Boolean
+        get() = prefs.getBoolean("isNavigate", false)
+        set(value) = prefs.edit().putBoolean("isNavigate", value).apply()
 
     var punchId: String
         get() = prefs.getString("Test", "init")?: ""

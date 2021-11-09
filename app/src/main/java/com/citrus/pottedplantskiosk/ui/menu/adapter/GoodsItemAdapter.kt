@@ -2,7 +2,6 @@ package com.citrus.pottedplantskiosk.ui.menu.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.base.onSafeClick
-import com.skydoves.elasticviews.ElasticAnimation
 import javax.inject.Inject
 
 class GoodsItemAdapter @Inject constructor(val context: Context) :
@@ -53,7 +51,7 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
             }
 
 
-            tvPrice.text = "$" + item.price.toString()
+            tvPrice.text = "$" + Constants.getValByMathWay(item.price)
 
             root.onSafeClick {
                 it.clickAnimation {

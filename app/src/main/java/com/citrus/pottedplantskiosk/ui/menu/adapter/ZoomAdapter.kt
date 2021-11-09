@@ -2,9 +2,9 @@ package com.citrus.pottedplantskiosk.ui.menu.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.TransitionAdapter
 import androidx.core.view.isVisible
@@ -17,16 +17,13 @@ import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.ZoomItemViewBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
-import com.citrus.pottedplantskiosk.util.Constants.df
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-import com.bumptech.glide.request.RequestOptions
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 
 
@@ -78,13 +75,17 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
         val item = cartGoods[position]
         holder.binding.apply {
 
-            if(item.isEdit){
-                numberPicker.setValue(item.qty)
-                sumPriceCount(tvPrice, item.qty, item.price)
+
+//            val rnds = (1..100).random()
+//            item.tax = (100 / rnds).toDouble()
+
+            if (item.isEdit) {
+                item.qty = item._qty
+                numberPicker.setValue(item._qty)
+                tvPrice.text = "$ " + Constants.getValByMathWay(item._sPrice)
                 addCart.text = "DONE"
-            }else{
+            } else {
                 item.qty = 1
-                item.sPrice = item.price
             }
 
             rvSize.isVisible = false
@@ -95,7 +96,11 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
                 tvName.text = item.gName
             }
 
-            tvPrice.text = "$" + item.price
+            tvPrice.text = "$" + Constants.getValByMathWay(item._sPrice)
+
+            tvPrice.setOnClickListener {
+                item.price = 100.0
+            }
 
             Glide.with(root)
                 .load(Constants.IMG_URL + item.picName)
@@ -130,7 +135,7 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
                             sizeAdapter.setOnSizeClickListener { choseSize ->
                                 item.gID = choseSize.gID
                                 item.price = choseSize.price
-                                sumPriceCount(tvPrice, item.qty, item.price)
+                                tvPrice.text = "$ " + Constants.getValByMathWay(item.sPrice)
                                 item.size?.forEach { size ->
                                     size.isCheck = size.desc == choseSize.desc
                                 }
@@ -144,27 +149,17 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
                 }
             })
 
-            numberPicker.setOnButtonClickListener{ _ , currentNum ->
-                if(currentNum == 0){
+            numberPicker.setOnButtonClickListener { _, currentNum ->
+                if (currentNum == 0) {
                     numberPicker.setValue(1)
-                   return@setOnButtonClickListener
+                    return@setOnButtonClickListener
                 }
                 item.qty = currentNum
-                item.sPrice = item.price * item.qty
-                sumPriceCount(tvPrice, item.qty, item.price)
+                tvPrice.text = "$ " + Constants.getValByMathWay(item.sPrice)
             }
         }
     }
 
-    fun sumPriceCount(tvPrice: TextView, qty: Int, price: Double): Double {
-        val sumPrice = price * qty
-        setPriceText(sumPrice, tvPrice)
-        return sumPrice
-    }
-
-    private fun setPriceText(sumPrice: Double, tvPrice: TextView) {
-        tvPrice.text = "$ " + df.format(sumPrice)
-    }
 
     override fun getItemCount(): Int {
         return cartGoods.size

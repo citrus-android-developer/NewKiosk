@@ -2,10 +2,12 @@ package com.citrus.pottedplantskiosk.util
 
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.di.prefs
 import com.skydoves.balloon.Balloon
 import com.skydoves.elasticviews.ElasticAnimation
@@ -50,33 +52,33 @@ object Constants {
     const val KEY_STORE_ADDRESS = "KEY_STORE_ADDRESS"
     const val KEY_HEADER = "KEY_HEADER"
     const val KEY_FOOTER = "KEY_FOOTER"
+
     sealed class LanguageType {
-        object SimpleChinese: LanguageType()
-        object English: LanguageType()
+        object SimpleChinese : LanguageType()
+        object English : LanguageType()
     }
 
 
-
-    fun String.trimSpace():String {
+    fun String.trimSpace(): String {
         return this.replace("\\s".toRegex(), "")
     }
 
-     fun Balloon.setDuration(sec: Long) {
-         MainScope().launch {
-             val duration = TimeUnit.SECONDS.toMillis(sec)
-             delay(duration)
-         }
-         this.dismiss()
+    fun Balloon.setDuration(sec: Long) {
+        MainScope().launch {
+            val duration = TimeUnit.SECONDS.toMillis(sec)
+            delay(duration)
+        }
+        this.dismiss()
     }
 
 
-    fun MotionLayout.setTransitionExecute(transitionId:Int,milliseconds:Int) {
+    fun MotionLayout.setTransitionExecute(transitionId: Int, milliseconds: Int) {
         setTransition(transitionId)
         setTransitionDuration(milliseconds)
         transitionToEnd()
     }
 
-    fun MotionLayout.setTransitionReverse(transitionId:Int,milliseconds:Int) {
+    fun MotionLayout.setTransitionReverse(transitionId: Int, milliseconds: Int) {
         setTransition(transitionId)
         setTransitionDuration(milliseconds)
         transitionToStart()
@@ -129,13 +131,49 @@ object Constants {
             }.doAction()
     }
 
-    fun getValByMathWay(orgValue: Double): Double {
+
+    private fun getDecimalFormat(): DecimalFormat {
+        return when (prefs.decimalPlace) {
+            0 -> DecimalFormat("0")
+            1 -> DecimalFormat("0.0")
+            2 -> DecimalFormat("0.00")
+            else -> DecimalFormat("0.00")
+        }
+    }
+
+
+    fun Context.getGstStr():String {
+        return when (prefs.taxFunction) {
+            0 -> this.getString(R.string.gstF)
+            1 -> this.getString(R.string.gstI)
+            2 -> this.getString(R.string.gstE)
+            else -> this.getString(R.string.gstF)
+        }
+    }
+
+    fun getValByMathWay(orgValue: Double): String {
         return when (prefs.methodOfOperation) {
-            0 -> BigDecimal.valueOf(orgValue).setScale(prefs.decimalPlace, BigDecimal.ROUND_HALF_UP).toDouble()
-            1 -> BigDecimal.valueOf(orgValue).setScale(prefs.decimalPlace, BigDecimal.ROUND_UP).toDouble()
-            2 -> BigDecimal.valueOf(orgValue).setScale(prefs.decimalPlace, BigDecimal.ROUND_DOWN).toDouble()
+            0 -> {
+                val value =
+                    BigDecimal.valueOf(orgValue)
+                        .setScale(prefs.decimalPlace, BigDecimal.ROUND_HALF_UP)
+                        .toDouble()
+                getDecimalFormat().format(value)
+            }
+            1 -> {
+                val value =
+                    BigDecimal.valueOf(orgValue).setScale(prefs.decimalPlace, BigDecimal.ROUND_UP)
+                        .toDouble()
+                getDecimalFormat().format(value)
+            }
+            2 -> {
+                val value =
+                    BigDecimal.valueOf(orgValue).setScale(prefs.decimalPlace, BigDecimal.ROUND_DOWN)
+                        .toDouble()
+                getDecimalFormat().format(value)
+            }
             3 -> {
-                val priceString: String = df.format(orgValue)
+                val priceString: String = getDecimalFormat().format(orgValue)
                 if (priceString.contains(".")) {
                     val s = priceString.split("\\.".toRegex()).toTypedArray()
                     if (s[1].length == 2) {
@@ -143,19 +181,24 @@ object Constants {
                         when (a) {
                             "0", "1", "2" -> {
                                 a = "0"
-                                (s[0] + "." + s[1].substring(0, 1) + a).toDouble()
+                                val value = (s[0] + "." + s[1].substring(0, 1) + a).toDouble()
+                                getDecimalFormat().format(value)
                             }
                             "3", "4", "5", "6", "7" -> {
                                 a = "5"
-                                (s[0] + "." + s[1].substring(0, 1) + a).toDouble()
+                                val value = (s[0] + "." + s[1].substring(0, 1) + a).toDouble()
+                                getDecimalFormat().format(value)
                             }
-                            "8", "9" -> (s[0] + "." + s[1].substring(0, 1)).toDouble() + 0.1
-                            else -> orgValue
+                            "8", "9" -> {
+                                val value = (s[0] + "." + s[1].substring(0, 1)).toDouble() + 0.1
+                                getDecimalFormat().format(value)
+                            }
+                            else -> getDecimalFormat().format(orgValue)
                         }
-                    } else orgValue
-                } else orgValue
+                    } else getDecimalFormat().format(orgValue)
+                } else getDecimalFormat().format(orgValue)
             }
-            else -> orgValue
+            else -> getDecimalFormat().format(orgValue)
         }
     }
 }

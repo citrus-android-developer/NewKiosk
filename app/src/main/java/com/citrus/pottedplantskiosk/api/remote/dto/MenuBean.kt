@@ -1,5 +1,11 @@
 package com.citrus.pottedplantskiosk.api.remote.dto
 
+import android.util.Log
+import com.citrus.pottedplantskiosk.di.prefs
+import com.citrus.pottedplantskiosk.util.add
+import com.citrus.pottedplantskiosk.util.div
+import com.citrus.pottedplantskiosk.util.mul
+import com.citrus.pottedplantskiosk.util.round
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -57,10 +63,10 @@ data class Good(
     val isPrint: String,
     @SerializedName("picname")
     val picName: String,
-    @SerializedName("Price")
-    var price: Double,
     @SerializedName("PrintGroup")
     val printGroup: String,
+    @SerializedName("Price")
+    var price: Double,
     @SerializedName("Size")
     var size: List<Size>?,
     @SerializedName("Stock")
@@ -68,18 +74,95 @@ data class Good(
     @SerializedName("Tax")
     var tax: Double,
     @SerializedName("TaxID")
-    val taxID: String,
+    var taxID: String,
     var isEdit: Boolean = false,
-    var qty: Int = 0,
-    var sPrice: Double = 0.0,
+    var gst: Double = 0.0,
+    /**bundle會遺失內部參數,以下兩個屬性的存在是為了保留內部屬性*/
+    var _qty:Int,
+    var _sPrice:Double
 ) : Serializable {
 
-    /**avoid shallow copy*/
-    fun deepCopy(
-        add: List<Add> = this.add.map { it?.copy() },
-        flavor: List<Flavor> = this.flavor.map { it.copy() },
-        size: List<Size>? = this.size?.map { it.copy() } ?: null,
-    ) = this.copy(add= add, flavor= flavor, size= size)
+
+    init {
+        setQtyChangedListener { qty ->
+            sPrice = qty * price
+            _qty = qty
+        }
+
+        setPriceChangedListener { price ->
+            sPrice = qty * price
+            _sPrice = sPrice
+        }
+
+        setsPriceChangedListener { sPrice ->
+            _sPrice = sPrice
+            Log.e("_sPrice",_sPrice.toString())
+            val itemTaxPct = tax
+            if (itemTaxPct != 0.0) {
+                var taxBase = 0.0
+                when (prefs.taxFunction) {
+                    0 -> return@setsPriceChangedListener
+                    1 -> taxBase = add(itemTaxPct, 100.0)
+                    2 -> taxBase = 100.0
+                }
+                gst = round(mul(sPrice, div(itemTaxPct, taxBase)), prefs.decimalPlace)
+            }
+        }
+}
+
+private var qtyChangedListener: ((Int) -> Unit)? = null
+private fun setQtyChangedListener(listener: (Int) -> Unit) {
+    qtyChangedListener = listener
+}
+
+private var priceChangedListener: ((Double) -> Unit)? = null
+private fun setPriceChangedListener(listener: (Double) -> Unit) {
+    priceChangedListener = listener
+}
+
+private var sPriceChangedListener: ((Double) -> Unit)? = null
+private fun setsPriceChangedListener(listener: (Double) -> Unit) {
+    sPriceChangedListener = listener
+}
+
+
+var sPrice = 0.0
+    set(value) {
+        synchronized(field) {
+            field = value
+            sPriceChangedListener?.let { change ->
+                change(value)
+            }
+        }
+    }
+
+var qty = 0
+    set(value) {
+        synchronized(field) {
+            field = value
+            qtyChangedListener?.let { change ->
+                change(value)
+            }
+        }
+    }
+
+var _Price: Double = 0.0
+    get() = price
+    set(value) {
+        synchronized(field) {
+            field = value
+            priceChangedListener?.let { change ->
+                change(value)
+            }
+        }
+    }
+
+/**avoid shallow copy*/
+fun deepCopy(
+    add: List<Add> = this.add.map { it?.copy() },
+    flavor: List<Flavor> = this.flavor.map { it.copy() },
+    size: List<Size>? = this.size?.map { it.copy() } ?: null,
+) = this.copy(add = add, flavor = flavor, size = size)
 
 }
 

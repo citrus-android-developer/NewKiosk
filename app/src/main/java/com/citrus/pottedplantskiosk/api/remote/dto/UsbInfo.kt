@@ -15,3 +15,5 @@ data class UsbInfo(
 ): Serializable {
     constructor() : this(HashMap(), ArrayList(), ArrayList(), ArrayList(),  ArrayList(), null)
 }
+
+

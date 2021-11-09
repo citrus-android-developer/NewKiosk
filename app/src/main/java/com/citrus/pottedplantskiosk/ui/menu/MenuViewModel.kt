@@ -1,7 +1,6 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.citrus.pottedplantskiosk.api.remote.RemoteRepository
@@ -30,6 +29,9 @@ class MenuViewModel @Inject constructor(
     var timeCount = 0
     private val _tikTok = MutableStateFlow(0)
     val tikTok: StateFlow<Int> = _tikTok
+
+    private val _reLaunchActivity = MutableSharedFlow<Boolean>()
+    val reLaunchActivity: SharedFlow<Boolean> = _reLaunchActivity
 
     private val _zoomPageSlidePos = MutableSharedFlow<Int>()
     val zoomPageSlidePos: SharedFlow<Int> = _zoomPageSlidePos
@@ -70,6 +72,7 @@ class MenuViewModel @Inject constructor(
 
     private val _toPrint = MutableSharedFlow<TransactionData>()
     val toPrint: SharedFlow<TransactionData> = _toPrint
+
 
 
     private fun tickerFlow() = flow {
@@ -167,6 +170,8 @@ class MenuViewModel @Inject constructor(
             goods.sPrice
         }
 
+
+
         var ordersDelivery = Orders.OrdersDelivery(
             storeID = 0,
             qty = sumQty,
@@ -208,12 +213,12 @@ class MenuViewModel @Inject constructor(
             repository.postOrders(
                 prefs.serverIp + Constants.SET_ORDERS,
                 Gson().toJson(orderDeliveryData)
-            ).collect {
+            ).collect { result ->
                 var printerData : TransactionData? = null
-                when (it) {
+                when (result) {
                     is Resource.Success -> {
                         orderDeliveryData.ordersItemDelivery.forEach { item ->
-                            item.orderNO = it.data?.data!!
+                            item.orderNO = result.data?.data!!
                         }
                        printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null)
                     }
@@ -222,7 +227,10 @@ class MenuViewModel @Inject constructor(
                     }
                     is Resource.Loading -> Unit
                 }
-                _toPrint.emit(printerData!!)
+
+                printerData?.let {
+                    _toPrint.emit(it)
+                }
             }
         }
     }
@@ -231,5 +239,9 @@ class MenuViewModel @Inject constructor(
         if (status == 1) {
             _clearCartGoods.emit(true)
         }
+    }
+
+    fun chosenLanComplete() = viewModelScope.launch {
+        _reLaunchActivity.emit(true)
     }
 }

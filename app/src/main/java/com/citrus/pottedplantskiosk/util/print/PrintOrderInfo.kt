@@ -11,6 +11,7 @@ import com.citrus.pottedplantskiosk.api.remote.dto.Orders
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.dfShow
+import com.citrus.pottedplantskiosk.util.Constants.getGstStr
 import com.citrus.pottedplantskiosk.util.UsbUtil
 
 import kotlinx.coroutines.Dispatchers
@@ -86,7 +87,7 @@ class PrintOrderInfo(
             sum += item.qty
 
             if (is80mm) {
-                val priceStr = String.format("%7s", dfShow.format(item.gPrice))
+                val priceStr = String.format("%7s", Constants.getValByMathWay(item.gPrice))
                 val qtyStr = String.format("%-3s", item.qty)
 
                 //最多48個字 48-11=37
@@ -107,11 +108,19 @@ class PrintOrderInfo(
                 var itemTitle =
                     item.qty.toString() + "x " + if (prefs.languagePos == 1) item.gName2 else item.gname
 
-                if (getStringPixLength(itemTitle + dfShow.format(item.gPrice), 12, 24) / 12 > 33) {
+                if (getStringPixLength(
+                        itemTitle + Constants.getValByMathWay(item.gPrice),
+                        12,
+                        24
+                    ) / 12 > 33
+                ) {
                     data = b(data, text(itemTitle))
-                    data = b(data, twoColumn("", dfShow.format(item.gPrice), is80mm))
+                    data = b(data, twoColumn("", Constants.getValByMathWay(item.gPrice), is80mm))
                 } else {
-                    data = b(data, twoColumn(itemTitle, dfShow.format(item.gPrice), is80mm))
+                    data = b(
+                        data,
+                        twoColumn(itemTitle, Constants.getValByMathWay(item.gPrice), is80mm)
+                    )
                 }
             }
 
@@ -131,7 +140,10 @@ class PrintOrderInfo(
         val gst =
             String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.totaltax))
         val grandTotal =
-            String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.gPrice))
+            String.format(
+                "%7s",
+                Constants.getValByMathWay(deliveryInfo.ordersDelivery.sPrice + deliveryInfo.ordersDelivery.totaltax)
+            )
 
         data = if (is80mm) {
             b(data, twoColumn(context.getString(R.string.Total), qtyStr + orgAmtStr, is80mm))
@@ -141,18 +153,8 @@ class PrintOrderInfo(
 
         data = b(data, dashLine(is80mm))
 
-        data = if (is80mm) {
-            b(data, twoColumn(context.getString(R.string.SubTotal), orgAmtStr, is80mm))
-        } else {
-            b(data, twoColumn(context.getString(R.string.SubTotal), "$orgAmtStr", is80mm))
-        }
-
-        data = if (is80mm) {
-            b(data, twoColumn(context.getString(R.string.gst), gst, is80mm))
-        } else {
-            b(data, twoColumn(context.getString(R.string.gst), "$gst", is80mm))
-        }
-
+        data = b(data, twoColumn(context.getString(R.string.SubTotal), orgAmtStr, is80mm))
+        data = b(data, twoColumn(context.getGstStr(), gst, is80mm))
 
         data = b(data, fontSizeCmd(FontSize.Big))
         data = b(data, alignCmd(1))
@@ -177,8 +179,7 @@ class PrintOrderInfo(
             onResult(true, null)
         } else {
             data = b(data, cutPaperCmd())
-            //send(data)
-            onResult(true, null)
+            send(data)
         }
     }
 

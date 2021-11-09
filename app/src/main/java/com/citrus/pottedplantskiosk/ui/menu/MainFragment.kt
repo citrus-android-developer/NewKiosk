@@ -53,6 +53,10 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
 
     override fun initView() {
 
+        if(prefs.isNavigate){
+            findNavController().navigateSafely(R.id.action_mainFragment_to_menuFragment)
+        }
+
         binding.apply {
             val anim: Animation = AlphaAnimation(0.0f, 1.0f)
             anim.duration = 1000
@@ -126,8 +130,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
     }
 
     private fun intentToMenu() {
-        menuViewModel.intentNavigateToMenu()
-        findNavController().navigateSafely(R.id.action_mainFragment_to_menuFragment)
+        menuViewModel.chosenLanComplete()
     }
 
     private fun showBanner(

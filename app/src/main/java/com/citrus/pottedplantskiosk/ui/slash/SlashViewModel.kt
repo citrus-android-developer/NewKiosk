@@ -6,10 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.citrus.pottedplantskiosk.api.remote.RemoteRepository
 import com.citrus.pottedplantskiosk.api.remote.Resource
-import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
-import com.citrus.pottedplantskiosk.api.remote.dto.BannerRequest
-import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
-import com.citrus.pottedplantskiosk.api.remote.dto.Data
+import com.citrus.pottedplantskiosk.api.remote.dto.*
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
 import com.google.gson.Gson
@@ -24,8 +21,8 @@ class SlashViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val _allMenuData = MutableSharedFlow<Resource<Data>>()
-    val allMenuData: SharedFlow<Resource<Data>> = _allMenuData
+    private val _allMenuData = MutableSharedFlow<Resource<MenuBean>>()
+    val allMenuData: SharedFlow<Resource<MenuBean>> = _allMenuData
 
     private val _allBannerData = MutableSharedFlow<Resource<BannerResponse>>()
     val allBannerData: SharedFlow<Resource<BannerResponse>> = _allBannerData

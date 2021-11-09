@@ -12,7 +12,6 @@ import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.databinding.CartItemViewDoneBinding
 import com.citrus.pottedplantskiosk.di.prefs
-import com.citrus.pottedplantskiosk.util.Constants.df
 
 
 class CheckoutAdapter (val context: Context) :
@@ -60,7 +59,7 @@ class CheckoutAdapter (val context: Context) :
                 tvGoodsName.text = item.gName
             }
 
-            tvQtyPrice.text = "$" + item.price + " x " + item.qty
+            tvQtyPrice.text = "$" + Constants.getValByMathWay(item.price) + " x " + item.qty
 
             Glide.with(holder.itemView)
                 .load(Constants.IMG_URL + item.picName)

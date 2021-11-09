@@ -3,7 +3,6 @@ package com.citrus.pottedplantskiosk.ui.slash
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -44,7 +43,7 @@ class SlashActivity : AppCompatActivity() {
                 when (result) {
                     is Resource.Loading -> Unit
                     is Resource.Success -> {
-                        menuData = result.data
+                        menuData = result.data?.data
                         checkEachFun()
                     }
                     is Resource.Error -> {

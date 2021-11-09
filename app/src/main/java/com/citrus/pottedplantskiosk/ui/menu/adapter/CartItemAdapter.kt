@@ -11,10 +11,7 @@ import com.bumptech.glide.Glide
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.CartItemViewBinding
 import com.citrus.pottedplantskiosk.util.Constants
-import com.citrus.pottedplantskiosk.util.Constants.df
 import javax.inject.Inject
-import android.util.DisplayMetrics
-import android.util.Log
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.DensityUtil.px2sp
@@ -123,7 +120,7 @@ class CartItemAdapter @Inject constructor(val context: Context) :
                 .load(Constants.IMG_URL + item.picName)
                 .into(goodsImg)
 
-            tvPrice.text = "$" + df.format(checkPrice(item.price, item.qty))
+            tvPrice.text = "$" + Constants.getValByMathWay(item.sPrice)
 
 
             val textSize: Float = context.px2sp(tvPrice.textSize)
@@ -136,7 +133,7 @@ class CartItemAdapter @Inject constructor(val context: Context) :
                 if (newValue > 0) {
                     item.qty = newValue
                     item.sPrice = checkPrice(item.price, item.qty)
-                    tvPrice.text = "$" + df.format(item.sPrice)
+                    tvPrice.text = "$" + Constants.getValByMathWay(item.sPrice)
                     notifyItemChanged(position)
                     onChangedListener?.let { notify ->
                         notify()

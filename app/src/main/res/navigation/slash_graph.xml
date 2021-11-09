@@ -14,6 +14,7 @@
             android:id="@+id/action_slashFragment_to_settingFragment2"
             app:destination="@id/settingFragment2" />
     </fragment>
+
     <dialog
         android:id="@+id/settingFragment2"
         android:name="com.citrus.pottedplantskiosk.ui.setting.SettingFragment"

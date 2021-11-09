@@ -119,6 +119,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
     override fun initView() {
+        prefs.isNavigate = false
         binding.apply {
             root.background.alpha = 30
             cartMotionLayout.registerLifecycleOwner(lifecycle)

@@ -1,6 +1,9 @@
 package com.citrus.pottedplantskiosk.ui.setting
 
+import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import androidx.core.widget.doOnTextChanged
 import androidx.viewbinding.ViewBinding
 import com.citrus.pottedplantskiosk.R
@@ -11,6 +14,16 @@ import com.citrus.pottedplantskiosk.util.base.BindingFragment
 
 class BasicSettingFragment : BindingFragment<FragmentBasicSettingBinding>() {
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.e("BasicSetting","view created")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.e("BasicSetting","view destroy")
+    }
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentBasicSettingBinding::inflate

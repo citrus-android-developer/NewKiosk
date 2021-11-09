@@ -9,9 +9,18 @@
     <string name="qty">qty</string>
     <string name="Total">Total:</string>
     <string name="SubTotal">Sub Total:</string>
-    <string name="gst">GST:</string>
+    <string name="gstF">GST(Free.):</string>
+    <string name="gstI">GST(Incl.):</string>
+    <string name="gstE">GST(Excl.):</string>
     <string name="grandTotal">Grand Total</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="paymentType">Payment Type:</string>
+    <string name="paymentType_">Payment Type</string>
+    <string name="myCart">My Cart</string>
+    <string name="orderDetail">Order Detail</string>
+    <string name="close">Close</string>
+    <string name="done">Done</string>
+    <string name="back">Back</string>
+    <string name="cartHint">Cart is empty</string>
 
 
     <string-array name="IdleTime">

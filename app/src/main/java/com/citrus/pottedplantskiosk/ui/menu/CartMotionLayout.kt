@@ -1,5 +1,6 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -14,19 +15,18 @@ import com.citrus.pottedplantskiosk.api.remote.dto.DeliveryInfo
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.api.remote.dto.PayWay
 import com.citrus.pottedplantskiosk.databinding.LayoutCartSheetBinding
-import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.ui.menu.adapter.CartItemAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.CheckoutAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.PayWayAdapter
 import com.citrus.pottedplantskiosk.util.*
-import com.citrus.pottedplantskiosk.util.Constants.df
-import com.citrus.pottedplantskiosk.util.Constants.getCurrentTime
+import com.citrus.pottedplantskiosk.util.Constants.getGstStr
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.launch
 
 
+@SuppressLint("SetTextI18n")
 class CartMotionLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -85,7 +85,7 @@ class CartMotionLayout @JvmOverloads constructor(
 
             payWayAdapter?.setOnPayWayClickListener { payWay ->
                 checkout()
-                payType.text = "Payment Type: " + payWay.desc
+                payType.text = context.getString(R.string.paymentType) + payWay.desc
                 currentPayWay = payWay
             }
             enableClicks()
@@ -122,7 +122,7 @@ class CartMotionLayout @JvmOverloads constructor(
             setTransition(R.id.set3_reveal, R.id.set4_settle)
             progress = 1f
         } else if (currentState == R.id.set6_checkout) {
-            binding.title.text = "My Cart"
+            binding.title.text = context.getString(R.string.myCart)
             binding.title.setCompoundDrawablesWithIntrinsicBounds(
                 R.drawable.ic_baseline_shopping_bag_24,
                 0,
@@ -190,7 +190,7 @@ class CartMotionLayout @JvmOverloads constructor(
     private fun checkout(): Unit = performAnimation {
         cartItemAdapter?.getList()?.let { checkoutAdapter?.setList(it) }
         binding.checkoutRv.startLayoutAnimation()
-        binding.title.text = "Order Detail"
+        binding.title.text = context.getString(R.string.orderDetail)
         binding.title.setCompoundDrawablesWithIntrinsicBounds(
             R.drawable.ic_baseline_checklist_24,
             0,
@@ -203,7 +203,7 @@ class CartMotionLayout @JvmOverloads constructor(
 
 
     private fun checkoutReveal(): Unit = performAnimation {
-        binding.title.text = "My Cart"
+        binding.title.text = context.getString(R.string.myCart)
         binding.title.setCompoundDrawablesWithIntrinsicBounds(
             R.drawable.ic_baseline_shopping_bag_24,
             0,
@@ -230,7 +230,7 @@ class CartMotionLayout @JvmOverloads constructor(
         R.id.set4_settle -> {
             binding.apply {
                 filterIcon.setImageResource(R.drawable.ic_baseline_payment_24)
-                filterIconText.text = "Payment Type"
+                filterIconText.text = context.getString(R.string.paymentType_)
                 filterIconArea.setOnClickListener { v ->
                     clickAnimation({
                         if (cartItemAdapter?.getList()?.isNotEmpty() == true) {
@@ -241,7 +241,7 @@ class CartMotionLayout @JvmOverloads constructor(
                     }, v)
                 }
                 closeIcon.setImageResource(R.drawable.ic_baseline_close_24)
-                closeIconText.text = "Close"
+                closeIconText.text = context.getString(R.string.close)
                 closeIconArea.setOnClickListener { v ->
                     clickAnimation({ closeSheet(false) }, v)
                 }
@@ -251,14 +251,14 @@ class CartMotionLayout @JvmOverloads constructor(
         R.id.set5_payWay -> {
             binding.apply {
                 filterIcon.setImageResource(R.drawable.ic_baseline_payment_24)
-                filterIconText.text = "Payment Type"
+                filterIconText.text = context.getString(R.string.paymentType_)
                 filterIconArea.setOnClickListener { v ->
                     clickAnimation({
                         payWayReveal()
                     }, v)
                 }
                 closeIcon.setImageResource(R.drawable.ic_baseline_close_24)
-                closeIconText.text = "Close"
+                closeIconText.text = context.getString(R.string.close)
                 closeIconArea.setOnClickListener { v ->
                     clickAnimation({ closeSheet(false) }, v)
                 }
@@ -268,12 +268,12 @@ class CartMotionLayout @JvmOverloads constructor(
         R.id.set6_checkout -> {
             binding.apply {
                 filterIcon.setImageResource(R.drawable.ic_baseline_price_check_24)
-                filterIconText.text = "Done"
+                filterIconText.text = context.getString(R.string.done)
                 filterIconArea.setOnClickListener { v ->
                     clickAnimation({ closeSheet(true) }, v)
                 }
                 closeIcon.setImageResource(R.drawable.ic_baseline_keyboard_backspace_24)
-                closeIconText.text = "Back"
+                closeIconText.text = context.getString(R.string.back)
                 closeIconArea.setOnClickListener { v ->
                     clickAnimation({ checkoutReveal() }, v)
                 }
@@ -314,6 +314,7 @@ class CartMotionLayout @JvmOverloads constructor(
     }
 
 
+    @SuppressLint("SetTextI18n")
     private fun infoChange() {
         binding.apply {
             /**商品總價淨額*/
@@ -326,31 +327,19 @@ class CartMotionLayout @JvmOverloads constructor(
             }
 
             for(item in list){
-                var itemTax = 0.0
-                if ( item.taxID != null && item.tax > 0) {
-                    val itemTaxPct = item.tax
-                    if (itemTaxPct != 0.0) {
-                        var taxBase = 0.0
-                        when (prefs.taxFunction) {
-                            1 ->  taxBase = add(itemTaxPct, 100.0)
-                            2 -> taxBase = 100.0
-                        }
-                        itemTax = round(mul(item.sPrice, div(itemTaxPct, taxBase)), prefs.decimalPlace)
-                    }
-                }
-                item.tax = itemTax
-                gstValue = add(gstValue, itemTax)
+                gstValue = add(gstValue, item.gst)
             }
 
-            grandTotalValue = Constants.getValByMathWay(pureSPrice + gstValue)
+            val grandTotalStr = Constants.getValByMathWay(pureSPrice + gstValue)
 
-            tvTotalPrice.text = "Sub Total: " + Constants.getValByMathWay(pureSPrice)
-            sumPrice.text = "Sub Total: " +  Constants.getValByMathWay(pureSPrice)
-            gts.text = "GST: $gstValue"
-            grandTotal.text = "Grand Total: $grandTotalValue"
+
+            tvTotalPrice.text = context.getString(R.string.SubTotal) + Constants.getValByMathWay(pureSPrice)
+            sumPrice.text = context.getString(R.string.SubTotal) +  Constants.getValByMathWay(pureSPrice)
+            gts.text = context.getGstStr() +  Constants.getValByMathWay(gstValue)
+            grandTotal.text = context.getString(R.string.grandTotal) +  grandTotalStr
 
             cartItemSize.text = cartItemAdapter?.getList()?.size.toString()
-            if (list?.isEmpty() == true && currentPayWay == null) {
+            if (list?.isEmpty() && currentPayWay == null) {
                 shoppingBagHint.visibility = View.VISIBLE
             }
         }

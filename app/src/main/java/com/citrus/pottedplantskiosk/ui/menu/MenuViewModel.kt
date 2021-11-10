@@ -104,7 +104,7 @@ class MenuViewModel @Inject constructor(
 
     fun showData(data: Data) = viewModelScope.launch {
         _menuData.emit(data.mainGroup)
-        var groupList = data.mainGroup.map { it.groupName }
+        var groupList = data.mainGroup.filter{ it.kind.isNotEmpty() }.map { it.groupName }
 
         if (groupList.isNotEmpty() && groupList[0] != "") {
             _menuGroupName.emit(groupList)
@@ -125,7 +125,7 @@ class MenuViewModel @Inject constructor(
         }
 
         currentGroup?.let { mainGroup ->
-            var list = mainGroup.kind.map { it.desc }
+            var list = mainGroup.kind.filter { it.goods.isNotEmpty() }.map { it.desc }
             _groupDescName.emit(list)
             onDescChange(mainGroup.kind.first().desc)
         }
@@ -133,7 +133,7 @@ class MenuViewModel @Inject constructor(
 
     fun onDescChange(desc: String) = viewModelScope.launch {
         currentGroup?.let { mainGroup ->
-            var goods = mainGroup.kind.find { it.desc == desc }?.goods ?: listOf()
+            var goods = mainGroup.kind.find { it.desc == desc }?.goods!!
             _allGoods.emit(goods)
         }
     }

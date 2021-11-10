@@ -46,10 +46,8 @@ class SlashFragment : BindingFragment<FragmentSlashBinding>(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.errorNotify.collect {
-                    findNavController().navigateSafely(
-                        R.id.action_slashFragment_to_settingFragment2,
-                        bundleOf("isFromSlash" to true)
-                    )
+                    val dialog = SettingFragment(true)
+                    dialog.show(childFragmentManager, "SettingFragment")
                 }
             }
         }
@@ -57,7 +55,7 @@ class SlashFragment : BindingFragment<FragmentSlashBinding>(){
 
     override fun initAction() {
         binding.ivLogo.onSevenClick {
-            val dialog = SettingFragment()
+            val dialog = SettingFragment(true)
             dialog.show(childFragmentManager, "SettingFragment")
         }
     }

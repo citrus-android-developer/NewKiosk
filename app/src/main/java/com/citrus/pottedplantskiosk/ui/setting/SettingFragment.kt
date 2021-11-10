@@ -35,7 +35,7 @@ import com.skydoves.elasticviews.ElasticAnimation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SettingFragment : BottomSheetDialogFragment() {
+class SettingFragment(private val isFromSlash: Boolean) : BottomSheetDialogFragment() {
     private val viewModel: SlashViewModel by activityViewModels()
 
     private var _binding: FragmentSettingBinding? = null
@@ -128,6 +128,9 @@ class SettingFragment : BottomSheetDialogFragment() {
 
             applyBtn.setOnClickListener { v ->
                 v.clickAnimation {
+                    if(isFromSlash){
+                        viewModel.reFetch()
+                    }
                     dismiss()
                 }
             }

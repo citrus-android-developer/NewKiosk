@@ -73,7 +73,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
             }
 
             logo.onSevenClick {
-                val dialog = SettingFragment()
+                val dialog = SettingFragment(false)
                 dialog.show(childFragmentManager, "SettingFragment")
             }
         }

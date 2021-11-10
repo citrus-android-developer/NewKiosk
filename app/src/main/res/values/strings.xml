@@ -21,6 +21,7 @@
     <string name="done">Done</string>
     <string name="back">Back</string>
     <string name="cartHint">Cart is empty</string>
+    <string name="home">Home</string>
 
 
     <string-array name="IdleTime">

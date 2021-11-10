@@ -126,7 +126,7 @@ dependencies {
     implementation "androidx.viewpager2:viewpager2:$viewpager2_version"
 
     implementation 'com.github.travijuu:numberpicker:1.0.7'
-    implementation "com.github.skydoves:transformationlayout:1.1.0"
+    implementation "com.github.skydoves:transformationlayout:1.1.1"
 
     implementation 'com.github.rommansabbir:AnimationX:1.0.1'
 

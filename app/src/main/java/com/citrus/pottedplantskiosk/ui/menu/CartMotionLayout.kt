@@ -250,7 +250,7 @@ class CartMotionLayout @JvmOverloads constructor(
                         }
                     }, v)
                 }
-                closeIcon.setImageResource(R.drawable.ic_baseline_close_24)
+                closeIcon.setImageResource(R.drawable.ic_baseline_close_fullscreen_24)
                 closeIconText.text = context.getString(R.string.close)
                 closeIconArea.setOnClickListener { v ->
                     clickAnimation({ closeSheet(false) }, v)

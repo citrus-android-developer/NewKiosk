@@ -17,11 +17,13 @@
     <string name="paymentType_">Payment Type</string>
     <string name="myCart">My Cart</string>
     <string name="orderDetail">Order Detail</string>
-    <string name="close">Close</string>
+    <string name="close">Continue shopping</string>
     <string name="done">Done</string>
     <string name="back">Back</string>
     <string name="cartHint">Cart is empty</string>
     <string name="home">Home</string>
+    <string name="idle">Idle State Detected</string>
+    <string name="idleHint">Will back to main page after %d sec</string>
 
 
     <string-array name="IdleTime">

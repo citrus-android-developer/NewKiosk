@@ -123,7 +123,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         prefs.isNavigate = false
         binding.apply {
             root.background.alpha = 30
-            cartMotionLayout.registerLifecycleOwner(lifecycle)
+            cartMotionLayout.registerLifecycleOwner(viewLifecycleOwner.lifecycle)
 
             mainGroupRv.apply {
                 layoutManager =
@@ -290,7 +290,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 menuViewModel.tikTok.collect { timer ->
 
-                    Log.e("timer",timer.toString())
                     if (timer == 0) {
                         releaseSnack()
                     }
@@ -310,7 +309,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                             while (temp < 120) {
                                 delay(1000)
                                 temp++
-                                timerHint.text = (120 - temp).toString() + "秒後將返回主畫面"
+                                timerHint.text =  getString(R.string.idleHint,(120 - temp))
                             }
                         }
 

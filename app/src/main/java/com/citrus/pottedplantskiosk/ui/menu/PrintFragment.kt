@@ -54,7 +54,7 @@ class PrintFragment : BottomSheetDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): BottomSheetDialog {
         return object : BottomSheetDialog(requireContext(), theme) {
             override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-                return super.dispatchTouchEvent(ev)
+                return false
             }
         }
     }
@@ -99,7 +99,7 @@ class PrintFragment : BottomSheetDialogFragment() {
             hintArea.isVisible = true
 
             if(data!!.state == TransactionState.NetworkIssue){
-                tvHint.text = "The transaction has failed, please contact the service staff"
+                tvHint.text = "The order has failed, please contact the service staff"
             }else{
                 tvHint.text = "Please contact the service staff to confirm the problem"
             }

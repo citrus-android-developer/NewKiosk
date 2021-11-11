@@ -21,5 +21,6 @@
     <string name="done">完成</string>
     <string name="back">返回</string>
     <string name="cartHint">请选购商品</string>
-
+    <string name="idle">检测到空闲状态</string>
+    <string name="idleHint">%d 秒后将返回主画面</string>
 </resources>

@@ -42,6 +42,7 @@
         <entry key="app/src/main/res/drawable/ic_baseline_chevron_left_24.xml" value="0.19907407407407407" />
         <entry key="app/src/main/res/drawable/ic_baseline_chevron_right_24.xml" value="0.19907407407407407" />
         <entry key="app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.19537037037037036" />
+        <entry key="app/src/main/res/drawable/ic_baseline_close_fullscreen_24.xml" value="0.10231481481481482" />
         <entry key="app/src/main/res/drawable/ic_baseline_delete_24.xml" value="0.26296296296296295" />
         <entry key="app/src/main/res/drawable/ic_baseline_feedback_24.xml" value="0.1587962962962963" />
         <entry key="app/src/main/res/drawable/ic_baseline_grid_view_24.xml" value="0.1" />

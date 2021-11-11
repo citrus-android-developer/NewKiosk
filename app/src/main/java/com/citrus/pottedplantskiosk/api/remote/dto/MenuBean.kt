@@ -1,6 +1,5 @@
 package com.citrus.pottedplantskiosk.api.remote.dto
 
-import android.util.Log
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.add
 import com.citrus.pottedplantskiosk.util.div
@@ -94,6 +93,9 @@ data class Good(
             _sPrice = sPrice
         }
 
+        /**
+         * 單品稅額以3位小數計算加總後小數第二位四捨五入,現金和信用卡有所區別，前者依設定內的小數位數+進位法計算結果
+         * */
         setsPriceChangedListener { sPrice ->
             _sPrice = sPrice
             val itemTaxPct = tax
@@ -104,7 +106,7 @@ data class Good(
                     1 -> taxBase = add(itemTaxPct, 100.0)
                     2 -> taxBase = 100.0
                 }
-                gst = round(mul(sPrice, div(itemTaxPct, taxBase)), prefs.decimalPlace)
+                gst = round(mul(sPrice, div(itemTaxPct, taxBase)), 3)
             }
         }
 }

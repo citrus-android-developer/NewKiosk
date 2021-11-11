@@ -3,6 +3,7 @@ package com.citrus.pottedplantskiosk.ui.menu
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
@@ -15,6 +16,7 @@ import com.citrus.pottedplantskiosk.api.remote.dto.DeliveryInfo
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.api.remote.dto.PayWay
 import com.citrus.pottedplantskiosk.databinding.LayoutCartSheetBinding
+import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.ui.menu.adapter.CartItemAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.CheckoutAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.PayWayAdapter
@@ -24,6 +26,7 @@ import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.skydoves.elasticviews.ElasticAnimation
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 
 @SuppressLint("SetTextI18n")
@@ -41,7 +44,7 @@ class CartMotionLayout @JvmOverloads constructor(
     private var binding: LayoutCartSheetBinding =
         LayoutCartSheetBinding.inflate(LayoutInflater.from(context), this)
 
-    private var deliveryInfo:DeliveryInfo? = null
+    private var deliveryInfo: DeliveryInfo? = null
     private var gstValue = 0.0
     private var grandTotalValue = 0.0
 
@@ -85,7 +88,8 @@ class CartMotionLayout @JvmOverloads constructor(
 
             payWayAdapter?.setOnPayWayClickListener { payWay ->
                 checkout()
-                payType.text = context.getString(R.string.paymentType) + payWay.desc
+                payType.text = context.getString(R.string.paymentType)
+                vPayType.text = payWay.desc
                 currentPayWay = payWay
             }
             enableClicks()
@@ -164,7 +168,13 @@ class CartMotionLayout @JvmOverloads constructor(
         binding.filterIconText.visibility = View.GONE
 
         if (isDone) {
-            deliveryInfo = DeliveryInfo(goodsList = cartItemAdapter?.getList()!!,payWay = currentPayWay!!,gst = gstValue,grandTotal = grandTotalValue,orderNo = "")
+            deliveryInfo = DeliveryInfo(
+                goodsList = cartItemAdapter?.getList()!!,
+                payWay = currentPayWay!!,
+                gst = gstValue,
+                grandTotal = grandTotalValue,
+                orderNo = ""
+            )
             onOrderDoneListener?.let { pass ->
                 cartItemAdapter?.getList()?.let { pass(deliveryInfo!!) }
             }
@@ -318,7 +328,10 @@ class CartMotionLayout @JvmOverloads constructor(
     private fun infoChange() {
         binding.apply {
             /**商品總價淨額*/
+            var grandTotalStr = ""
+            gstValue = 0.0
             var pureSPrice = 0.0
+
             /**商品淨税*/
 
             var list = cartItemAdapter!!.getList()
@@ -326,20 +339,31 @@ class CartMotionLayout @JvmOverloads constructor(
                 pureSPrice = add(pureSPrice, goods.sPrice)
             }
 
-            for(item in list){
+            for (item in list) {
                 gstValue = add(gstValue, item.gst)
             }
 
-            val grandTotalStr = Constants.getValByMathWay(pureSPrice + gstValue)
+
+            if (prefs.taxFunction == 1) {
+                grandTotalStr = pureSPrice.toString()
+            } else if (prefs.taxFunction == 2) {
+                var gstRounding =
+                    BigDecimal(gstValue).setScale(2, BigDecimal.ROUND_HALF_UP).toDouble()
+                grandTotalStr = (pureSPrice + gstRounding).toString()
+            }
 
 
-            tvTotalPrice.text = context.getString(R.string.SubTotal) + Constants.getValByMathWay(pureSPrice)
-            sumPrice.text = context.getString(R.string.SubTotal) +  Constants.getValByMathWay(pureSPrice)
-            gts.text = context.getGstStr() +  Constants.getValByMathWay(gstValue)
-            grandTotal.text = context.getString(R.string.grandTotal) +  grandTotalStr
+            tvTotalPrice.text = context.getString(R.string.SubTotal) + pureSPrice
+
+            sumPrice.text = context.getString(R.string.SubTotal)
+            vSumPrice.text = pureSPrice.toString()
+            gts.text = context.getGstStr()
+            vGts.text = Constants.getValByMathWay(gstValue)
+            grandTotal.text = context.getString(R.string.grandTotal)
+            vGrandTotal.text = grandTotalStr
 
             cartItemSize.text = cartItemAdapter?.getList()?.size.toString()
-            if (list?.isEmpty() && currentPayWay == null) {
+            if (list.isEmpty() && currentPayWay == null) {
                 shoppingBagHint.visibility = View.VISIBLE
             }
         }
@@ -378,9 +402,10 @@ class CartMotionLayout @JvmOverloads constructor(
         onOrderDoneListener = listener
     }
 
-    fun setCartItemSizePulse(){
+    fun setCartItemSizePulse() {
         infoChange()
-        YoYo.with(Techniques.Pulse).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT).duration(600).playOn(binding.cartItemSize)
+        YoYo.with(Techniques.Pulse).pivot(YoYo.CENTER_PIVOT, YoYo.CENTER_PIVOT).duration(600)
+            .playOn(binding.cartItemSize)
     }
 
     fun releaseAdapter() {

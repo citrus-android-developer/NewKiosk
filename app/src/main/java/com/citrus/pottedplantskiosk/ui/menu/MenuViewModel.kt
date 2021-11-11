@@ -134,6 +134,8 @@ class MenuViewModel @Inject constructor(
     fun onDescChange(desc: String) = viewModelScope.launch {
         currentGroup?.let { mainGroup ->
             var goods = mainGroup.kind.find { it.desc == desc }?.goods!!
+            goods[0].price = 4.55
+            goods[0].tax = 7.0
             _allGoods.emit(goods)
         }
     }
@@ -198,7 +200,9 @@ class MenuViewModel @Inject constructor(
                     gkid = goods.gKID,
                     gType = goods.gType,
                     gname = goods.gName,
-                    gName2 = goods.gName2
+                    gName2 = goods.gName2,
+                    tax = goods.gst
+
                 )
             seq++
             ordersItemDeliveryList = ordersItemDeliveryList + ordersItemDelivery

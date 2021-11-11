@@ -95,6 +95,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onTransformationStartContainer()
+        menuViewModel.intentNavigateToMenu()
         refreshUsbDevice()
     }
 
@@ -288,6 +289,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 menuViewModel.tikTok.collect { timer ->
+
+                    Log.e("timer",timer.toString())
                     if (timer == 0) {
                         releaseSnack()
                     }

@@ -104,6 +104,8 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
 
             Glide.with(root)
                 .load(Constants.IMG_URL + item.picName)
+                .fallback(R.drawable.ic_image_gallery__2_)
+                .error(R.drawable.ic_image_gallery__2_)
                 .into(photo)
 
             addCart.setOnClickListener {

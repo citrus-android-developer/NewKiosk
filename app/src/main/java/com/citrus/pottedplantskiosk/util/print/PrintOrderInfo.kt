@@ -152,7 +152,7 @@ class PrintOrderInfo(
         }
 
         data = b(data, dashLine(is80mm))
-
+        data = b(data, twoColumn(context.getString(R.string.paymentType), deliveryInfo.ordersDelivery.payType, is80mm))
         data = b(data, twoColumn(context.getString(R.string.SubTotal), orgAmtStr, is80mm))
         data = b(data, twoColumn(context.getGstStr(), gst, is80mm))
 

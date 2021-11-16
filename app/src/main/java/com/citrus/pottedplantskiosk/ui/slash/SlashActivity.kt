@@ -3,7 +3,9 @@ package com.citrus.pottedplantskiosk.ui.slash
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -47,6 +49,8 @@ class SlashActivity : AppCompatActivity() {
                         checkEachFun()
                     }
                     is Resource.Error -> {
+                        Log.e("error",result.message!!)
+                        Toast.makeText(baseContext,result.message!!,Toast.LENGTH_LONG).show()
                         viewModel.fetchError()
                     }
                 }
@@ -61,7 +65,10 @@ class SlashActivity : AppCompatActivity() {
                         bannerData = result.data
                         checkEachFun()
                     }
-                    is Resource.Error -> Unit
+                    is Resource.Error -> {
+                        Log.e("error",result.message!!)
+                        checkEachFun()
+                    }
                 }
             }
         }
@@ -86,7 +93,7 @@ class SlashActivity : AppCompatActivity() {
 
 
     private fun checkEachFun() {
-        if (menuData != null && bannerData != null) {
+        if (menuData != null) {
             viewModel.intentNext()
         }
     }

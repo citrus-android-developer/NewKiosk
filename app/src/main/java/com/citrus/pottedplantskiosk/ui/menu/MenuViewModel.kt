@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.citrus.pottedplantskiosk.api.remote.RemoteRepository
@@ -73,8 +74,6 @@ class MenuViewModel @Inject constructor(
     private val _toPrint = MutableSharedFlow<TransactionData>()
     val toPrint: SharedFlow<TransactionData> = _toPrint
 
-
-
     private fun tickerFlow() = flow {
         while (true) {
             emit(timeCount++)
@@ -136,6 +135,9 @@ class MenuViewModel @Inject constructor(
             var goods = mainGroup.kind.find { it.desc == desc }?.goods!!
             goods[0].price = 4.55
             goods[0].tax = 7.0
+
+            goods[1].price = 3.25
+            goods[1].tax = 6.0
             _allGoods.emit(goods)
         }
     }
@@ -160,6 +162,7 @@ class MenuViewModel @Inject constructor(
     fun showBanner(bannerResponse: BannerResponse) = viewModelScope.launch {
         _showBannerData.emit(bannerResponse.data)
     }
+
 
     fun postOrderItem(deliveryInfo: DeliveryInfo) = viewModelScope.launch {
 
@@ -227,6 +230,7 @@ class MenuViewModel @Inject constructor(
                        printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null)
                     }
                     is Resource.Error -> {
+                        Log.e("error",result.message!!)
                          printerData =   TransactionData(orders = null,state = TransactionState.NetworkIssue, null)
                     }
                     is Resource.Loading -> Unit
@@ -248,4 +252,6 @@ class MenuViewModel @Inject constructor(
     fun chosenLanComplete() = viewModelScope.launch {
         _reLaunchActivity.emit(true)
     }
+
+
 }

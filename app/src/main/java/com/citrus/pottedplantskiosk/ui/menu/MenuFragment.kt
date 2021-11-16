@@ -157,6 +157,14 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 menuViewModel.showBannerData.collect { banners ->
+                    if(banners.isEmpty()){
+                        binding.banner.isVisible = false
+                        binding.bannerBackground.isVisible = true
+                        return@collect
+                    }
+
+                    binding.banner.isVisible = true
+                    binding.bannerBackground.isVisible = false
                     binding.banner.adapter = ImageAdapter(banners)
                     binding.banner.indicator = RectangleIndicator(activity)
                     binding.banner.setIndicatorSpace(BannerUtils.dp2px(4f).toInt())
@@ -289,6 +297,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 menuViewModel.tikTok.collect { timer ->
+                    Log.e("Tik Tok","$timer")
 
                     if (timer == 0) {
                         releaseSnack()

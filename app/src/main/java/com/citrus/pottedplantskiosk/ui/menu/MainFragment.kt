@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -24,6 +25,7 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.Button
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -54,7 +56,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
 
     override fun initView() {
 
-        if(prefs.isNavigate){
+        if (prefs.isNavigate) {
             findNavController().navigateSafely(R.id.action_mainFragment_to_menuFragment)
         }
 
@@ -82,10 +84,19 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
     override fun initObserve() {
         lifecycleScope.launchWhenStarted {
             menuViewModel.showBannerData.collect { banners ->
+                if (banners.isEmpty()) {
+                    binding.banner.isVisible = false
+                    binding.bannerBackground.isVisible = true
+                    return@collect
+                }
+
+                binding.banner.isVisible = true
+                binding.bannerBackground.isVisible = false
                 showBanner(
                     binding.banner as Banner<BannerData, BannerImageAdapter<BannerData>>,
                     banners
                 )
+
             }
         }
     }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.activity.viewModels
@@ -22,7 +23,7 @@ class MenuActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMenuBinding
 
     lateinit var data:Data
-    lateinit var banner:BannerResponse
+    private var banner:BannerResponse? = null
 
     override fun onResume() {
         super.onResume()
@@ -40,7 +41,11 @@ class MenuActivity : AppCompatActivity() {
 
         val bundle = intent.extras
          data = bundle?.getSerializable("data") as Data
-         banner = bundle?.getSerializable("banner") as BannerResponse
+        var bannerData =  bundle?.getSerializable("banner")
+
+        bannerData?.let{
+            banner = it as BannerResponse
+        }
 
         data?.let {
             menuViewModel.showData(it)

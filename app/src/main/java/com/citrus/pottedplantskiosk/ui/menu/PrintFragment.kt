@@ -54,7 +54,7 @@ class PrintFragment : BottomSheetDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): BottomSheetDialog {
         return object : BottomSheetDialog(requireContext(), theme) {
             override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-                return false
+                return super.dispatchTouchEvent(ev)
             }
         }
     }

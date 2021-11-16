@@ -160,11 +160,22 @@ class PrintOrderInfo(
         data = b(data, alignCmd(1))
         data = b(data, boldCmd(true))
 
-        data = if (is80mm) {
-            b(data, twoColumnBig(context.getString(R.string.grandTotal), grandTotal, is80mm))
-        } else {
-            b(data, twoColumnBig(context.getString(R.string.grandTotal), "$grandTotal", is80mm))
+
+        if(prefs.taxFunction == 2){
+            data = if (is80mm) {
+                b(data, twoColumnBig(context.getString(R.string.grandTotal), grandTotal, is80mm))
+            } else {
+                b(data, twoColumnBig(context.getString(R.string.grandTotal), "$grandTotal", is80mm))
+            }
+        }else{
+            data = if (is80mm) {
+                b(data, twoColumnBig(context.getString(R.string.grandTotal), orgAmtStr, is80mm))
+            } else {
+                b(data, twoColumnBig(context.getString(R.string.grandTotal), "$orgAmtStr", is80mm))
+            }
         }
+
+
 
 
         data = b(data, fontSizeCmd(FontSize.Normal))
@@ -174,6 +185,7 @@ class PrintOrderInfo(
         if (prefs.footer.isNotEmpty()) data = b(data, text(prefs.footer))
 
         data = b(data, text("\n"))
+
 
         if (data.isEmpty()) {
             onResult(true, null)

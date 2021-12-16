@@ -13,6 +13,7 @@ import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.FragmentSlashBinding
 import com.citrus.pottedplantskiosk.ui.setting.SettingFragment
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
+import com.citrus.pottedplantskiosk.util.base.lifecycleFlow
 import com.citrus.pottedplantskiosk.util.base.onSevenClick
 import com.citrus.pottedplantskiosk.util.navigateSafely
 import com.daimajia.androidanimations.library.Techniques
@@ -23,7 +24,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SlashFragment : BindingFragment<FragmentSlashBinding>(){
+class SlashFragment : BindingFragment<FragmentSlashBinding>() {
 
     private val viewModel: SlashViewModel by activityViewModels()
 
@@ -42,14 +43,9 @@ class SlashFragment : BindingFragment<FragmentSlashBinding>(){
     }
 
     override fun initObserve() {
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.errorNotify.collect {
-                    val dialog = SettingFragment(true)
-                    dialog.show(childFragmentManager, "SettingFragment")
-                }
-            }
+        lifecycleFlow(viewModel.errorNotify) {
+            val dialog = SettingFragment(true)
+            dialog.show(childFragmentManager, "SettingFragment")
         }
     }
 

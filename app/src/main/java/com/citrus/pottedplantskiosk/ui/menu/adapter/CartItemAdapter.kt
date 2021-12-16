@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.databinding.CartItemViewBinding
 import com.citrus.pottedplantskiosk.util.Constants
@@ -118,6 +119,8 @@ class CartItemAdapter @Inject constructor(val context: Context) :
 
             Glide.with(holder.itemView)
                 .load(Constants.IMG_URL + item.picName)
+                .placeholder(R.drawable.ic_image_gallery__2_)
+                .fallback(R.drawable.ic_image_gallery__2_)
                 .into(goodsImg)
 
             tvPrice.text = "$" + Constants.getValByMathWay(item.sPrice)

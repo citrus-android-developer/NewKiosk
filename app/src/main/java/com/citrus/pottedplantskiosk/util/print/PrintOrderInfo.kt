@@ -1,6 +1,10 @@
 package com.citrus.pottedplantskiosk.util.print
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Rect
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbEndpoint
@@ -14,16 +18,15 @@ import com.citrus.pottedplantskiosk.util.Constants.dfShow
 import com.citrus.pottedplantskiosk.util.Constants.getGstStr
 import com.citrus.pottedplantskiosk.util.UsbUtil
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import java.io.DataOutputStream
-import java.io.IOException
-import java.io.OutputStream
-import java.lang.Exception
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.SocketException
+import android.graphics.pdf.PdfRenderer
+import android.os.Build
+import android.os.ParcelFileDescriptor
+import android.util.Base64.DEFAULT
+import androidx.annotation.RequiresApi
+import java.io.*
+import java.lang.Byte.decode
+import java.util.*
+
 
 class PrintOrderInfo(
     private val context: Context,
@@ -42,8 +45,8 @@ class PrintOrderInfo(
 
         var data: ByteArray
         data = initCmd()
-        data = b(data, fontSizeCmd(FontSize.SuperBig))
-        data = b(data, alignCmd(1))
+        data = b(data, fontSizeCmd(if(is80mm) FontSize.SuperBig else FontSize.Big))
+        data = b(data, alignCmd(if(is80mm) 1 else 0))
         data = b(data, boldCmd(true))
         data = b(
             data,
@@ -52,7 +55,7 @@ class PrintOrderInfo(
 
         data = b(data, setLineSpace(55))
 
-        data = b(data, fontSizeCmd(FontSize.Big))
+        data = b(data, fontSizeCmd(if(is80mm) FontSize.Big else FontSize.Normal))
         data = b(data, alignCmd(0))
         if (prefs.header.isNotEmpty()) data = b(data, text(prefs.header))
         if (prefs.kioskId.isNotEmpty()) data = b(data, text("Take Away: " + prefs.kioskId))
@@ -152,22 +155,30 @@ class PrintOrderInfo(
         }
 
         data = b(data, dashLine(is80mm))
-        data = b(data, twoColumn(context.getString(R.string.paymentType), deliveryInfo.ordersDelivery.payType, is80mm))
+        data = b(
+            data,
+            twoColumn(
+                context.getString(R.string.paymentType),
+                deliveryInfo.ordersDelivery.payType,
+                is80mm
+            )
+        )
         data = b(data, twoColumn(context.getString(R.string.SubTotal), orgAmtStr, is80mm))
         data = b(data, twoColumn(context.getGstStr(), gst, is80mm))
 
-        data = b(data, fontSizeCmd(FontSize.Big))
-        data = b(data, alignCmd(1))
+        if(is80mm) {
+            data = b(data, fontSizeCmd(FontSize.Big))
+            data = b(data, alignCmd(1))
+        }
         data = b(data, boldCmd(true))
 
-
-        if(prefs.taxFunction == 2){
+        if (prefs.taxFunction == 2) {
             data = if (is80mm) {
                 b(data, twoColumnBig(context.getString(R.string.grandTotal), grandTotal, is80mm))
             } else {
                 b(data, twoColumnBig(context.getString(R.string.grandTotal), "$grandTotal", is80mm))
             }
-        }else{
+        } else {
             data = if (is80mm) {
                 b(data, twoColumnBig(context.getString(R.string.grandTotal), orgAmtStr, is80mm))
             } else {
@@ -175,17 +186,36 @@ class PrintOrderInfo(
             }
         }
 
-
-
-
         data = b(data, fontSizeCmd(FontSize.Normal))
         data = b(data, boldCmd(false))
+        data = b(data, alignCmd(0))
         data = b(data, dashLine(is80mm))
 
         if (prefs.footer.isNotEmpty()) data = b(data, text(prefs.footer))
 
         data = b(data, text("\n"))
 
+        val isP = context.assets.open("jps_invoice.pdf")
+        val size: Int = isP.available()
+
+        val buffer = ByteArray(size)
+        isP.read(buffer)
+        isP.close()
+
+
+
+
+//        val invoiceBitmapOrg = BitmapFactory.decodeResource(
+//            context!!.resources,
+//            R.drawable.invoice
+//        )
+
+
+        val icon = writeBytesAsPdf(buffer)!!
+
+
+
+        data = b(data, bitmapToBytes(icon))
 
         if (data.isEmpty()) {
             onResult(true, null)
@@ -217,6 +247,54 @@ class PrintOrderInfo(
 
     private fun onError(message: String) {
         onResult(false, message)
+    }
+
+
+    private fun compressPic(bitmap: Bitmap): Bitmap {
+        val width = bitmap.width
+        val height = bitmap.height
+
+        val newWidth = (width * 1.3).toInt()
+        val newHeight = (height * 1.3).toInt()
+        val targetBmp = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
+        val targetCanvas = Canvas(targetBmp)
+        targetCanvas.drawColor(-0x1)
+        targetCanvas.drawBitmap(
+            bitmap,
+            Rect(0, 0, width, height),
+            Rect(0, 0, newWidth, newHeight),
+            null
+        )
+        return targetBmp
+    }
+
+
+    private fun getFileDescriptor(byteArray: ByteArray): ParcelFileDescriptor {
+        val file = File.createTempFile("temp", null).also { FileOutputStream(it).write(byteArray) }
+        return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+    }
+
+    private fun writeBytesAsPdf(bytes: ByteArray?): Bitmap? {
+        if (bytes==null) return null
+        val page = PdfRenderer(getFileDescriptor(bytes)).openPage(0)
+
+        val bitmap: Bitmap = Bitmap.createBitmap(context.resources.displayMetrics.densityDpi / 72 * page.width, context.resources.displayMetrics.densityDpi / 72 * page.height, Bitmap.Config.ARGB_8888)
+        page.render(bitmap,null,null,PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
+
+        val width = bitmap.width
+        val height = bitmap.height
+        val newWidth = (width * 1.3).toInt()
+        val newHeight = (height * 1.3).toInt()
+        val targetBmp = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
+        val targetCanvas = Canvas(targetBmp)
+        targetCanvas.drawColor(-0x1)
+        targetCanvas.drawBitmap(
+            bitmap,
+            Rect(0, 0, width, height),
+            Rect(0, 0, newWidth, newHeight),
+            null
+        )
+      return targetBmp
     }
 
 

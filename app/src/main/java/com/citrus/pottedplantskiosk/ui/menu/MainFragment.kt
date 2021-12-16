@@ -34,6 +34,7 @@ import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.ui.setting.SettingFragment
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
+import com.citrus.pottedplantskiosk.util.base.lifecycleFlow
 import com.citrus.pottedplantskiosk.util.base.onSevenClick
 import com.citrus.pottedplantskiosk.util.navigateSafely
 import com.skydoves.balloon.*
@@ -82,22 +83,19 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
     }
 
     override fun initObserve() {
-        lifecycleScope.launchWhenStarted {
-            menuViewModel.showBannerData.collect { banners ->
-                if (banners.isEmpty()) {
-                    binding.banner.isVisible = false
-                    binding.bannerBackground.isVisible = true
-                    return@collect
-                }
-
-                binding.banner.isVisible = true
-                binding.bannerBackground.isVisible = false
-                showBanner(
-                    binding.banner as Banner<BannerData, BannerImageAdapter<BannerData>>,
-                    banners
-                )
-
+        lifecycleFlow(menuViewModel.showBannerData) { banners ->
+            if (banners.isEmpty()) {
+                binding.banner.isVisible = false
+                binding.bannerBackground.isVisible = true
+                return@lifecycleFlow
             }
+
+            binding.banner.isVisible = true
+            binding.bannerBackground.isVisible = false
+            showBanner(
+                binding.banner as Banner<BannerData, BannerImageAdapter<BannerData>>,
+                banners
+            )
         }
     }
 

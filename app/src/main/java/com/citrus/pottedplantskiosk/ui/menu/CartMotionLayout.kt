@@ -327,12 +327,9 @@ class CartMotionLayout @JvmOverloads constructor(
     @SuppressLint("SetTextI18n")
     private fun infoChange() {
         binding.apply {
-            /**商品總價淨額*/
             var grandTotalStr = ""
             gstValue = 0.0
             var pureSPrice = 0.0
-
-            /**商品淨税*/
 
             var list = cartItemAdapter!!.getList()
             list.forEach { goods ->
@@ -343,8 +340,7 @@ class CartMotionLayout @JvmOverloads constructor(
                 gstValue = add(gstValue, item.gst)
             }
 
-
-            if (prefs.taxFunction == 1) {
+            if (prefs.taxFunction == 1 || prefs.taxFunction == 0) {
                 grandTotalStr = pureSPrice.toString()
             } else if (prefs.taxFunction == 2) {
                 var gstRounding =

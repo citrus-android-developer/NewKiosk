@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PottedPlantsKiosk</string>
+    <string name="app_name">CitrusKiosk</string>
     <string name="touch_to_start">Touch To Start</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="orderTime">Order Time:</string>

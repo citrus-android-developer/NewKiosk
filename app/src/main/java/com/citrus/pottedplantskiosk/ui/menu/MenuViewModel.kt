@@ -231,7 +231,8 @@ class MenuViewModel @Inject constructor(
                     }
                     is Resource.Error -> {
                         Log.e("error",result.message!!)
-                         printerData =   TransactionData(orders = null,state = TransactionState.NetworkIssue, null)
+                        printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null)
+                         //printerData =   TransactionData(orders = null,state = TransactionState.NetworkIssue, null)
                     }
                     is Resource.Loading -> Unit
                 }

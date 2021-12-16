@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PottedPlantsKiosk</string>
+    <string name="app_name">CitrusKiosk</string>
     <string name="touch_to_start">触碰以开始</string>
     <string name="orderTime">预点时间:</string>
     <string name="orderNo">单号:</string>

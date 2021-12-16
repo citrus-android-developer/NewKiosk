@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -131,6 +132,7 @@ class PrintFragment : BottomSheetDialogFragment() {
             }
             showSuccess()
             job = MainScope().launch {
+                Log.e("job","ready to start")
                 delay(8000)
                 findNavController().popBackStack(R.id.mainFragment, false)
             }

@@ -1,15 +1,23 @@
 package com.citrus.pottedplantskiosk.util.print
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.os.Build
+import android.util.Log
 import com.citrus.pottedplantskiosk.api.remote.dto.PrinterData
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.UsbUtil
 import com.citrus.pottedplantskiosk.util.div
 import com.citrus.pottedplantskiosk.util.mul
+import okhttp3.internal.cookieToString
+import java.lang.StringBuilder
 import java.net.Socket
 import java.nio.charset.StandardCharsets
 import java.util.*
+import kotlin.experimental.or
+import kotlin.math.ceil
+
 
 enum class FontSize {
     Normal,
@@ -102,6 +110,57 @@ fun cutPaperCmd(): ByteArray {
     return byteArrayOf(0x1D.toByte(), 0x56.toByte(), 0x42.toByte(), 0x00.toByte())
 //    return byteArrayOf(0x1D.toByte(), 0x6D.toByte())
 }
+
+fun initImageCommand(bytesByLine: Int, bitmapHeight: Int): ByteArray {
+    val xH = bytesByLine / 256
+    val xL = bytesByLine - xH * 256
+    val yH = bitmapHeight / 256
+    val yL = bitmapHeight - yH * 256
+    val imageBytes = ByteArray(8 + bytesByLine * bitmapHeight)
+    System.arraycopy(
+        byteArrayOf(
+            0x1D, 0x76, 0x30, 0x00,
+            xL.toByte(), xH.toByte(), yL.toByte(), yH.toByte()
+        ), 0, imageBytes, 0, 8
+    )
+    return imageBytes
+}
+
+
+fun bitmapToBytes(bitmap: Bitmap): ByteArray {
+    val bitmapWidth = bitmap.width
+    val bitmapHeight = bitmap.height
+    val bytesByLine = ceil((bitmapWidth.toFloat() / 8f).toDouble()).toInt()
+    val imageBytes: ByteArray = initImageCommand(bytesByLine, bitmapHeight)
+    var i = 8
+    for (posY in 0 until bitmapHeight) {
+        var j = 0
+        while (j < bitmapWidth) {
+            val stringBinary = StringBuilder()
+            for (k in 0..7) {
+                val posX = j + k
+                if (posX < bitmapWidth) {
+                    val color = bitmap.getPixel(posX, posY)
+                    val r = color shr 16 and 0xff
+                    val g = color shr 8 and 0xff
+                    val b = color and 0xff
+                    if (r > 160 && g > 160 && b > 160) {
+                        stringBinary.append("0")
+                    } else {
+                        stringBinary.append("1")
+                    }
+                } else {
+                    stringBinary.append("0")
+                }
+            }
+            imageBytes[i++] = stringBinary.toString().toInt(2).toByte()
+            j += 8
+        }
+    }
+    return imageBytes
+}
+
+
 
 fun alignCmd(alignMode: Int): ByteArray {
     return byteArrayOf(0x1b.toByte(), 0x61.toByte(), alignMode.toByte())

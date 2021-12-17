@@ -321,17 +321,18 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             menuViewModel.onGoodsClick(good, list)
         }
 
-        binding.cartMotionLayout.setOnGoodsClickListener { goods ->
-            findNavController().navigate(
-                R.id.action_menuFragment_to_zoomPageFragment,
-                bundleOf("goods" to goods)
-            )
-        }
+        binding.cartMotionLayout.apply {
+            setOnGoodsClickListener { goods ->
+                findNavController().navigate(
+                    R.id.action_menuFragment_to_zoomPageFragment,
+                    bundleOf("goods" to goods)
+                )
+            }
 
-        binding.cartMotionLayout.setonOrderDoneListener { deliveryInfo ->
-            menuViewModel.postOrderItem(deliveryInfo)
+            setonOrderDoneListener { deliveryInfo ->
+                menuViewModel.postOrderItem(deliveryInfo)
+            }
         }
-
     }
 
     private fun backToMain() {

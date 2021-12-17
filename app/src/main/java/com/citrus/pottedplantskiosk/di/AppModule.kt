@@ -99,5 +99,4 @@ object FragmentModule {
     fun provideGroupItemAdapter(fragment: Fragment) =
         GroupItemAdapter(fragment.requireContext())
 
-
 }

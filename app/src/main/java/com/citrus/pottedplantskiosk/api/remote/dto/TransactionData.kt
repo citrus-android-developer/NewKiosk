@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.api.remote.dto
 
 import android.hardware.usb.UsbDevice
+import com.pos.sdklib.aidl.newprinter.AidlNewPrinter
 import java.io.Serializable
 
 sealed class TransactionState {
@@ -9,5 +10,5 @@ sealed class TransactionState {
     object WorkFine:TransactionState()
 }
 
-data class TransactionData (val orders: Orders.OrderDeliveryData?, var state:TransactionState, var printer: UsbDevice?) :
+data class TransactionData (val orders: Orders.OrderDeliveryData?, var state:TransactionState, var printer: UsbDevice?, var mNewPrinter: AidlNewPrinter?) :
     Serializable

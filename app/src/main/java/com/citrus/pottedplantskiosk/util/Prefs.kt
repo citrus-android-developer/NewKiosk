@@ -85,4 +85,10 @@ class Prefs(context: Context) {
         get() = prefs.getInt(Constants.KEY_TAX, 0)
         set(value) = prefs.edit().putInt(Constants.KEY_TAX, value).apply()
 
+
+    var orderStr: String
+        get() = prefs.getString(Constants.KEY_ORDER_STRING, "")?: ""
+        set(value) = prefs.edit().putString(Constants.KEY_ORDER_STRING, value).apply()
+
+
 }

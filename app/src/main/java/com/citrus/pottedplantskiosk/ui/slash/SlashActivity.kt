@@ -14,6 +14,7 @@ import com.citrus.pottedplantskiosk.api.remote.Resource
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.databinding.ActivitySlashBinding
+import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.ui.menu.MenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -36,7 +37,28 @@ class SlashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySlashBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        prefs.orderStr = ""
+        var msg: String? = intent.getStringExtra("pos_message")
+
+        msg?.let {
+            prefs.orderStr = "true"
+            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+            Log.e("onCreate msg from symLink", msg.toString())
+        } ?:    Log.e("onCreate msg from symLink", "null")
         initObserve()
+
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        var msg: String? = intent?.getStringExtra("pos_message")
+
+        prefs.orderStr = ""
+        msg?.let {
+            prefs.orderStr = "true"
+            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+            Log.e("onNewIntent msg from symLink", msg.toString())
+        } ?:    Log.e("onNewIntent msg from symLink", "null")
     }
 
     private fun initObserve() {

@@ -227,11 +227,11 @@ class MenuViewModel @Inject constructor(
                         orderDeliveryData.ordersItemDelivery.forEach { item ->
                             item.orderNO = result.data?.data!!
                         }
-                       printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null)
+                       printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null,null)
                     }
                     is Resource.Error -> {
                         Log.e("error",result.message!!)
-                        printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null)
+                        printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null,null)
                          //printerData =   TransactionData(orders = null,state = TransactionState.NetworkIssue, null)
                     }
                     is Resource.Loading -> Unit

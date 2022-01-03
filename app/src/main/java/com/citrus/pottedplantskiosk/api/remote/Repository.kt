@@ -21,7 +21,7 @@ interface Repository {
 sealed class Resource<out T>(val data: T? = null, val message: String? = null) {
     class Success<T>(data: T) : Resource<T>(data)
     class Error<T>(message: String, data: T? = null) : Resource<T>(data, message)
-    class Loading<T>(data: T? = null) : Resource<T>(data)
+    class Loading<T>(data: T? = null, isLoading:Boolean) : Resource<T>(data)
 }
 
 class RetryCondition(val errorMsg: String) : Exception()
@@ -47,6 +47,6 @@ fun <T> resultFlowData(
     }
 }.catch {
     Log.e("catch error", "--")
-}.onStart { emit(Resource.Loading(null)) }
-    .onCompletion { emit(Resource.Loading(null)) }
+}.onStart { emit(Resource.Loading(null,true)) }
+    .onCompletion { emit(Resource.Loading(null,false)) }
     .flowOn(Dispatchers.IO)

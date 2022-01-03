@@ -26,7 +26,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.citrus.pottedplantskiosk.api.remote.dto.Good
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.skydoves.elasticviews.ElasticAnimation
 
 
 @AndroidEntryPoint
@@ -49,12 +48,10 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
     override fun onStart() {
         super.onStart()
         val view: FrameLayout = dialog?.findViewById(R.id.design_bottom_sheet)!!
-
         view.layoutParams.height = resources.getDimension(R.dimen.dp_400).toInt()
         val behavior = BottomSheetBehavior.from(view)
         behavior.peekHeight = resources.getDimension(R.dimen.dp_400).toInt()
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
-
 
     }
 

@@ -41,13 +41,11 @@ interface AppModule {
 
             if (BuildConfig.DEBUG) {
                 val loggingInterceptor =
-                    HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+                    HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS)
                 okHttpClientBuilder.addInterceptor(loggingInterceptor)
             }
 
             return okHttpClientBuilder
-                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
-                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .connectTimeout(DEFAULT_CONNECT_TIME, TimeUnit.SECONDS)
                 .writeTimeout(DEFAULT_WRITE_TIME, TimeUnit.SECONDS)
                 .readTimeout(DEFAULT_READ_TIME, TimeUnit.SECONDS)

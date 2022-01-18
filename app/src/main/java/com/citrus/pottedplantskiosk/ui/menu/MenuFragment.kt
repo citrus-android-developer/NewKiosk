@@ -165,7 +165,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             }
 
             goodsRv.apply {
-                layoutManager = GridLayoutManager(requireActivity(), 3)
+                layoutManager = GridLayoutManager(requireActivity(), 2)
                 adapter = goodsItemAdapter
             }
 

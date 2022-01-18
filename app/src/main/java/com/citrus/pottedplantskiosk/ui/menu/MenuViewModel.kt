@@ -74,6 +74,16 @@ class MenuViewModel @Inject constructor(
     private val _toPrint = MutableSharedFlow<TransactionData>()
     val toPrint: SharedFlow<TransactionData> = _toPrint
 
+
+    fun getMenu() =
+        viewModelScope.launch {
+            repository.getMenu(prefs.serverIp + Constants.GET_MENU, prefs.storeId).collect { result ->
+                result.data?.data?.let {
+                    showData(it)
+                }
+            }
+        }
+
     private fun tickerFlow() = flow {
         while (true) {
             emit(timeCount++)

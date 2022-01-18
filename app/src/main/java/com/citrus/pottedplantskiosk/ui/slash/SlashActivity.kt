@@ -97,10 +97,10 @@ class SlashActivity : AppCompatActivity() {
 
         lifecycleScope.launchWhenStarted {
             viewModel.allData.collect {
-                this@SlashActivity.overridePendingTransition(
-                    R.anim.nav_default_enter_anim,
-                    R.anim.nav_default_exit_anim
-                )
+//                this@SlashActivity.overridePendingTransition(
+//                    R.anim.nav_default_enter_anim,
+//                    R.anim.nav_default_exit_anim
+//                )
                 val intent = Intent()
                 intent.setClass(this@SlashActivity, MenuActivity::class.java)
                 val bundle = Bundle()

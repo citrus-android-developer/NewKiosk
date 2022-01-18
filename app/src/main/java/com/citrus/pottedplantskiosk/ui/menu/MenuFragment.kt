@@ -145,6 +145,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
     override fun initView() {
+        menuViewModel.getMenu()
         prefs.isNavigate = false
         binding.apply {
             root.background.alpha = 30
@@ -357,6 +358,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             intent?.putExtra("pos_packagename", "com.citrus.pottedplantskiosk")
             intent?.let{
                 startActivity(it)
+                requireActivity().finish()
             } ?: Log.e("null","null")
 
 
@@ -368,6 +370,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
         lifecycleFlow(menuViewModel.tikTok) { timer ->
+            return@lifecycleFlow
+
             if (timer == 0) {
                 releaseSnack()
             }

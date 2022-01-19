@@ -43,7 +43,6 @@ class SlashActivity : AppCompatActivity() {
         msg?.let {
             prefs.orderStr = "true"
             Toast.makeText(this, it, Toast.LENGTH_LONG).show()
-            Log.e("onCreate msg from symLink", msg.toString())
         } ?:    Log.e("onCreate msg from symLink", "null")
         initObserve()
 
@@ -56,8 +55,6 @@ class SlashActivity : AppCompatActivity() {
         prefs.orderStr = ""
         msg?.let {
             prefs.orderStr = "true"
-            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
-            Log.e("onNewIntent msg from symLink", msg.toString())
         } ?:    Log.e("onNewIntent msg from symLink", "null")
     }
 
@@ -71,7 +68,6 @@ class SlashActivity : AppCompatActivity() {
                         checkEachFun()
                     }
                     is Resource.Error -> {
-                        Log.e("error",result.message!!)
                         Toast.makeText(baseContext,result.message!!,Toast.LENGTH_LONG).show()
                         viewModel.fetchError()
                     }
@@ -88,7 +84,6 @@ class SlashActivity : AppCompatActivity() {
                         checkEachFun()
                     }
                     is Resource.Error -> {
-                        Log.e("error",result.message!!)
                         checkEachFun()
                     }
                 }

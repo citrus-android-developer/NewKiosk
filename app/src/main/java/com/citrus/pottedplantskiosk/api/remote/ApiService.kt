@@ -3,7 +3,6 @@ package com.citrus.pottedplantskiosk.api.remote
 import com.citrus.pottedplantskiosk.api.remote.dto.*
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
-import javax.net.ssl.SSLEngineResult
 
 
 interface ApiService {
@@ -31,17 +30,5 @@ interface ApiService {
         @Url url: String,
         @Field("jsonData") jsonData: String
     ): ApiResponse<UploadResponse>
-
-
-    /**getGenericResult Test*/
-    @Headers("Content-Type: application/x-www-form-urlencoded")
-    @GET
-    suspend fun getGenericResultByInt(@Url url: String): ApiResponse<StatusCode<Int>>
-
-    /**getGenericResult Test*/
-    @Headers("Content-Type: application/x-www-form-urlencoded")
-    @GET
-    suspend fun getGenericResultByObj(@Url url: String): ApiResponse<StatusCode<ResultMock>>
-
 
 }

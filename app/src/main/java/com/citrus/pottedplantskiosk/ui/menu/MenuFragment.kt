@@ -97,7 +97,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         onTransformationStartContainer()
         menuViewModel.intentNavigateToMenu()
         refreshUsbDevice()
-        Log.e("onCreate","onCreate")
         PosSdkUtils.bind(requireActivity(), object : PosSdkUtils.BindResult {
             override fun onReady(posSdkUtils: PosSdkUtils) {
                 mNewPrinter = posSdkUtils.aidlNewPrinter
@@ -165,8 +164,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             }
 
             if(prefs.orderStr != ""){
-                Log.e("trigger Print",dealingTransactionData.toString())
-                Log.e("dealingTransactionData",dealingTransactionData.toString())
                 if(prefs.transactionData!= ""){
                     val data = Gson().fromJson(prefs.transactionData, OrderDeliveryData::class.java)
                     val transactionData = TransactionData(orders = data, state = TransactionState.WorkFine, printer = null, mNewPrinter = mNewPrinter)
@@ -184,6 +181,9 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             binding.goodsRv.scrollToPosition(pos)
         }
 
+        lifecycleFlow(menuViewModel.progress) {
+                binding.progressCircular.isVisible = it
+        }
 
         lifecycleFlow(menuViewModel.currentCartGoods) { cartGoods ->
             if (cartGoods != null) {
@@ -290,7 +290,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     arrayStr.add(1, "00")
                 }
                 sPriceText = arrayStr[0] + arrayStr[1]
-                Log.e("sPrice", sPriceText)
 
 
                 var ecrProtocol = EcrProtocol()
@@ -339,8 +338,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
                 var payload = ecrProtocol.ercPayload()
 
-                Log.e("payload", payload)
-                Log.e("payload", payload.length.toString())
                 val intent: Intent? =
                     activity?.packageManager?.getLaunchIntentForPackage("com.symlink.symlinknccc")
                 intent?.putExtra("pos_message", payload)
@@ -350,7 +347,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     requireActivity().finish()
                 } ?: Log.e("null", "null")
             }else{
-                Log.e("data",dealingTransactionData.toString())
                 findNavController().navigateSafely(
                     R.id.action_menuFragment_to_printFragment,
                     args = bundleOf("transaction" to dealingTransactionData)

@@ -40,6 +40,9 @@ class MenuViewModel @Inject constructor(
     private val _printStatus = MutableSharedFlow<Int>()
     val printStatus: SharedFlow<Int> = _printStatus
 
+    private val _progress = MutableSharedFlow<Boolean>()
+    val progress: SharedFlow<Boolean> = _progress
+
     private val _clearCartGoods = MutableSharedFlow<Boolean>()
     val clearCartGoods: SharedFlow<Boolean> = _clearCartGoods
 
@@ -80,6 +83,7 @@ class MenuViewModel @Inject constructor(
             repository.getMenu(prefs.serverIp + Constants.GET_MENU, prefs.storeId).collect { result ->
                 result.data?.data?.let {
                     showData(it)
+                    _progress.emit(false)
                 }
             }
         }
@@ -240,7 +244,6 @@ class MenuViewModel @Inject constructor(
                        printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null,null)
                     }
                     is Resource.Error -> {
-                        Log.e("error",result.message!!)
                         printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null,null)
                          //printerData =   TransactionData(orders = null,state = TransactionState.NetworkIssue, null)
                     }

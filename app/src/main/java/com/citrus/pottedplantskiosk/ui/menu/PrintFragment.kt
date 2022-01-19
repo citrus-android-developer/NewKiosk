@@ -175,7 +175,6 @@ class PrintFragment : BottomSheetDialogFragment() {
             }
             showSuccess()
             job = MainScope().launch {
-                Log.e("job", "ready to start")
                 delay(8000)
                 findNavController().popBackStack(R.id.mainFragment, false)
             }
@@ -187,7 +186,6 @@ class PrintFragment : BottomSheetDialogFragment() {
     private val printerResultListener: AidlPrinterResultListener =
         object : AidlPrinterResultListener.Stub() {
             override fun onPrintFinish() {
-                Log.e("列印完成", "---------")
                 lifecycleScope.launch(Main) {
                     if (payType == payWayList()[1].desc) {
                         showSuccess(true)

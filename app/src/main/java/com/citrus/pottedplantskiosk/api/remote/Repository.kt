@@ -14,8 +14,6 @@ interface Repository {
     suspend fun getMenu(url: String, rsNo: String): Flow<Resource<MenuBean>>
     suspend fun getBanner(url: String, jsonData: String): Flow<Resource<BannerResponse>>
     suspend fun postOrders(url: String, jsonData: String): Flow<Resource<UploadResponse>>
-    suspend fun getGenericResultByInt(url: String): Flow<Resource<StatusCode<Int>>>
-    suspend fun getGenericResultByObj(url: String): Flow<Resource<StatusCode<ResultMock>>>
 }
 
 sealed class Resource<out T>(val data: T? = null, val message: String? = null) {

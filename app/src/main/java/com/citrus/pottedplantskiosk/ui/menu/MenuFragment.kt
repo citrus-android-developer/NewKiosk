@@ -27,9 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.citrus.pottedplantskiosk.R
-import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
-import com.citrus.pottedplantskiosk.api.remote.dto.TransactionState
-import com.citrus.pottedplantskiosk.api.remote.dto.UsbInfo
+import com.citrus.pottedplantskiosk.api.remote.dto.*
 import com.citrus.pottedplantskiosk.databinding.FragmentMenuBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.ui.menu.adapter.*
@@ -106,15 +104,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         PosSdkUtils.bind(requireActivity(), object : PosSdkUtils.BindResult {
             override fun onReady(posSdkUtils: PosSdkUtils) {
                 mNewPrinter = posSdkUtils.aidlNewPrinter
-
-                if(prefs.orderStr != ""){
-                    Log.e("dealingTransactionData",dealingTransactionData.toString())
-                    dealingTransactionData?.mNewPrinter = mNewPrinter
-                    findNavController().navigateSafely(
-                        R.id.action_menuFragment_to_printFragment,
-                        args = bundleOf("transaction" to dealingTransactionData)
-                    )
-                }
             }
 
             override fun onError(s: String) {
@@ -174,6 +163,19 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             homeBtn.onSafeClick {
                 it.clickAnimation {
                     backToMain()
+                }
+            }
+
+            if(prefs.orderStr != ""){
+                Log.e("trigger Print",dealingTransactionData.toString())
+                Log.e("dealingTransactionData",dealingTransactionData.toString())
+                if(prefs.transactionData!= ""){
+                    val data = Gson().fromJson(prefs.transactionData, OrderDeliveryData::class.java)
+                    val transactionData = TransactionData(orders = data, state = TransactionState.WorkFine, printer = null, mNewPrinter = mNewPrinter)
+                    findNavController().navigateSafely(
+                        R.id.action_menuFragment_to_printFragment,
+                        args = bundleOf("transaction" to transactionData)
+                    )
                 }
             }
         }
@@ -289,6 +291,10 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             }
 
             dealingTransactionData = transactionData
+            val data = dealingTransactionData!!.orders!!
+            prefs.transactionData = Gson().toJson(data)
+
+
 
             var sPriceText =
             dealingTransactionData?.orders?.ordersDelivery?.sPrice.toString()

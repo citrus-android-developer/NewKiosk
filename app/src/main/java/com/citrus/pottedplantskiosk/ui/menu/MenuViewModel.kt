@@ -187,7 +187,7 @@ class MenuViewModel @Inject constructor(
 
 
 
-        var ordersDelivery = Orders.OrdersDelivery(
+        var ordersDelivery = OrdersDelivery(
             storeID = 0,
             qty = sumQty,
             payType = deliveryInfo.payWay.desc,
@@ -198,12 +198,12 @@ class MenuViewModel @Inject constructor(
 
         )
 
-        var ordersItemDeliveryList = listOf<Orders.OrdersItemDelivery>()
+        var ordersItemDeliveryList = listOf<OrdersItemDelivery>()
 
         var seq = 1
         list.forEach { goods ->
             var ordersItemDelivery =
-                Orders.OrdersItemDelivery(
+                OrdersItemDelivery(
                     storeID = 0,
                     orderSeq = seq,
                     gid = goods.gID,
@@ -221,7 +221,7 @@ class MenuViewModel @Inject constructor(
             ordersItemDeliveryList = ordersItemDeliveryList + ordersItemDelivery
         }
 
-        var orderDeliveryData = Orders.OrderDeliveryData(
+        var orderDeliveryData = OrderDeliveryData(
             ordersDelivery = ordersDelivery,
             ordersItemDelivery = ordersItemDeliveryList
         )

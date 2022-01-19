@@ -10,8 +10,6 @@ import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbEndpoint
 import androidx.fragment.app.FragmentActivity
 import com.citrus.pottedplantskiosk.R
-import com.citrus.pottedplantskiosk.api.remote.dto.DeliveryInfo
-import com.citrus.pottedplantskiosk.api.remote.dto.Orders
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.dfShow
@@ -23,6 +21,7 @@ import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.util.Base64.DEFAULT
 import androidx.annotation.RequiresApi
+import com.citrus.pottedplantskiosk.api.remote.dto.OrderDeliveryData
 import java.io.*
 import java.lang.Byte.decode
 import java.util.*
@@ -30,7 +29,7 @@ import java.util.*
 
 class PrintOrderInfo(
     private val context: Context,
-    private val deliveryInfo: Orders.OrderDeliveryData,
+    private val deliveryInfo: OrderDeliveryData,
     private val usbDevice: UsbDevice?,
     private val onResult: (isSuccess: Boolean, err: String?) -> Unit
 ) {

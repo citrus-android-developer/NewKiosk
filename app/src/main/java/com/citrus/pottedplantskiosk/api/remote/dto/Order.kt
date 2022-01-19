@@ -3,7 +3,6 @@ package com.citrus.pottedplantskiosk.api.remote.dto
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-class Orders {
 
     data class OrderDeliveryData (
         @SerializedName("OrdersDelivery")
@@ -261,5 +260,3 @@ class Orders {
         @SerializedName("FlavorDesc2")
         val flavorDesc2: String  = ""
     ):Serializable
-
-}

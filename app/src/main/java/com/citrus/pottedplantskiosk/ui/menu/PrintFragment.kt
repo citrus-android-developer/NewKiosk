@@ -16,6 +16,7 @@ import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
 import com.citrus.pottedplantskiosk.api.remote.dto.TransactionState
 import com.citrus.pottedplantskiosk.databinding.FragmentPrintBinding
+import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.print.PrintOrderInfo
 import com.citrus.pottedplantskiosk.util.print.SlipModelUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -178,6 +179,8 @@ class PrintFragment : BottomSheetDialogFragment() {
         object : AidlPrinterResultListener.Stub() {
             override fun onPrintFinish() {
                 showSuccess()
+                prefs.transactionData = ""
+                prefs.orderStr = ""
                 Log.e("列印完成", "---------")
             }
 

@@ -2,8 +2,7 @@ package com.citrus.pottedplantskiosk.util
 
 import android.content.Context
 import android.content.SharedPreferences
-
-
+import android.util.Log
 
 
 class Prefs(context: Context) {
@@ -15,6 +14,11 @@ class Prefs(context: Context) {
     var punchId: String
         get() = prefs.getString("Test", "init")?: ""
         set(value) = prefs.edit().putString("Test", value).apply()
+
+    var transactionData: String
+        get() = prefs.getString("transactionData", "")?: ""
+        set(value) = prefs.edit().putString("transactionData", value).apply()
+
 
     var languagePos: Int
         get() = prefs.getInt(Constants.KEY_LANGUAGE_POS, -1)

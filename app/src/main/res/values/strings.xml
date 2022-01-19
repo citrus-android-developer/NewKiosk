@@ -24,6 +24,8 @@
     <string name="home">Home</string>
     <string name="idle">Idle State Detected</string>
     <string name="idleHint">Will back to main page after %d sec</string>
+    <string name="setting">Setting</string>
+
 
 
     <string-array name="IdleTime">

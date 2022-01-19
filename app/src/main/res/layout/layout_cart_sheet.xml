@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2" />
+        app:layout_constraintGuide_percent="0.00" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/checkoutBottomLine"
@@ -45,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.28" />
+        app:layout_constraintGuide_percent="0.10" />
 
     <View
         android:id="@+id/filter_sheet_placeholder"
@@ -65,13 +65,13 @@
 
     <TextView
         android:id="@+id/cartItemSize"
-        android:layout_width="@dimen/dp_12"
-        android:layout_height="@dimen/dp_12"
+        android:layout_width="@dimen/dp_16"
+        android:layout_height="@dimen/dp_16"
         android:background="@drawable/cart_size_hint_bg"
         android:elevation="@dimen/dp_38"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="@dimen/sp_7"
+        android:textSize="@dimen/sp_8"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@id/fab"
         app:layout_constraintTop_toTopOf="@+id/fab" />
@@ -88,8 +88,8 @@
 
     <LinearLayout
         android:id="@+id/filter_icon_area"
-        android:layout_width="@dimen/dp_72"
-        android:layout_height="@dimen/dp_72"
+        android:layout_width="@dimen/dp_120"
+        android:layout_height="@dimen/dp_120"
         android:elevation="@dimen/dp_34"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@id/fab"
@@ -114,7 +114,7 @@
             android:gravity="center|top"
             android:text="Payment Type"
             android:textColor="@color/white"
-            android:textSize="@dimen/sp_10"
+            android:textSize="@dimen/sp_14"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@id/filter_icon"
             app:layout_constraintStart_toStartOf="@id/filter_icon"
@@ -348,8 +348,8 @@
 
         <ImageView
             android:id="@+id/shoppingBag"
-            android:layout_width="@dimen/dp_40"
-            android:layout_height="@dimen/dp_40"
+            android:layout_width="@dimen/dp_60"
+            android:layout_height="@dimen/dp_60"
             android:layout_gravity="center"
             app:srcCompat="@drawable/empty_cart"
             app:tint="@color/lightWhite" />
@@ -363,7 +363,7 @@
             android:fontFamily="@font/droidbold"
             android:text="@string/cartHint"
             android:textColor="@color/lightWhite"
-            android:textSize="@dimen/sp_8"
+            android:textSize="@dimen/sp_12"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -388,7 +388,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/bottom_bar_card_view"
         android:layout_width="0dp"
-        android:layout_height="@dimen/dp_35"
+        android:layout_height="@dimen/dp_60"
         android:outlineProvider="none"
         android:visibility="invisible"
         app:cardBackgroundColor="@android:color/transparent"
@@ -400,7 +400,7 @@
 
     <LinearLayout
         android:id="@+id/close_icon_area"
-        android:layout_width="@dimen/dp_72"
+        android:layout_width="@dimen/dp_80"
         android:layout_height="0dp"
         android:layout_gravity="center"
         android:elevation="@dimen/dp_34"
@@ -426,7 +426,7 @@
             android:gravity="center"
             android:text="Close"
             android:textColor="@color/white"
-            android:textSize="@dimen/sp_10"
+            android:textSize="@dimen/sp_14"
             android:visibility="invisible" />
 
 

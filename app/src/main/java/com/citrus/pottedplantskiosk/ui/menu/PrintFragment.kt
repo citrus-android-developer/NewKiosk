@@ -10,15 +10,19 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.citrus.pottedplantskiosk.R
+import com.citrus.pottedplantskiosk.api.remote.dto.OrderDeliveryData
 import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
 import com.citrus.pottedplantskiosk.api.remote.dto.TransactionState
+import com.citrus.pottedplantskiosk.api.remote.dto.payWayList
 import com.citrus.pottedplantskiosk.databinding.FragmentPrintBinding
 import com.citrus.pottedplantskiosk.di.prefs
-import com.citrus.pottedplantskiosk.util.print.PrintOrderInfo
-import com.citrus.pottedplantskiosk.util.print.SlipModelUtils
+import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.Constants.getGstStr
+import com.citrus.pottedplantskiosk.util.print.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -27,6 +31,7 @@ import com.pos.sdklib.aidl.newprinter.AidlPrinterResultListener
 import com.pos.sdklib.aidl.newprinter.param.PrintItemAlign
 import com.pos.sdklib.aidl.newprinter.param.TextPrintItemParam
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -43,6 +48,7 @@ class PrintFragment : BottomSheetDialogFragment() {
     private val args: PrintFragmentArgs by navArgs()
     var job: Job? = null
     var data: TransactionData? = null
+    var payType = ""
 
     override fun onStart() {
         super.onStart()
@@ -95,6 +101,7 @@ class PrintFragment : BottomSheetDialogFragment() {
             }
 
             is TransactionState.WorkFine -> {
+                payType = data!!.orders!!.ordersDelivery.payType
                 when {
                     data!!.printer != null -> {
                         printStart(data!!)
@@ -127,9 +134,11 @@ class PrintFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun showSuccess() {
+    private fun showSuccess(isCash: Boolean = false) {
         binding.apply {
-            menuViewModel.setPrintStatus(1)
+            if (isCash) {
+                menuViewModel.setPrintStatus(1)
+            }
             lottieHint.setAnimation("success.json")
             printing.isVisible = false
             hintArea.isVisible = true
@@ -150,7 +159,7 @@ class PrintFragment : BottomSheetDialogFragment() {
                 PrintItemAlign.CENTER
             )
         )
-        printTest(printer)
+        printTest(printer, data.orders)
     }
 
 
@@ -178,10 +187,16 @@ class PrintFragment : BottomSheetDialogFragment() {
     private val printerResultListener: AidlPrinterResultListener =
         object : AidlPrinterResultListener.Stub() {
             override fun onPrintFinish() {
-                showSuccess()
-                prefs.transactionData = ""
-                prefs.orderStr = ""
                 Log.e("列印完成", "---------")
+                lifecycleScope.launch(Main) {
+                    if (payType == payWayList()[1].desc) {
+                        showSuccess(true)
+                    } else {
+                        showSuccess()
+                    }
+                    prefs.transactionData = ""
+                    prefs.orderStr = ""
+                }
             }
 
             override fun onPrintError(errorCode: Int, msg: String) {
@@ -215,161 +230,177 @@ class PrintFragment : BottomSheetDialogFragment() {
         return decorView
     }
 
-    private fun printTest(mNewPrinter: AidlNewPrinter?) {
+    private fun printTest(mNewPrinter: AidlNewPrinter?, orders: OrderDeliveryData?) {
         val slip = SlipModelUtils()
         mNewPrinter?.let {
-            it.addTextPrintItem(
-                slip.addTextOnePrint(
-                    "RECEIPT",
-                    true,
-                    32,
-                    PrintItemAlign.CENTER
+
+            if (prefs.header.isNotEmpty()) {
+                it.addTextPrintItem(
+                    slip.addTextOnePrint(
+                        prefs.header,
+                        true,
+                        32,
+                        PrintItemAlign.CENTER
+                    )
                 )
-            )
-            addLine(slip,mNewPrinter)
+            }
+            addLine(slip, mNewPrinter)
+
+            if (prefs.kioskId.isNotEmpty()) {
+                it.addTextPrintItem(
+                    slip.addTextOnePrint(
+                        "Take Away: " + prefs.kioskId,
+                        false,
+                        -1,
+                        PrintItemAlign.LEFT
+                    )
+                )
+            }
+
+            if (prefs.storeName.isNotEmpty()) {
+                it.addTextPrintItem(
+                    slip.addTextOnePrint(
+                        prefs.storeName,
+                        false,
+                        -1,
+                        PrintItemAlign.LEFT
+                    )
+                )
+            }
+
+            if (prefs.storeAddress.isNotEmpty()) {
+                it.addTextPrintItem(
+                    slip.addTextOnePrint(
+                        prefs.storeAddress,
+                        false,
+                        -1,
+                        PrintItemAlign.LEFT
+                    )
+                )
+            }
+
             it.addTextPrintItem(
                 slip.addTextOnePrint(
-                    "MERCHANT NAME:",
+                    requireContext().resources.getString(R.string.printTime) + Constants.getCurrentTime(),
                     false,
                     -1,
                     PrintItemAlign.LEFT
                 )
             )
-            it.addTextPrintItem(
-                slip.addTextOnePrint(
-                    "Company test merchant (Hong Kong) HKG",
-                    false,
-                    -1,
-                    PrintItemAlign.LEFT
+            addLine(slip, mNewPrinter)
+
+            var sum = 0
+            orders?.ordersItemDelivery?.forEach { item ->
+                sum += item.qty
+                it.addMultipleTextPrintItem(
+                    slip.addLeftAndRightItem(
+                        if (prefs.languagePos == 1) item.gName2 else item.gname,
+                        " x " + item.qty.toString(),
+                        null
+                    )
                 )
-            )
+                it.addTextPrintItem(
+                    slip.addTextOnePrint(
+                        Constants.getValByMathWay(item.gPrice),
+                        false,
+                        -1,
+                        PrintItemAlign.RIGHT
+                    )
+                )
+
+                val flavorAdd =
+                    if (!item.addGName.isNullOrEmpty() && !item.flavorDesc.isNullOrEmpty()) item.addGName + "/" + item.flavorDesc
+                    else if (!item.addGName.isNullOrEmpty()) item.addGName
+                    else if (!item.flavorDesc.isNullOrEmpty()) item.flavorDesc
+                    else null
+
+                flavorAdd?.let { flavor ->
+                    it.addTextPrintItem(
+                        slip.addTextOnePrint(
+                            "    #$flavor",
+                            false,
+                            -1,
+                            PrintItemAlign.RIGHT
+                        )
+                    )
+                }
+            }
+            addLine(slip, mNewPrinter)
+
+            var orgAmtStr =
+                String.format("%7s", Constants.getValByMathWay(orders!!.ordersDelivery.sPrice))
+            val qtyStr = String.format("%-3s", sum)
+            val gst =
+                String.format("%7s", Constants.getValByMathWay(orders!!.ordersDelivery.totaltax))
+            val grandTotal =
+                String.format(
+                    "%7s",
+                    Constants.getValByMathWay(orders!!.ordersDelivery.sPrice + orders!!.ordersDelivery.totaltax)
+                )
+
             it.addMultipleTextPrintItem(
                 slip.addLeftAndRightItem(
-                    "TRAIH：01.07.2013",
-                    "SAAT:12：30",
+                    requireContext().getString(R.string.Total),
+                    qtyStr + orgAmtStr,
                     null
                 )
             )
+
             it.addMultipleTextPrintItem(
                 slip.addLeftAndRightItem(
-                    "TERMINAL NO.",
-                    "00020004",
+                    requireContext().getString(R.string.paymentType),
+                    orders.ordersDelivery.payType,
                     null
                 )
             )
+
+
             it.addMultipleTextPrintItem(
                 slip.addLeftAndRightItem(
-                    "OPERATOR NO.",
-                    "01",
+                    requireContext().getString(R.string.SubTotal),
+                    orgAmtStr,
                     null
                 )
             )
+
             it.addMultipleTextPrintItem(
                 slip.addLeftAndRightItem(
-                    "ACQUIRER:",
-                    "25350344",
+                    requireContext().getGstStr(),
+                    gst,
                     null
                 )
             )
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    "ISSUER:",
-                    "90880060",
-                    null
+
+
+            if (prefs.taxFunction == 2) {
+                it.addMultipleTextPrintItem(
+                    slip.addLeftAndRightItem(
+                        requireContext().getString(R.string.grandTotal),
+                        grandTotal,
+                        null
+                    )
                 )
-            )
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    "CARD NO.",
-                    "6214094******0008",
-                    -1,
-                    32,
-                    floatArrayOf(1f, 3f)
+            } else {
+                it.addMultipleTextPrintItem(
+                    slip.addLeftAndRightItem(
+                        requireContext().getString(R.string.grandTotal),
+                        orgAmtStr,
+                        null
+                    )
                 )
-            )
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    "EXP DATE:",
-                    "3010",
-                    null
+            }
+
+            if (prefs.footer.isNotEmpty()) {
+                it.addTextPrintItem(
+                    slip.addTextOnePrint(
+                        prefs.footer,
+                        true,
+                        32,
+                        PrintItemAlign.CENTER
+                    )
                 )
-            )
-            it.addTextPrintItem(
-                slip.addTextOnePrint(
-                    "TRANS TYPE:",
-                    false,
-                    -1,
-                    PrintItemAlign.LEFT
-                )
-            )
-            it.addTextPrintItem(
-                slip.addTextOnePrint(
-                    "SALE",
-                    true,
-                    36,
-                    PrintItemAlign.RIGHT
-                )
-            )
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    "BATCH NO.:",
-                    "000114",
-                    null
-                )
-            )
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    "VOUCHER NO.",
-                    "000060",
-                    -1,
-                    32,
-                    floatArrayOf(1f, 1f)
-                )
-            )
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    "REF NO.",
-                    "200507443660",
-                    -1,
-                    32,
-                    floatArrayOf(1f, 1f)
-                )
-            )
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    "TRANS TIME.",
-                    "2020/05/07 16:27:55",
-                    null
-                )
-            )
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    "AMOUNT",
-                    "HKD 150.00",
-                    32,
-                    32,
-                    null
-                )
-            )
-            addLine(slip,mNewPrinter)
-            it.addTextPrintItem(
-                slip.addTextOnePrint(
-                    "SIGNATURE:",
-                    false,
-                    16,
-                    PrintItemAlign.LEFT
-                )
-            )
-            it.addBitmapPrintItem(slip.addBitmapItem(requireContext(), "sign.png"))
-            addLine(slip,mNewPrinter)
-            it.addTextPrintItem(
-                slip.addTextOnePrint(
-                    "I ACKNOWLEDGE SATISFACTORY RECEIPT OF RELATIVE GOODS/SERVICES",
-                    false,
-                    16,
-                    PrintItemAlign.CENTER
-                )
-            )
+            }
+
             it.addTextPrintItem(addLines(2))
             try {
                 val bundle = Bundle()
@@ -383,7 +414,7 @@ class PrintFragment : BottomSheetDialogFragment() {
     }
 
     @Throws(RemoteException::class)
-    private fun addLine(slip: SlipModelUtils,mNewPrinter: AidlNewPrinter?) {
+    private fun addLine(slip: SlipModelUtils, mNewPrinter: AidlNewPrinter?) {
         mNewPrinter!!.addTextPrintItem(
             slip.addTextOnePrint(
                 "--------------------------------------",

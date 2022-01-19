@@ -41,11 +41,11 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
         val item = goods[position]
         holder.binding.apply {
 
-//            Glide.with(root)
-//                .load(Constants.IMG_URL + item.picName)
-//                .placeholder(R.drawable.ic_image_gallery__2_)
-//                .fallback(R.drawable.ic_image_gallery__2_)
-//                .into(itemImage)
+            Glide.with(root)
+                .load(Constants.IMG_URL + item.picName)
+                .placeholder(R.drawable.ic_image_gallery__2_)
+                .fallback(R.drawable.ic_image_gallery__2_)
+                .into(itemImage)
 
             if (prefs.languagePos == 1) {
                 tvItemName.text = item.gName2

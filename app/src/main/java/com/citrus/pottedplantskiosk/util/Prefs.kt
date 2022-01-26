@@ -11,6 +11,10 @@ class Prefs(context: Context) {
         get() = prefs.getBoolean("isNavigate", false)
         set(value) = prefs.edit().putBoolean("isNavigate", value).apply()
 
+    var isLanChanged: Boolean
+        get() = prefs.getBoolean("isLanChanged", false)
+        set(value) = prefs.edit().putBoolean("isLanChanged", value).apply()
+
     var punchId: String
         get() = prefs.getString("Test", "init")?: ""
         set(value) = prefs.edit().putString("Test", value).apply()
@@ -82,7 +86,7 @@ class Prefs(context: Context) {
         set(value) = prefs.edit().putInt(Constants.KEY_METHOD_OF_OPERATION, value).apply()
 
     var printerIs80mm: Boolean
-        get() = prefs.getBoolean(Constants.KEY_PRINTER_IS80MM, true)
+        get() = prefs.getBoolean(Constants.KEY_PRINTER_IS80MM, false)
         set(value) = prefs.edit().putBoolean(Constants.KEY_PRINTER_IS80MM, value).apply()
 
     var tax: Int

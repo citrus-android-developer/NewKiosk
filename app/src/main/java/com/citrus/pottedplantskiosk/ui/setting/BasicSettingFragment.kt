@@ -1,9 +1,7 @@
 package com.citrus.pottedplantskiosk.ui.setting
 
-import android.os.Bundle
-import android.util.Log
+
 import android.view.LayoutInflater
-import android.view.View
 import androidx.core.widget.doOnTextChanged
 import androidx.viewbinding.ViewBinding
 import com.citrus.pottedplantskiosk.R
@@ -30,6 +28,10 @@ class BasicSettingFragment : BindingFragment<FragmentBasicSettingBinding>() {
             decimalSpinner.hint = prefs.decimalPlace.toString()
             operationSpinner.hint = context?.resources?.getStringArray(R.array.MethodOfOperation)
                 ?.get(prefs.methodOfOperation) ?: ""
+
+            lanSpinner.hint =
+                if(prefs.languagePos == -1) "default" else
+                context?.resources?.getStringArray(R.array.language)?.get(prefs.languagePos)
         }
     }
 
@@ -53,6 +55,20 @@ class BasicSettingFragment : BindingFragment<FragmentBasicSettingBinding>() {
                 }
                 setOnSpinnerOutsideTouchListener { _, _ ->
                     idleSpinner.dismiss()
+                }
+            }
+
+            lanSpinner.apply {
+                lifecycleOwner = viewLifecycleOwner
+                setOnSpinnerItemSelectedListener<String> { _, _, newIndex, _ ->
+                    if(prefs.languagePos != newIndex){
+                        prefs.languagePos = newIndex
+                        prefs.isLanChanged = true
+                    }
+
+                }
+                setOnSpinnerOutsideTouchListener { _, _ ->
+                    lanSpinner.dismiss()
                 }
             }
 

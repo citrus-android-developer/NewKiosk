@@ -37,6 +37,7 @@ class SlashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySlashBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         prefs.orderStr = ""
         var msg: String? = intent.getStringExtra("pos_message")
 

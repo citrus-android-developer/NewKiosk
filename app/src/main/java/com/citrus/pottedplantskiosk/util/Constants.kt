@@ -123,7 +123,7 @@ object Constants {
         ElasticAnimation(this)
             .setScaleX(0.85f)
             .setScaleY(0.85f)
-            .setDuration(50)
+            .setDuration(100)
             .setOnFinishListener {
                 this.findViewTreeLifecycleOwner()?.lifecycleScope?.launch {
                     block()

@@ -2,6 +2,7 @@ package com.citrus.pottedplantskiosk.ui.setting
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -22,6 +23,7 @@ import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.databinding.FragmentSettingBinding
 import com.citrus.pottedplantskiosk.databinding.FragmentZoomPageBinding
 import com.citrus.pottedplantskiosk.di.prefs
+import com.citrus.pottedplantskiosk.ui.menu.MenuActivity
 import com.citrus.pottedplantskiosk.ui.menu.ZoomPageFragmentArgs
 import com.citrus.pottedplantskiosk.ui.slash.SlashViewModel
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
@@ -128,8 +130,12 @@ class SettingFragment(private val isFromSlash: Boolean) : BottomSheetDialogFragm
 
             applyBtn.setOnClickListener { v ->
                 v.clickAnimation {
-                    if(isFromSlash){
-                        viewModel.reFetch()
+                    if(prefs.isLanChanged){
+                        prefs.isLanChanged = false
+                        val intent = Intent()
+                        intent.setClass(requireActivity(), MenuActivity::class.java)
+                        requireActivity().startActivity(intent)
+                        requireActivity().finish()
                     }
                     dismiss()
                 }
@@ -183,6 +189,5 @@ class SettingFragment(private val isFromSlash: Boolean) : BottomSheetDialogFragm
             }
         }
     }
-
 
 }

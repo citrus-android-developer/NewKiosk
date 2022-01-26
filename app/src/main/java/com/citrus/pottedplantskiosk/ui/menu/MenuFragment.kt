@@ -76,7 +76,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private var snackbar: Snackbar? = null
     private var updateTimerJob: Job? = null
     private var currentClickView: View? = null
-    private var mNewPrinter: AidlNewPrinter? = null
     private var dealingTransactionData: TransactionData? = null
 
     @Inject
@@ -102,25 +101,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         onTransformationStartContainer()
         menuViewModel.intentNavigateToMenu()
         refreshUsbDevice()
-        Log.e("onCreate","onCreate")
-        PosSdkUtils.bind(requireActivity(), object : PosSdkUtils.BindResult {
-            override fun onReady(posSdkUtils: PosSdkUtils) {
-                mNewPrinter = posSdkUtils.aidlNewPrinter
-
-                if(prefs.orderStr != ""){
-                    Log.e("dealingTransactionData",dealingTransactionData.toString())
-                    dealingTransactionData?.mNewPrinter = mNewPrinter
-                    findNavController().navigateSafely(
-                        R.id.action_menuFragment_to_printFragment,
-                        args = bundleOf("transaction" to dealingTransactionData)
-                    )
-                }
-            }
-
-            override fun onError(s: String) {
-                Log.e("error", "Failed to bind service")
-            }
-        })
     }
 
 
@@ -280,11 +260,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             item?.let {
                 transactionData.printer = usbInfo.deviceList[item.name]
             } ?: run {
-                if(mNewPrinter == null) {
                     transactionData.state = TransactionState.PrinterNotFoundIssue
-                }else{
-                    transactionData.mNewPrinter = mNewPrinter
-                }
             }
 
             dealingTransactionData = transactionData

@@ -53,6 +53,9 @@ object Constants {
     const val KEY_FOOTER = "KEY_FOOTER"
     const val KEY_ORDER_STRING = "KEY_ORDER_STRING"
 
+    var screenW = 0
+    var screenH = 0
+
     sealed class LanguageType {
         object SimpleChinese : LanguageType()
         object English : LanguageType()

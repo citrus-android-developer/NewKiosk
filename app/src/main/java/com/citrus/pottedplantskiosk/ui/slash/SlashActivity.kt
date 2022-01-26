@@ -2,11 +2,13 @@ package com.citrus.pottedplantskiosk.ui.slash
 
 
 import android.content.Intent
+import android.graphics.Point
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.citrus.pottedplantskiosk.R
@@ -16,7 +18,10 @@ import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.databinding.ActivitySlashBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.ui.menu.MenuActivity
+import com.citrus.pottedplantskiosk.ui.slash.dialog.MsgAlertDialog
+import com.citrus.pottedplantskiosk.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
@@ -37,14 +42,13 @@ class SlashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySlashBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        prefs.orderStr = ""
-        var msg: String? = intent.getStringExtra("pos_message")
+        val size = Point()
+        val display = windowManager.defaultDisplay
+        display.getSize(size)
+        /**儲存螢幕size*/
+        Constants.screenW = size.x
+        Constants.screenH = size.y
 
-        msg?.let {
-            prefs.orderStr = "true"
-            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
-            Log.e("onCreate msg from symLink", msg.toString())
-        } ?:    Log.e("onCreate msg from symLink", "null")
         initObserve()
 
     }
@@ -71,9 +75,16 @@ class SlashActivity : AppCompatActivity() {
                         checkEachFun()
                     }
                     is Resource.Error -> {
-                        Log.e("error",result.message!!)
-                        Toast.makeText(baseContext,result.message!!,Toast.LENGTH_LONG).show()
+
                         viewModel.fetchError()
+
+                        delay(2000)
+                        var dialog = MsgAlertDialog(this@SlashActivity,result.message!! )
+                        dialog?.show()
+                        dialog?.window?.setLayout(
+                            (Constants.screenW * 0.8).toInt(),
+                            (Constants.screenH * 0.1).toInt()
+                        )
                     }
                 }
             }

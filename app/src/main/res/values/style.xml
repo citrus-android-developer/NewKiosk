@@ -24,6 +24,22 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="BaseCustomDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:clipToPadding">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowBackground">@drawable/custom_dialog_bg</item>
+        <item name="android:windowFrame">@null</item>
+        <!--        <item name="android:windowContentOverlay">@null</item>-->
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+    </style>
+
+    <style name="CustomDialogTheme" parent="@style/BaseCustomDialog">
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+    </style>
 
 <!--    <style name="CustomBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">-->
 <!--        <item name="bottomSheetStyle">@style/CustomBottomSheet</item>-->

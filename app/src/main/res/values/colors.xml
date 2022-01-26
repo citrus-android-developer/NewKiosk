@@ -34,6 +34,8 @@
     <color name="greenDark">#0B5E10</color>
     <color name="green">#D0DFCA</color>
     <color name="red">#FF1414</color>
+
+    <color name="alertRed">#E63131</color>
     <color name="colorLightOrange">#7988664A</color>
     <color name="deleteRed">#F77171</color>
     <color name="gray">#CFCFCF</color>

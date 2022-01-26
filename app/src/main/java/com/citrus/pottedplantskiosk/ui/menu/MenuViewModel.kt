@@ -126,7 +126,9 @@ class MenuViewModel @Inject constructor(
         currentGroup?.let { mainGroup ->
             var list = mainGroup.kind.filter { it.goods.isNotEmpty() }.map { it.desc }
             _groupDescName.emit(list)
-            onDescChange(mainGroup.kind.first().desc)
+            if(mainGroup.kind.isNotEmpty()) {
+                onDescChange(mainGroup.kind.first().desc)
+            }
         }
     }
 

@@ -9,16 +9,20 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
 
     override suspend fun getMenu(url: String, rsNo: String) =
         resultFlowData(apiQuery = { apiService.getMenu(url, rsNo) }, onSuccess = { result ->
-            if (result.data.status != 1) {
+            if (result.data.status != 1 || result.data.data.mainGroup.isEmpty()) {
                 Resource.Error("Menu not found", null)
             } else {
-                Resource.Success(result.data)
+                if(result.data.data.mainGroup.find { it.kind.isNotEmpty() } == null){
+                    Resource.Error("Menu not found", null)
+                }else{
+                    Resource.Success(result.data)
+                }
             }
         })
 
     override suspend fun getBanner(url: String, jsonData: String) =
         resultFlowData(apiQuery = { apiService.getBanner(url, jsonData) }, onSuccess = { result ->
-            if (result.data.status != 1) {
+            if (result.data.status != 1 || result.data.data.isEmpty()) {
                 Resource.Error("Banner not found", null)
             } else {
                 Resource.Success(result.data)
@@ -34,22 +38,6 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
             }
         })
 
-    override suspend fun getGenericResultByInt(url: String) =
-        resultFlowData(apiQuery = { apiService.getGenericResultByInt(url) }, onSuccess = { result ->
-            if (result.data.status != 1) {
-                Resource.Error("Orders upload fail", null)
-            } else {
-                Resource.Success(result.data)
-            }
-        })
 
-    override suspend fun getGenericResultByObj(url: String)  =
-        resultFlowData(apiQuery = { apiService.getGenericResultByObj(url) }, onSuccess = { result ->
-            if (result.data.status != 1) {
-                Resource.Error("Orders upload fail", null)
-            } else {
-                Resource.Success(result.data)
-            }
-        })
 
 }

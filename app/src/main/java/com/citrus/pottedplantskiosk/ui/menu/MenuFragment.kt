@@ -289,81 +289,10 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
             dealingTransactionData = transactionData
 
-            var sPriceText =
-            dealingTransactionData?.orders?.ordersDelivery?.sPrice.toString()
-            var arrayStr = sPriceText.split(".").toMutableList()
-            if(arrayStr.size > 1){
-                if(arrayStr[1].length == 1){
-                    arrayStr[1] =  arrayStr[1] + "0"
-                }
-            }else{
-                arrayStr.add(1,"00")
-            }
-            sPriceText = arrayStr[0] + arrayStr[1]
-            Log.e("sPrice",sPriceText)
-
-
-            var ecrProtocol = EcrProtocol()
-            ecrProtocol.ecrIndicator = "I"
-            ecrProtocol.ecrVersionDate = ""
-            ecrProtocol.transTypeIndicator = ""
-            ecrProtocol.transType = "01"
-            ecrProtocol.cupIndicator = "N"
-            ecrProtocol.hostID = ""
-            ecrProtocol.receiptNo = ""
-            ecrProtocol.cardNo = ""
-            ecrProtocol.cardExpireDate = ""
-            ecrProtocol.transAmount = sPriceText
-            ecrProtocol.transDate = "220101"
-            ecrProtocol.transTime = "210016"
-            ecrProtocol.approvalNo = ""
-            ecrProtocol.waveCardIndicator = ""
-            ecrProtocol.ecrResponseCode = ""
-            ecrProtocol.merchantId = ""
-            ecrProtocol.terminalId = ""
-            ecrProtocol.expAmount = ""
-            ecrProtocol.storeId = ""
-            ecrProtocol.installmentRedeemIndicator = ""
-            ecrProtocol.rdmPaidAmt = sPriceText
-            ecrProtocol.rdmPoint = ""
-            ecrProtocol.pointsOfBalance = ""
-            ecrProtocol.redeemAmt = ""
-            ecrProtocol.installmentPeriod = ""
-            ecrProtocol.downPaymentAmount = ""
-            ecrProtocol.installmentPaymentAmount = ""
-            ecrProtocol.formalityFee = ""
-            ecrProtocol.cardType = ""
-            ecrProtocol.batchNo = ""
-            ecrProtocol.startTransType = ""
-            ecrProtocol.mpFlag = ""
-            ecrProtocol.spIssuerId = ""
-            ecrProtocol.spCardOriginDate = ""
-            ecrProtocol.spRrn = ""
-            ecrProtocol.payItem = ""
-            ecrProtocol.cardNoHashValue = ""
-            ecrProtocol.mpResponseCode = ""
-            ecrProtocol.asmAwardFlag = ""
-            ecrProtocol.mcpIndicator = ""
-            ecrProtocol.codeNo = ""
-            ecrProtocol.reserved = ""
-
-            var payload = ecrProtocol.ercPayload()
-
-            Log.e("payload",payload)
-            Log.e("payload",payload.length.toString())
-            val intent: Intent? =
-                activity?.packageManager?.getLaunchIntentForPackage("com.symlink.symlinknccc")
-            intent?.putExtra("pos_message", payload)
-            intent?.putExtra("pos_packagename", "com.citrus.pottedplantskiosk")
-            intent?.let{
-                startActivity(it)
-            } ?: Log.e("null","null")
-
-
-//            findNavController().navigateSafely(
-//                R.id.action_menuFragment_to_printFragment,
-//                args = bundleOf("transaction" to transactionData)
-//            )
+            findNavController().navigateSafely(
+                R.id.action_menuFragment_to_printFragment,
+                args = bundleOf("transaction" to transactionData)
+            )
         }
 
 

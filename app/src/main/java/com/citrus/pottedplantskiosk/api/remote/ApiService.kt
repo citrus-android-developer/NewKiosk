@@ -32,16 +32,4 @@ interface ApiService {
         @Field("jsonData") jsonData: String
     ): ApiResponse<UploadResponse>
 
-
-    /**getGenericResult Test*/
-    @Headers("Content-Type: application/x-www-form-urlencoded")
-    @GET
-    suspend fun getGenericResultByInt(@Url url: String): ApiResponse<StatusCode<Int>>
-
-    /**getGenericResult Test*/
-    @Headers("Content-Type: application/x-www-form-urlencoded")
-    @GET
-    suspend fun getGenericResultByObj(@Url url: String): ApiResponse<StatusCode<ResultMock>>
-
-
 }

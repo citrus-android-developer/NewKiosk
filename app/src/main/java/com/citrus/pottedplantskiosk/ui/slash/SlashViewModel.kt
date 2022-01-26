@@ -42,30 +42,11 @@ class SlashViewModel @Inject constructor(
         deferred.awaitAll()
     }
 
-    init {
-        getGenericResultByInt()
-        getGenericResultByString()
-    }
-
-    private  fun getGenericResultByInt() =
-        viewModelScope.launch {
-            repository.getGenericResultByInt("http://192.168.0.56:8080/api/getGenericResultByInt").collect {
-                Log.e("getGeneric",it.toString())
-                it.data?.toString()?.let { it1 -> Log.e("getGenericResultByInt", it1) }
-            }
-        }
-
-    private  fun getGenericResultByString() =
-        viewModelScope.launch {
-            repository.getGenericResultByObj("http://192.168.0.56:8080/api/getGenericResultByObject").collect {
-                Log.e("getGeneric",it.toString())
-
-                it.data?.data?.let { it1 -> Log.e("getGenericResultByObj", it1.desc) }
-            }
-        }
 
     private fun getMenu() =
         viewModelScope.launch {
+            Log.e("url",prefs.serverIp + Constants.GET_MENU)
+            Log.e("storeId",prefs.storeId)
             repository.getMenu(prefs.serverIp + Constants.GET_MENU, prefs.storeId).collect { result ->
                 _allMenuData.emit(result)
             }

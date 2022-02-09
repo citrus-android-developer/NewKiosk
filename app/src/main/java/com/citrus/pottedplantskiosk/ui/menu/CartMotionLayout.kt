@@ -22,6 +22,7 @@ import com.citrus.pottedplantskiosk.ui.menu.adapter.CheckoutAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.PayWayAdapter
 import com.citrus.pottedplantskiosk.util.*
 import com.citrus.pottedplantskiosk.util.Constants.getGstStr
+import com.citrus.pottedplantskiosk.util.Constants.getValByMathWay
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.skydoves.elasticviews.ElasticAnimation
@@ -349,14 +350,14 @@ class CartMotionLayout @JvmOverloads constructor(
             }
 
 
-            tvTotalPrice.text = context.getString(R.string.SubTotal) + pureSPrice
+            tvTotalPrice.text = context.getString(R.string.SubTotal) + getValByMathWay(pureSPrice)
 
             sumPrice.text = context.getString(R.string.SubTotal)
-            vSumPrice.text = pureSPrice.toString()
+            vSumPrice.text = getValByMathWay(pureSPrice)
             gts.text = context.getGstStr()
-            vGts.text = Constants.getValByMathWay(gstValue)
+            vGts.text = getValByMathWay(gstValue)
             grandTotal.text = context.getString(R.string.grandTotal)
-            vGrandTotal.text = grandTotalStr
+            vGrandTotal.text = getValByMathWay(grandTotalStr.toDouble())
 
             cartItemSize.text = cartItemAdapter?.getList()?.size.toString()
             if (list.isEmpty() && currentPayWay == null) {

@@ -221,6 +221,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
         lifecycleFlow(menuViewModel.allGoods) { goodsList ->
+            binding.itemRvArea.isVisible = true
             goodsItemAdapter.setGoodsList(goodsList)
             binding.goodsRv.scrollToPosition(0)
             binding.goodsRv.scheduleLayoutAnimation()
@@ -236,6 +237,14 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         }
 
 
+//        lifecycleFlow(menuViewModel.needSetting) {
+//            if(it.isNotBlank()) {
+//                val dialog = SettingFragment(false)
+//                dialog.show(childFragmentManager, "SettingFragment")
+//
+//                Toast.makeText(requireContext(),it,Toast.LENGTH_LONG).show()
+//            }
+//        }
 
         lifecycleFlow(menuViewModel.clearCartGoods) {
             binding.cartMotionLayout.clearCartGoods()

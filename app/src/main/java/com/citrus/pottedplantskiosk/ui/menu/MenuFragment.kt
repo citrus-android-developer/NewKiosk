@@ -185,8 +185,14 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 binding.progressCircular.isVisible = it
         }
 
+
         lifecycleFlow(menuViewModel.showSetting) {
-            
+            if(it.isNotBlank()) {
+                val dialog = SettingFragment(false)
+                dialog.show(childFragmentManager, "SettingFragment")
+
+                Toast.makeText(requireContext(),it,Toast.LENGTH_LONG).show()
+            }
         }
 
         lifecycleFlow(menuViewModel.currentCartGoods) { cartGoods ->

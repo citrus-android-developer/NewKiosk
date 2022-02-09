@@ -44,7 +44,7 @@ fun <T> resultFlowData(
         return@retryWhen false
     }
 }.catch {
-    Log.e("catch error", "--")
+    emit(Resource.Error( "can't fetch data.", null))
 }.onStart { emit(Resource.Loading(null,true)) }
     .onCompletion { emit(Resource.Loading(null,false)) }
     .flowOn(Dispatchers.IO)

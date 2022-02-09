@@ -64,6 +64,9 @@ class MenuViewModel @Inject constructor(
     private val _showDetailEvent = MutableSharedFlow<Good>()
     val showDetailEvent: SharedFlow<Good> = _showDetailEvent
 
+    private val _showSetting = MutableSharedFlow<String>()
+    val showSetting: SharedFlow<String> = _showSetting
+
 
     private val _showBannerData = MutableStateFlow<List<BannerData>>(listOf())
     val showBannerData: StateFlow<List<BannerData>> = _showBannerData
@@ -81,9 +84,18 @@ class MenuViewModel @Inject constructor(
     fun getMenu() =
         viewModelScope.launch {
             repository.getMenu(prefs.serverIp + Constants.GET_MENU, prefs.storeId).collect { result ->
-                result.data?.data?.let {
-                    showData(it)
-                    _progress.emit(false)
+                when(result) {
+                    is Resource.Success -> {
+                        result.data?.data?.let {
+                            showData(it)
+                            _progress.emit(false)
+                        }
+                    }
+                    is Resource.Error -> {
+                        _showSetting.emit(result.message!!)
+                        _progress.emit(false)
+                    }
+                    else -> Unit
                 }
             }
         }

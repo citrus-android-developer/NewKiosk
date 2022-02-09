@@ -12,7 +12,11 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
             if (result.data.status != 1) {
                 Resource.Error("Menu not found", null)
             } else {
-                Resource.Success(result.data)
+                if(result.data.data.mainGroup.isEmpty()){
+                    Resource.Error("MainGroup is empty", null)
+                }else{
+                    Resource.Success(result.data)
+                }
             }
         })
 

@@ -185,6 +185,10 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 binding.progressCircular.isVisible = it
         }
 
+        lifecycleFlow(menuViewModel.showSetting) {
+            
+        }
+
         lifecycleFlow(menuViewModel.currentCartGoods) { cartGoods ->
             if (cartGoods != null) {
                 /**非已編輯物件才有購物車動畫*/

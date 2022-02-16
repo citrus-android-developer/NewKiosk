@@ -195,27 +195,16 @@ class PrintOrderInfo(
 
         data = b(data, text("\n"))
 
-        val isP = context.assets.open("jps_invoice.pdf")
-        val size: Int = isP.available()
-
-        val buffer = ByteArray(size)
-        isP.read(buffer)
-        isP.close()
-
-
-
-
-//        val invoiceBitmapOrg = BitmapFactory.decodeResource(
-//            context!!.resources,
-//            R.drawable.invoice
-//        )
-
-
-        val icon = writeBytesAsPdf(buffer)!!
-
-
-
-        data = b(data, bitmapToBytes(icon))
+        /**發票Test*/
+//        val isP = context.assets.open("jps_invoice.pdf")
+//        val size: Int = isP.available()
+//
+//        val buffer = ByteArray(size)
+//        isP.read(buffer)
+//        isP.close()
+//
+//        val icon = writeBytesAsPdf(buffer)!!
+//        data = b(data, bitmapToBytes(icon))
 
         if (data.isEmpty()) {
             onResult(true, null)

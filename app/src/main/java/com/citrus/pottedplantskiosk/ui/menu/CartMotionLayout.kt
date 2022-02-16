@@ -349,14 +349,14 @@ class CartMotionLayout @JvmOverloads constructor(
             }
 
 
-            tvTotalPrice.text = context.getString(R.string.SubTotal) + pureSPrice
+            tvTotalPrice.text = context.getString(R.string.SubTotal) + Constants.getValByMathWay(pureSPrice)
 
             sumPrice.text = context.getString(R.string.SubTotal)
-            vSumPrice.text = pureSPrice.toString()
+            vSumPrice.text = Constants.getValByMathWay(pureSPrice)
             gts.text = context.getGstStr()
             vGts.text = Constants.getValByMathWay(gstValue)
             grandTotal.text = context.getString(R.string.grandTotal)
-            vGrandTotal.text = grandTotalStr
+            vGrandTotal.text = Constants.getValByMathWay(grandTotalStr.toDouble())
 
             cartItemSize.text = cartItemAdapter?.getList()?.size.toString()
             if (list.isEmpty() && currentPayWay == null) {

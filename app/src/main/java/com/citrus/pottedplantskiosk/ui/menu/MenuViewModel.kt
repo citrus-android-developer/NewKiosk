@@ -159,11 +159,17 @@ class MenuViewModel @Inject constructor(
     fun onDescChange(desc: String) = viewModelScope.launch {
         currentGroup?.let { mainGroup ->
             var goods = mainGroup.kind.find { it.desc == desc }?.goods!!
-            goods[0].price = 4.55
-            goods[0].tax = 7.0
 
-            goods[1].price = 3.25
-            goods[1].tax = 6.0
+            goods.forEach {
+                if( it.price < 10) {
+                    it.price = it.price * 100
+                }
+
+                if( it.price < 100) {
+                    it.price = it.price * 10
+                }
+            }
+
             _allGoods.emit(goods)
         }
     }

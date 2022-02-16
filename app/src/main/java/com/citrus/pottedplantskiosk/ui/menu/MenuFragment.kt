@@ -290,7 +290,9 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
                 var sPriceText =
-                    dealingTransactionData?.orders?.ordersDelivery?.sPrice.toString()
+                    dealingTransactionData?.orders?.ordersDelivery?.sPrice?.toInt().toString()
+
+                Log.e("sPriceText",sPriceText)
                 var arrayStr = sPriceText.split(".").toMutableList()
                 if (arrayStr.size > 1) {
                     if (arrayStr[1].length == 1) {
@@ -350,6 +352,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
                 val intent: Intent? =
                     activity?.packageManager?.getLaunchIntentForPackage("com.symlink.symlinknccc")
+
                 intent?.putExtra("pos_message", payload)
                 intent?.putExtra("pos_packagename", "com.citrus.pottedplantskiosk")
                 intent?.let {

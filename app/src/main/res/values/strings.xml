@@ -21,6 +21,7 @@
     <string name="done">Done</string>
     <string name="back">Back</string>
     <string name="cartHint">Cart is empty</string>
+    <string name="addToCart">Add to Cart</string>
     <string name="home">Home</string>
     <string name="idle">Idle State Detected</string>
     <string name="idleHint">Will back to main page after %d sec</string>

@@ -146,13 +146,24 @@ class CartMotionLayout @JvmOverloads constructor(
             progress = 1f
         }
 
+        if (isDone) {
+            deliveryInfo = DeliveryInfo(
+                goodsList = cartItemAdapter?.getList()!!,
+                payWay = currentPayWay!!,
+                gst = gstValue,
+                grandTotal = grandTotalValue,
+                orderNo = ""
+            )
+            onOrderDoneListener?.let { pass ->
+                cartItemAdapter?.getList()?.let { pass(deliveryInfo!!) }
+            }
+        }
 
 
         binding.cartRv.visibility = View.INVISIBLE
 
         transitionToStart()
         awaitTransitionComplete(R.id.set3_reveal)
-
 
         setTransition(R.id.set2_path, R.id.set3_reveal)
         progress = 1f
@@ -167,19 +178,6 @@ class CartMotionLayout @JvmOverloads constructor(
         transitionToStart()
         awaitTransitionComplete(R.id.set1_base)
         binding.filterIconText.visibility = View.GONE
-
-        if (isDone) {
-            deliveryInfo = DeliveryInfo(
-                goodsList = cartItemAdapter?.getList()!!,
-                payWay = currentPayWay!!,
-                gst = gstValue,
-                grandTotal = grandTotalValue,
-                orderNo = ""
-            )
-            onOrderDoneListener?.let { pass ->
-                cartItemAdapter?.getList()?.let { pass(deliveryInfo!!) }
-            }
-        }
 
     }
 

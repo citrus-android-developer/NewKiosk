@@ -108,7 +108,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="加入購物車"
+        android:text="@string/addToCart"
         android:textStyle="bold"
         android:fontFamily="@font/droidbold"
         android:padding="@dimen/dp_13"

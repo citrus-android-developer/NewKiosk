@@ -7,7 +7,7 @@
         android:id="@+id/set1To2"
         motion:constraintSetEnd="@id/set2_path"
         motion:constraintSetStart="@id/set1_base"
-        motion:duration="500">
+        motion:duration="300">
 
         <!-- For Arc Path -->
         <KeyFrameSet>
@@ -40,7 +40,7 @@
         android:id="@+id/set2To3"
         motion:constraintSetEnd="@id/set3_reveal"
         motion:constraintSetStart="@id/set2_path"
-        motion:duration="500">
+        motion:duration="300">
 
         <!-- At 80% of animation, reach max size of fab with radius
           as a circle (160dp doesn't matter as the CustomCardView will
@@ -76,19 +76,19 @@
         android:id="@+id/set3To4"
         motion:constraintSetEnd="@id/set4_settle"
         motion:constraintSetStart="@id/set3_reveal"
-        motion:duration="500" />
+        motion:duration="300" />
 
     <Transition
         android:id="@+id/set4To5"
         motion:constraintSetEnd="@id/set5_payWay"
         motion:constraintSetStart="@id/set4_settle"
-        motion:duration="500" />
+        motion:duration="300" />
 
     <Transition
         android:id="@+id/set5To6"
         motion:constraintSetEnd="@id/set6_checkout"
         motion:constraintSetStart="@id/set5_payWay"
-        motion:duration="500" />
+        motion:duration="300" />
 
 
     <ConstraintSet android:id="@+id/set1_base">
@@ -445,14 +445,15 @@
         <Constraint
             android:id="@+id/checkoutBottomViewLine"
             android:elevation="@dimen/dp_36"
-            motion:layout_constraintEnd_toEndOf="@+id/checkoutRv"
+            motion:layout_constraintEnd_toEndOf="parent"
             android:layout_height="@dimen/dp_2"
             android:layout_width="0dp"
             android:visibility="visible"
-            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_marginEnd="@dimen/dp_60"
+            
             motion:layout_constraintTop_toBottomOf="@+id/checkoutRv"
-            android:layout_marginStart="@dimen/dp_10"
-            motion:layout_constraintStart_toStartOf="@+id/checkoutRv" />
+            android:layout_marginStart="@dimen/dp_60"
+            motion:layout_constraintStart_toStartOf="parent" />
         <Constraint
             android:layout_marginTop="@dimen/dp_2"
             android:id="@+id/priceInfo"

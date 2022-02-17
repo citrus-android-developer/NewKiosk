@@ -139,7 +139,7 @@ class PrintFragment : BottomSheetDialogFragment() {
             }
             showSuccess()
             job = MainScope().launch {
-                delay(8000)
+                delay(4000)
                 findNavController().popBackStack(R.id.mainFragment, false)
             }
             job?.start()

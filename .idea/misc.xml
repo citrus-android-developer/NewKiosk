@@ -104,6 +104,7 @@
         <entry key="app/src/main/res/layout/inside_recycler_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_container_goods.xml" value="0.125" />
         <entry key="app/src/main/res/layout/item_size.xml" value="0.17546296296296296" />
+        <entry key="app/src/main/res/layout/layout_baseline.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/layout/layout_cart_sheet.xml" value="0.1" />
         <entry key="app/src/main/res/layout/layout_motion.xml" value="0.25" />
         <entry key="app/src/main/res/layout/layout_motion_test.xml" value="0.2222222222222222" />

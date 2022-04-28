@@ -56,6 +56,22 @@
             android:textSize="@dimen/sp_16"
             android:textStyle="bold" />
 
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tvBtn"
+            android:layout_width="@dimen/dp_70"
+            android:layout_height="@dimen/dp_38"
+            android:background="@drawable/text_btn_shape_white"
+            android:fontFamily="@font/droidbold"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="@dimen/dp_10"
+            android:text="@string/confirm"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"
+            android:textStyle="bold"
+            />
+
     </LinearLayout>
 
 

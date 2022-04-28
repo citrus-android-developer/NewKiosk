@@ -1,43 +1,51 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import android.os.RemoteException
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.citrus.pottedplantskiosk.R
-import com.citrus.pottedplantskiosk.api.remote.dto.OrderDeliveryData
-import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
-import com.citrus.pottedplantskiosk.api.remote.dto.TransactionState
-import com.citrus.pottedplantskiosk.api.remote.dto.payWayList
+import com.citrus.pottedplantskiosk.api.remote.dto.*
 import com.citrus.pottedplantskiosk.databinding.FragmentPrintBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.Constants.CENTER
+import com.citrus.pottedplantskiosk.util.Constants.LEFT
+import com.citrus.pottedplantskiosk.util.Constants.LINE_SPACE
+import com.citrus.pottedplantskiosk.util.Constants.LINE_SPACE_BLOCK
+import com.citrus.pottedplantskiosk.util.Constants.LINE_SPACE_L
+import com.citrus.pottedplantskiosk.util.Constants.PAGE_WIDTH
+import com.citrus.pottedplantskiosk.util.Constants.RIGHT
+import com.citrus.pottedplantskiosk.util.Constants.SEPARATE_MID
+import com.citrus.pottedplantskiosk.util.Constants.SEPARATE_NORMAL
+import com.citrus.pottedplantskiosk.util.Constants.SPACE
+import com.citrus.pottedplantskiosk.util.Constants.TXT_L
+import com.citrus.pottedplantskiosk.util.Constants.TXT_M
+import com.citrus.pottedplantskiosk.util.Constants.TXT_S
 import com.citrus.pottedplantskiosk.util.Constants.getGstStr
+import com.citrus.pottedplantskiosk.util.base.onSafeClick
+import com.citrus.pottedplantskiosk.util.navigateSafely
 import com.citrus.pottedplantskiosk.util.print.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.pos.sdklib.aidl.newprinter.AidlNewPrinter
-import com.pos.sdklib.aidl.newprinter.AidlPrinterResultListener
-import com.pos.sdklib.aidl.newprinter.param.PrintItemAlign
-import com.pos.sdklib.aidl.newprinter.param.TextPrintItemParam
+import com.google.gson.Gson
+import com.pax.gl.page.PaxGLPage
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.lang.Exception
-import java.lang.StringBuilder
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class PrintFragment : BottomSheetDialogFragment() {
@@ -46,9 +54,11 @@ class PrintFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentPrintBinding? = null
     private val binding get() = _binding!!
     private val args: PrintFragmentArgs by navArgs()
-    var job: Job? = null
+    private var idleJob: Job? = null
     var data: TransactionData? = null
     var payType = ""
+    var printJob: Job? = null
+    private lateinit var startActivityLauncher: ActivityResultLauncher<Intent>
 
     override fun onStart() {
         super.onStart()
@@ -58,13 +68,26 @@ class PrintFragment : BottomSheetDialogFragment() {
         val behavior = BottomSheetBehavior.from(view)
         behavior.peekHeight = resources.getDimension(R.dimen.dp_400).toInt()
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
-
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.BottomSheetDialog)
+
+        startActivityLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.data != null && it.resultCode == Activity.RESULT_OK) {
+                    it.data?.getStringExtra("EDC_RESPONSE")?.let { msg ->
+                        var edcResponse = Gson().fromJson(msg, EdcData::class.java)
+
+                        Log.e("test", edcResponse.toString())
+                        if (edcResponse.ECR_Response_Code == "0000") {
+
+                        }
+                    }
+                }
+            }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): BottomSheetDialog {
@@ -79,7 +102,7 @@ class PrintFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentPrintBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -91,23 +114,78 @@ class PrintFragment : BottomSheetDialogFragment() {
 
         data = args.transaction
 
-        when (data!!.state) {
-            is TransactionState.NetworkIssue -> {
-                showError()
-            }
+        data?.let {
+            when (it.state) {
+                is TransactionState.NetworkIssue -> {
+                    showError()
+                }
 
-            is TransactionState.PrinterNotFoundIssue -> {
-                showError()
-            }
+                is TransactionState.PrinterNotFoundIssue -> {
+                    showError()
+                }
 
-            is TransactionState.WorkFine -> {
-                payType = data!!.orders!!.ordersDelivery.payType
-                when {
-                    data!!.printer != null -> {
-                        printStart(data!!)
+                is TransactionState.WorkFine -> {
+                    payType = it.orders?.ordersDelivery?.payType ?: ""
+                    when {
+                        it.printer != null -> {
+                            printStart(it)
+                        }
+                        else -> {
+                            printJob?.cancel()
+                            printJob = MainScope().launch {
+                                withContext(IO) {
+                                    a920PrintStart(it)
+                                }
+                            }
+                            printJob?.start()
+                        }
                     }
-                    data!!.mNewPrinter != null -> {
-                        symLinkPrint(data!!)
+                }
+            }
+        }
+
+        binding.tvBtn.onSafeClick {
+            if (payType == payWayList()[0].desc) {
+                var edcData = EdcData(Trans_Type = "11")
+
+                val intent = Intent()
+                intent.setClassName(
+                    "com.cybersoft.a920",
+                    "com.cybersoft.a920.activity.MainActivity"
+                )
+                val bundle = Bundle()
+                bundle.putString(
+                    "POS_REQUEST",
+                    Gson().toJson(edcData)
+                )
+                intent.putExtras(bundle)
+                startActivityLauncher.launch(intent)
+            } else {
+                printJob?.cancel()
+                printJob = MainScope().launch {
+                    withContext(IO) {
+                        a920PrintStart(data!!)
+                    }
+                }
+                printJob?.start()
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            A920Printer.printerEvent.collect {
+                when (it.result) {
+                    PrinterState.DONE -> {
+                        binding.tvBtn.visibility = View.GONE
+                        showSuccess()
+                        idleJob?.cancel()
+                        idleJob = MainScope().launch {
+                            delay(8000)
+                            findNavController().popBackStack(R.id.mainFragment, false)
+                        }
+                        idleJob?.start()
+                    }
+                    PrinterState.OUT_OF_PAPER, PrinterState.LOW_BATTERY -> {
+                        showAlert(it.errorMsg)
                     }
                     else -> {
                         showError()
@@ -136,9 +214,8 @@ class PrintFragment : BottomSheetDialogFragment() {
 
     private fun showSuccess(isCash: Boolean = false) {
         binding.apply {
-            if (isCash) {
-                menuViewModel.setPrintStatus(1)
-            }
+            tvBtn.isVisible = false
+            menuViewModel.setPrintStatus(1)
             lottieHint.setAnimation("success.json")
             printing.isVisible = false
             hintArea.isVisible = true
@@ -147,19 +224,122 @@ class PrintFragment : BottomSheetDialogFragment() {
 
     }
 
-    private fun symLinkPrint(data: TransactionData) {
-        val slip = SlipModelUtils()
-        var deliveryItemList = data.orders?.ordersItemDelivery
-        var printer = data.mNewPrinter
-        printer?.addTextPrintItem(
-            slip.addTextOnePrint(
-                deliveryItemList?.get(0)?.orderNO,
-                true,
-                40,
-                PrintItemAlign.CENTER
-            )
+    private fun showAlert(msg: String) {
+        binding.apply {
+            tvBtn.isVisible = true
+            printing.isVisible = false
+            hintArea.isVisible = true
+            lottieHint.setAnimation("error.json")
+            tvHint.text = msg
+        }
+    }
+
+
+    private fun a920PrintStart(data: TransactionData) {
+        val paxGLPage =
+            PaxGLPage.getInstance(requireContext())
+        val iPage = paxGLPage.createPage()
+
+        val deliveryInfo = data.orders!!
+        var deliveryItemList = deliveryInfo.ordersItemDelivery
+
+        A920Printer.init()
+        A920Printer.step(LINE_SPACE_L)
+        //LEFT
+        iPage.addLine().addUnit(SPACE, LINE_SPACE, LEFT)
+        iPage.addLine().addUnit(deliveryInfo.ordersItemDelivery[0].orderNO, TXT_L, CENTER)
+        if (prefs.header.isNotEmpty()) {
+            iPage.addLine().addUnit(SPACE, LINE_SPACE, LEFT)
+            iPage.addLine().addUnit(prefs.header, TXT_M, CENTER)
+        }
+        if (prefs.kioskId.isNotEmpty()) {
+            iPage.addLine().addUnit(SPACE, LINE_SPACE, LEFT)
+            iPage.addLine().addUnit("Take Away: " + prefs.kioskId, TXT_M, LEFT)
+        }
+        if (prefs.storeName.isNotEmpty()) {
+            iPage.addLine().addUnit(SPACE, LINE_SPACE, LEFT)
+            iPage.addLine().addUnit(prefs.storeName, TXT_M, LEFT)
+        }
+        if (prefs.storeAddress.isNotEmpty()) {
+            iPage.addLine().addUnit(prefs.storeAddress, TXT_M, LEFT)
+        }
+        iPage.addLine().addUnit(SPACE, LINE_SPACE, LEFT)
+        iPage.addLine().addUnit(
+            resources.getString(R.string.printTime) + Constants.getCurrentTime(),
+            TXT_M,
+            LEFT
         )
-        printTest(printer, data.orders)
+
+        iPage.addLine().addUnit(SEPARATE_MID, TXT_M, CENTER)
+
+        var sum = 0
+        for (item in deliveryItemList) {
+            sum += item.qty
+
+            var itemTitle = if (prefs.languagePos == 1) item.gName2 else item.gname
+
+            iPage.addLine().addUnit(SPACE, LINE_SPACE, LEFT)
+            iPage.addLine().addUnit(itemTitle, TXT_M, LEFT)
+                .addUnit(item.qty.toString(), TXT_M, CENTER)
+                .addUnit(Constants.getValByMathWay(item.gPrice), TXT_M, RIGHT)
+
+
+            val flavorAdd =
+                if (!item.addGName.isNullOrEmpty() && !item.flavorDesc.isNullOrEmpty()) item.addGName + "/" + item.flavorDesc
+                else if (!item.addGName.isNullOrEmpty()) item.addGName
+                else if (!item.flavorDesc.isNullOrEmpty()) item.flavorDesc
+                else null
+
+
+            flavorAdd?.let {
+                iPage.addLine().addUnit(SPACE, LINE_SPACE, LEFT)
+                iPage.addLine().addUnit("    #$it", TXT_S, LEFT)
+            }
+        }
+
+
+        var orgAmtStr =
+            String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.sPrice))
+        val qtyStr = String.format("%-3s", sum)
+        val gst =
+            String.format("%7s", Constants.getValByMathWay(deliveryInfo.ordersDelivery.totaltax))
+        val grandTotal =
+            String.format(
+                "%7s",
+                Constants.getValByMathWay(deliveryInfo.ordersDelivery.sPrice + deliveryInfo.ordersDelivery.totaltax)
+            )
+
+        iPage.addLine().addUnit(resources.getString(R.string.Total), TXT_M, RIGHT)
+            .addUnit(qtyStr, TXT_M, CENTER).addUnit(
+                orgAmtStr, TXT_M, LEFT
+            )
+
+        iPage.addLine().addUnit(SEPARATE_MID, TXT_M, CENTER)
+
+
+        iPage.addLine().addUnit(SPACE, LINE_SPACE, LEFT)
+        iPage.addLine().addUnit(resources.getString(R.string.paymentType), TXT_M, LEFT)
+            .addUnit(deliveryInfo.ordersDelivery.payType, TXT_M, LEFT)
+        iPage.addLine().addUnit(resources.getString(R.string.SubTotal), TXT_M, LEFT)
+            .addUnit(orgAmtStr, TXT_M, LEFT)
+        iPage.addLine().addUnit(requireContext().getGstStr(), TXT_M, LEFT).addUnit(gst, TXT_M, LEFT)
+
+        if (prefs.taxFunction == 2) {
+            iPage.addLine().addUnit(resources.getString(R.string.grandTotal), TXT_L, LEFT)
+                .addUnit(grandTotal, TXT_L, LEFT)
+        } else {
+            iPage.addLine().addUnit(resources.getString(R.string.grandTotal), TXT_L, LEFT)
+                .addUnit(orgAmtStr, TXT_L, LEFT)
+        }
+        if (prefs.footer.isNotEmpty()) {
+            iPage.addLine().addUnit(SEPARATE_NORMAL, TXT_M, CENTER)
+            iPage.addLine().addUnit(prefs.footer, TXT_M, CENTER)
+        }
+
+        var printData = paxGLPage.pageToBitmap(iPage, PAGE_WIDTH)
+        A920Printer.printBitmap(printData)
+        A920Printer.step(LINE_SPACE_BLOCK)
+        A920Printer.start()
     }
 
 
@@ -174,33 +354,14 @@ class PrintFragment : BottomSheetDialogFragment() {
                 return@PrintOrderInfo
             }
             showSuccess()
-            job = MainScope().launch {
+            idleJob = MainScope().launch {
                 delay(8000)
                 findNavController().popBackStack(R.id.mainFragment, false)
             }
-            job?.start()
+            idleJob?.start()
         }.startPrint()
     }
 
-
-    private val printerResultListener: AidlPrinterResultListener =
-        object : AidlPrinterResultListener.Stub() {
-            override fun onPrintFinish() {
-                lifecycleScope.launch(Main) {
-                    if (payType == payWayList()[1].desc) {
-                        showSuccess(true)
-                    } else {
-                        showSuccess()
-                    }
-                    prefs.transactionData = ""
-                    prefs.orderStr = ""
-                }
-            }
-
-            override fun onPrintError(errorCode: Int, msg: String) {
-                Log.e("Error", String.format("列印失敗, 錯誤碼 : %d, 錯誤訊息 : %s", errorCode, msg))
-            }
-        }
 
     private fun setFullScreen() {
         val decorView = setSystemUiVisibilityMode()
@@ -210,7 +371,8 @@ class PrintFragment : BottomSheetDialogFragment() {
     }
 
     override fun onDestroyView() {
-        job?.cancel()
+        idleJob?.cancel()
+        printJob?.cancel()
         super.onDestroyView()
     }
 
@@ -226,210 +388,5 @@ class PrintFragment : BottomSheetDialogFragment() {
 
         decorView?.systemUiVisibility = options
         return decorView
-    }
-
-    private fun printTest(mNewPrinter: AidlNewPrinter?, orders: OrderDeliveryData?) {
-        val slip = SlipModelUtils()
-        mNewPrinter?.let {
-
-            if (prefs.header.isNotEmpty()) {
-                it.addTextPrintItem(
-                    slip.addTextOnePrint(
-                        prefs.header,
-                        true,
-                        32,
-                        PrintItemAlign.CENTER
-                    )
-                )
-            }
-            addLine(slip, mNewPrinter)
-
-            if (prefs.kioskId.isNotEmpty()) {
-                it.addTextPrintItem(
-                    slip.addTextOnePrint(
-                        "Take Away: " + prefs.kioskId,
-                        false,
-                        -1,
-                        PrintItemAlign.LEFT
-                    )
-                )
-            }
-
-            if (prefs.storeName.isNotEmpty()) {
-                it.addTextPrintItem(
-                    slip.addTextOnePrint(
-                        prefs.storeName,
-                        false,
-                        -1,
-                        PrintItemAlign.LEFT
-                    )
-                )
-            }
-
-            if (prefs.storeAddress.isNotEmpty()) {
-                it.addTextPrintItem(
-                    slip.addTextOnePrint(
-                        prefs.storeAddress,
-                        false,
-                        -1,
-                        PrintItemAlign.LEFT
-                    )
-                )
-            }
-
-            it.addTextPrintItem(
-                slip.addTextOnePrint(
-                    requireContext().resources.getString(R.string.printTime) + Constants.getCurrentTime(),
-                    false,
-                    -1,
-                    PrintItemAlign.LEFT
-                )
-            )
-            addLine(slip, mNewPrinter)
-
-            var sum = 0
-            orders?.ordersItemDelivery?.forEach { item ->
-                sum += item.qty
-                it.addMultipleTextPrintItem(
-                    slip.addLeftAndRightItem(
-                        if (prefs.languagePos == 1) item.gName2 else item.gname,
-                        " x " + item.qty.toString(),
-                        null
-                    )
-                )
-                it.addTextPrintItem(
-                    slip.addTextOnePrint(
-                        Constants.getValByMathWay(item.gPrice),
-                        false,
-                        -1,
-                        PrintItemAlign.RIGHT
-                    )
-                )
-
-                val flavorAdd =
-                    if (!item.addGName.isNullOrEmpty() && !item.flavorDesc.isNullOrEmpty()) item.addGName + "/" + item.flavorDesc
-                    else if (!item.addGName.isNullOrEmpty()) item.addGName
-                    else if (!item.flavorDesc.isNullOrEmpty()) item.flavorDesc
-                    else null
-
-                flavorAdd?.let { flavor ->
-                    it.addTextPrintItem(
-                        slip.addTextOnePrint(
-                            "    #$flavor",
-                            false,
-                            -1,
-                            PrintItemAlign.RIGHT
-                        )
-                    )
-                }
-            }
-            addLine(slip, mNewPrinter)
-
-            var orgAmtStr =
-                String.format("%7s", Constants.getValByMathWay(orders!!.ordersDelivery.sPrice))
-            val qtyStr = String.format("%-3s", sum)
-            val gst =
-                String.format("%7s", Constants.getValByMathWay(orders!!.ordersDelivery.totaltax))
-            val grandTotal =
-                String.format(
-                    "%7s",
-                    Constants.getValByMathWay(orders!!.ordersDelivery.sPrice + orders!!.ordersDelivery.totaltax)
-                )
-
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    requireContext().getString(R.string.Total),
-                    qtyStr + orgAmtStr,
-                    null
-                )
-            )
-
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    requireContext().getString(R.string.paymentType),
-                    orders.ordersDelivery.payType,
-                    null
-                )
-            )
-
-
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    requireContext().getString(R.string.SubTotal),
-                    orgAmtStr,
-                    null
-                )
-            )
-
-            it.addMultipleTextPrintItem(
-                slip.addLeftAndRightItem(
-                    requireContext().getGstStr(),
-                    gst,
-                    null
-                )
-            )
-
-
-            if (prefs.taxFunction == 2) {
-                it.addMultipleTextPrintItem(
-                    slip.addLeftAndRightItem(
-                        requireContext().getString(R.string.grandTotal),
-                        grandTotal,
-                        null
-                    )
-                )
-            } else {
-                it.addMultipleTextPrintItem(
-                    slip.addLeftAndRightItem(
-                        requireContext().getString(R.string.grandTotal),
-                        orgAmtStr,
-                        null
-                    )
-                )
-            }
-
-            if (prefs.footer.isNotEmpty()) {
-                it.addTextPrintItem(
-                    slip.addTextOnePrint(
-                        prefs.footer,
-                        true,
-                        32,
-                        PrintItemAlign.CENTER
-                    )
-                )
-            }
-
-            it.addTextPrintItem(addLines(2))
-            try {
-                val bundle = Bundle()
-                //you can also set grayscale here, bundle.putInt(PrinterParamTag.TAG_PRINT_GRAY, 0x18);
-                it.print(bundle, printerResultListener)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-    }
-
-    @Throws(RemoteException::class)
-    private fun addLine(slip: SlipModelUtils, mNewPrinter: AidlNewPrinter?) {
-        mNewPrinter!!.addTextPrintItem(
-            slip.addTextOnePrint(
-                "--------------------------------------",
-                true,
-                -1,
-                PrintItemAlign.CENTER
-            )
-        )
-    }
-
-    private fun addLines(lines: Int): TextPrintItemParam? {
-        val sb = StringBuilder()
-        val t1 = TextPrintItemParam()
-        for (i in 0 until lines) {
-            sb.append("\n")
-        }
-        t1.content = sb.toString()
-        return t1
     }
 }

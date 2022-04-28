@@ -32,7 +32,9 @@ class CartItemAdapter @Inject constructor(val context: Context) :
     }
 
     fun clearCart() {
+        _cartGoods.clear()
         cartGoods.clear()
+        notifyDataSetChanged()
         onChangedListener?.let { notify ->
             notify()
         }

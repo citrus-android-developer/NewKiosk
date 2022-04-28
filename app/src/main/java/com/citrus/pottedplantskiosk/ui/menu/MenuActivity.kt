@@ -2,18 +2,19 @@ package com.citrus.pottedplantskiosk.ui.menu
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.databinding.ActivityMenuBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.i18n.LocaleHelper
-import com.google.android.material.snackbar.Snackbar
+import com.citrus.pottedplantskiosk.util.print.A920Printer
+import com.citrus.pottedplantskiosk.util.print.PrinterState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.flow.collect
@@ -23,7 +24,7 @@ class MenuActivity : AppCompatActivity() {
     private val menuViewModel: MenuViewModel by viewModels()
     private lateinit var binding: ActivityMenuBinding
 
-    lateinit var data:Data
+    lateinit var data: Data
 
     override fun onResume() {
         super.onResume()
@@ -39,14 +40,6 @@ class MenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        prefs.orderStr = ""
-        var msg: String? = intent.getStringExtra("pos_message")
-
-        msg?.let {
-            prefs.orderStr = "true"
-        } ?:    Log.e("onCreate msg from symLink", "null")
-
-
 
         lifecycleScope.launchWhenStarted {
             menuViewModel.reLaunchActivity.collect {
@@ -57,6 +50,7 @@ class MenuActivity : AppCompatActivity() {
                 finish()
             }
         }
+
     }
 
     fun setFullScreen() {

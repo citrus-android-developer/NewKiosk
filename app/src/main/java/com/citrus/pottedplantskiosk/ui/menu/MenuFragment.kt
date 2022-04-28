@@ -3,24 +3,25 @@ package com.citrus.pottedplantskiosk.ui.menu
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Color
+import android.graphics.Path
+import android.graphics.PathMeasure
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,37 +31,31 @@ import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.*
 import com.citrus.pottedplantskiosk.databinding.FragmentMenuBinding
 import com.citrus.pottedplantskiosk.di.prefs
-import com.citrus.pottedplantskiosk.ui.menu.adapter.*
+import com.citrus.pottedplantskiosk.ui.menu.adapter.GoodsItemAdapter
+import com.citrus.pottedplantskiosk.ui.menu.adapter.GroupItemAdapter
+import com.citrus.pottedplantskiosk.ui.menu.adapter.MainGroupItemAdapter
 import com.citrus.pottedplantskiosk.ui.setting.SettingFragment
 import com.citrus.pottedplantskiosk.ui.setting.adapter.UsbNameWithID
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.ACTION_USB_PERMISSION
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.Constants.forEachReversedWithIndex
-import com.citrus.pottedplantskiosk.util.EcrProtocol
 import com.citrus.pottedplantskiosk.util.UsbUtil
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
 import com.citrus.pottedplantskiosk.util.base.lifecycleFlow
 import com.citrus.pottedplantskiosk.util.base.onSafeClick
 import com.citrus.pottedplantskiosk.util.navigateSafely
-import com.citrus.pottedplantskiosk.util.print.PrintOrderInfo
+import com.citrus.pottedplantskiosk.util.scanner.ScannerHw
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import com.pos.sdklib.aidl.newprinter.AidlNewPrinter
-import com.pos.sdklib.util.PosSdkUtils
 import com.skydoves.elasticviews.ElasticAnimation
 import com.skydoves.transformationlayout.onTransformationStartContainer
-import com.youth.banner.indicator.RectangleIndicator
-import com.youth.banner.transformer.AlphaPageTransformer
-import com.youth.banner.util.BannerUtils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_menu.*
 import kotlinx.android.synthetic.main.goods_item_view.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -75,8 +70,9 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private var snackbar: Snackbar? = null
     private var updateTimerJob: Job? = null
     private var currentClickView: View? = null
-    private var mNewPrinter: AidlNewPrinter? = null
+
     private var dealingTransactionData: TransactionData? = null
+    private lateinit var startActivityLauncher: ActivityResultLauncher<Intent>
 
     @Inject
     lateinit var mainGroupItemAdapter: MainGroupItemAdapter
@@ -90,22 +86,27 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     lateinit var goodsItemAdapter: GoodsItemAdapter
 
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onTransformationStartContainer()
         menuViewModel.intentNavigateToMenu()
         refreshUsbDevice()
-        PosSdkUtils.bind(requireActivity(), object : PosSdkUtils.BindResult {
-            override fun onReady(posSdkUtils: PosSdkUtils) {
-                mNewPrinter = posSdkUtils.aidlNewPrinter
-            }
 
-            override fun onError(s: String) {
-                Log.e("error", "Failed to bind service")
+        startActivityLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.data != null && it.resultCode == Activity.RESULT_OK) {
+                    it.data?.getStringExtra("EDC_RESPONSE")?.let { msg ->
+                        var edcResponse = Gson().fromJson(msg, EdcData::class.java)
+
+                        if (edcResponse.ECR_Response_Code == "0000") {
+                            findNavController().navigateSafely(
+                                R.id.action_menuFragment_to_printFragment,
+                                args = bundleOf("transaction" to dealingTransactionData)
+                            )
+                        }
+                    }
+                }
             }
-        })
     }
 
 
@@ -158,15 +159,20 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
             homeBtn.onSafeClick {
                 it.clickAnimation {
-                    val dialog = SettingFragment(false)
-                    dialog.show(childFragmentManager, "SettingFragment")
+                    ScannerHw.startScan()
+//                    val dialog = SettingFragment(false)
+//                    dialog.show(childFragmentManager, "SettingFragment")
                 }
             }
 
-            if(prefs.orderStr != ""){
-                if(prefs.transactionData!= ""){
+            if (prefs.orderStr != "") {
+                if (prefs.transactionData != "") {
                     val data = Gson().fromJson(prefs.transactionData, OrderDeliveryData::class.java)
-                    val transactionData = TransactionData(orders = data, state = TransactionState.WorkFine, printer = null, mNewPrinter = mNewPrinter)
+                    val transactionData = TransactionData(
+                        orders = data,
+                        state = TransactionState.WorkFine,
+                        printer = null
+                    )
                     findNavController().navigateSafely(
                         R.id.action_menuFragment_to_printFragment,
                         args = bundleOf("transaction" to transactionData)
@@ -177,21 +183,26 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     }
 
     override fun initObserve() {
+        lifecycleFlow(ScannerHw.result) { str ->
+            Log.e("scanner test", str)
+            ScannerHw.stopScan()
+        }
+
         lifecycleFlow(menuViewModel.zoomPageSlidePos) { pos ->
             binding.goodsRv.scrollToPosition(pos)
         }
 
         lifecycleFlow(menuViewModel.progress) {
-                binding.progressCircular.isVisible = it
+            binding.progressCircular.isVisible = it
         }
 
 
         lifecycleFlow(menuViewModel.showSetting) {
-            if(it.isNotBlank()) {
+            if (it.isNotBlank()) {
                 val dialog = SettingFragment(false)
                 dialog.show(childFragmentManager, "SettingFragment")
 
-                Toast.makeText(requireContext(),it,Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
             }
         }
 
@@ -251,121 +262,65 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
         lifecycleFlow(menuViewModel.clearCartGoods) {
-            binding.cartMotionLayout.clearCartGoods()
+            if (it) {
+                binding.cartMotionLayout.clearCartGoods()
+            }
         }
+
 
 
 
         lifecycleFlow(menuViewModel.toPrint) { transactionData ->
 
-            if (usbInfo.deviceList.isEmpty()) {
-                transactionData.state = TransactionState.PrinterNotFoundIssue
-            }
-
-            var item = usbInfo.deviceList.map {
-                UsbNameWithID(
-                    it.value.deviceName,
-                    it.value.productId
-                )
-            }.find { it.id.toString() == prefs.printer }
-
-
-            item?.let {
-                transactionData.printer = usbInfo.deviceList[item.name]
-            } ?: run {
-                if(mNewPrinter == null) {
-                    transactionData.state = TransactionState.PrinterNotFoundIssue
-                }else{
-                    transactionData.state = TransactionState.WorkFine
-                    transactionData.mNewPrinter = mNewPrinter
-                }
-            }
+//            if (usbInfo.deviceList.isEmpty()) {
+//                transactionData.state = TransactionState.PrinterNotFoundIssue
+//            }
+//
+//            var item = usbInfo.deviceList.map {
+//                UsbNameWithID(
+//                    it.value.deviceName,
+//                    it.value.productId
+//                )
+//            }.find { it.id.toString() == prefs.printer }
+//
+//
+//            item?.let {
+//                transactionData.printer = usbInfo.deviceList[item.name]
+//            }
 
             dealingTransactionData = transactionData
 
 
-            if(dealingTransactionData?.orders?.ordersDelivery?.payType == payWayList()[0].desc) {
+            if (dealingTransactionData?.orders?.ordersDelivery?.payType == payWayList()[0].desc) {
                 val data = dealingTransactionData!!.orders!!
                 prefs.transactionData = Gson().toJson(data)
 
 
                 var sPriceText =
-                    dealingTransactionData?.orders?.ordersDelivery?.sPrice?.toInt().toString()
+                    dealingTransactionData?.orders?.ordersDelivery?.sPrice?.toInt()
 
-                Log.e("sPriceText",sPriceText)
-                var arrayStr = sPriceText.split(".").toMutableList()
-                if (arrayStr.size > 1) {
-                    if (arrayStr[1].length == 1) {
-                        arrayStr[1] = arrayStr[1] + "0"
-                    }
-                } else {
-                    arrayStr.add(1, "00")
-                }
-                sPriceText = arrayStr[0] + arrayStr[1]
+                var edcData = EdcData(Trans_Type = "11", Trans_Amount = sPriceText.toString())
 
 
-                var ecrProtocol = EcrProtocol()
-                ecrProtocol.ecrIndicator = "I"
-                ecrProtocol.ecrVersionDate = ""
-                ecrProtocol.transTypeIndicator = ""
-                ecrProtocol.transType = "01"
-                ecrProtocol.cupIndicator = "N"
-                ecrProtocol.hostID = ""
-                ecrProtocol.receiptNo = ""
-                ecrProtocol.cardNo = ""
-                ecrProtocol.cardExpireDate = ""
-                ecrProtocol.transAmount = sPriceText
-                ecrProtocol.transDate = "220101"
-                ecrProtocol.transTime = "210016"
-                ecrProtocol.approvalNo = ""
-                ecrProtocol.waveCardIndicator = ""
-                ecrProtocol.ecrResponseCode = ""
-                ecrProtocol.merchantId = ""
-                ecrProtocol.terminalId = ""
-                ecrProtocol.expAmount = ""
-                ecrProtocol.storeId = ""
-                ecrProtocol.installmentRedeemIndicator = ""
-                ecrProtocol.rdmPaidAmt = sPriceText
-                ecrProtocol.rdmPoint = ""
-                ecrProtocol.pointsOfBalance = ""
-                ecrProtocol.redeemAmt = ""
-                ecrProtocol.installmentPeriod = ""
-                ecrProtocol.downPaymentAmount = ""
-                ecrProtocol.installmentPaymentAmount = ""
-                ecrProtocol.formalityFee = ""
-                ecrProtocol.cardType = ""
-                ecrProtocol.batchNo = ""
-                ecrProtocol.startTransType = ""
-                ecrProtocol.mpFlag = ""
-                ecrProtocol.spIssuerId = ""
-                ecrProtocol.spCardOriginDate = ""
-                ecrProtocol.spRrn = ""
-                ecrProtocol.payItem = ""
-                ecrProtocol.cardNoHashValue = ""
-                ecrProtocol.mpResponseCode = ""
-                ecrProtocol.asmAwardFlag = ""
-                ecrProtocol.mcpIndicator = ""
-                ecrProtocol.codeNo = ""
-                ecrProtocol.reserved = ""
+                val intent = Intent()
+                intent.setClassName(
+                    "com.cybersoft.a920",
+                    "com.cybersoft.a920.activity.MainActivity"
+                )
+                val bundle = Bundle()
+                bundle.putString(
+                    "POS_REQUEST",
+                    Gson().toJson(edcData)
+                )
+                intent.putExtras(bundle)
+                startActivityLauncher.launch(intent)
 
-                var payload = ecrProtocol.ercPayload()
-
-                val intent: Intent? =
-                    activity?.packageManager?.getLaunchIntentForPackage("com.symlink.symlinknccc")
-
-                intent?.putExtra("pos_message", payload)
-                intent?.putExtra("pos_packagename", "com.citrus.pottedplantskiosk")
-                intent?.let {
-                    startActivity(it)
-                    requireActivity().finish()
-                } ?: Log.e("null", "null")
-            }else{
+            } else {
                 findNavController().navigateSafely(
                     R.id.action_menuFragment_to_printFragment,
                     args = bundleOf("transaction" to dealingTransactionData)
                 )
             }
-
 
 
         }
@@ -381,7 +336,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             if (timer == 100) {
                 var temp = 100
                 snackbar = Snackbar.make(requireView(), "", 20000)
-                val customSnackView: View = layoutInflater.inflate(R.layout.custom_snackbar_view, null)
+                val customSnackView: View =
+                    layoutInflater.inflate(R.layout.custom_snackbar_view, null)
                 snackbar!!.view.setBackgroundColor(Color.TRANSPARENT)
                 val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
                 snackbarLayout.setPadding(0, 0, 0, 50)
@@ -415,7 +371,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             }
         }
     }
-
 
 
     override fun initAction() {

@@ -349,7 +349,8 @@ class CartMotionLayout @JvmOverloads constructor(
             }
 
 
-            tvTotalPrice.text = context.getString(R.string.SubTotal) + Constants.getValByMathWay(pureSPrice)
+            tvTotalPrice.text =
+                context.getString(R.string.SubTotal) + Constants.getValByMathWay(pureSPrice)
 
             sumPrice.text = context.getString(R.string.SubTotal)
             vSumPrice.text = Constants.getValByMathWay(pureSPrice)

@@ -18,6 +18,8 @@ android {
         versionCode 1
         versionName "1.0"
 
+        ndk.abiFilters  'armeabi','armeabi-v7a','arm64-v8a','x86'
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -27,6 +29,12 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
     }
 
     buildTypes {
@@ -45,20 +53,20 @@ android {
 }
 
 dependencies {
-
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation files('libs/possdklib-1.0.jar')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation 'com.github.anastaciocintra:escpos-coffee:4.1.0'
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.0"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.20"
+
     /** Fragment ktx*/
     def fragmentVersion = "1.4.0"
     implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
@@ -80,10 +88,10 @@ dependencies {
     def retrofitVersion = '2.9.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2"
+    implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3"
 
     /** Sandwich */
-    def sandwichVersion = "1.2.1"
+    def sandwichVersion = "1.2.2"
     implementation "com.github.skydoves:sandwich:$sandwichVersion"
 
     /** Coroutines */
@@ -114,7 +122,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glide"
 
     /** Balloon */
-    def balloon = "1.4.0"
+    def balloon = "1.4.3"
     implementation "com.github.skydoves:balloon:$balloon"
 
     /** ElasticViews */

@@ -259,10 +259,10 @@ class MenuViewModel @Inject constructor(
                         orderDeliveryData.ordersItemDelivery.forEach { item ->
                             item.orderNO = result.data?.data!!
                         }
-                       printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null,null)
+                       printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null)
                     }
                     is Resource.Error -> {
-                        printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null,null)
+                        printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null)
                          //printerData =   TransactionData(orders = null,state = TransactionState.NetworkIssue, null)
                     }
                     is Resource.Loading -> Unit
@@ -278,6 +278,8 @@ class MenuViewModel @Inject constructor(
     fun setPrintStatus(status: Int) = viewModelScope.launch {
         if (status == 1) {
             _clearCartGoods.emit(true)
+        }else{
+            _clearCartGoods.emit(false)
         }
     }
 

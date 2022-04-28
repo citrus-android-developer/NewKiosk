@@ -19,6 +19,8 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import com.pax.gl.page.IPage
+
 
 object Constants {
     //const val BASE_URL = "http://cms.citrus.tw/soramenLAB"
@@ -52,6 +54,53 @@ object Constants {
     const val KEY_HEADER = "KEY_HEADER"
     const val KEY_FOOTER = "KEY_FOOTER"
     const val KEY_ORDER_STRING = "KEY_ORDER_STRING"
+
+
+    // 列印用
+    val LEFT: IPage.EAlign = IPage.EAlign.LEFT
+    val CENTER: IPage.EAlign = IPage.EAlign.CENTER
+    val RIGHT: IPage.EAlign = IPage.EAlign.RIGHT
+    const val SPACE = " "
+    const val LINE_SPACE = 10
+    const val LINE_SPACE_S = 5
+    const val LINE_SPACE_M = 20
+    const val LINE_SPACE_L = 30
+    const val LINE_SPACE_XL = 40
+    const val LINE_SPACE_XXL = 60
+    const val LINE_SPACE_BLOCK = 150
+    const val TXT_S = 16
+    const val TXT_SS = 18
+    const val TXT_M = 22
+    const val TXT_L = 26
+    const val TXT_XL = 28
+    val TXT_BOLD: Int = IPage.ILine.IUnit.TEXT_STYLE_BOLD
+    val TXT_NORMAL: Int = IPage.ILine.IUnit.TEXT_STYLE_NORMAL
+    val TXT_UNDERLINE: Int = IPage.ILine.IUnit.TEXT_STYLE_UNDERLINE
+    const val REDEEM = "REDEEM"
+    const val IPP = "IPP"
+    const val ADJUST_LINE_SPACE = -6
+    const val LINE_SPACE_PARAM = -2
+    const val PAGE_WIDTH = 384
+    const val FLOAT_2 = 0.2f
+    const val FLOAT_25 = 0.25f
+    const val FLOAT_3 = 0.3f
+    const val FLOAT_35 = 0.35f
+    const val FLOAT_4 = 0.4f
+    const val FLOAT_5 = 0.5f
+    const val FLOAT_6 = 0.6f
+    const val FLOAT_7 = 0.7f
+    const val FLOAT_8 = 0.8f
+    const val SEPARATE_PARAM = "=============================================="
+    const val SEPARATE_MID = "================================"
+    const val SEPARATE = "============="
+    const val SEPARATE_ISSUER = "***"
+    const val SEPARATE_NORMAL = "—————————————————"
+    const val SEPARATE_STAR = "****************************"
+    const val UNDERLINE_TIP = "————————————"
+    const val UNDERLINE_TOTAL = "———————————"
+    const val GRAY = 4
+    const val CUT_PAPER_CUT_ALL = 0
+    const val CUT_PAPER_CUT_PART = 1
 
     sealed class LanguageType {
         object SimpleChinese : LanguageType()

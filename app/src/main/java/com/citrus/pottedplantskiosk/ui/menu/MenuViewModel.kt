@@ -74,6 +74,23 @@ class MenuViewModel @Inject constructor(
     private val _toPrint = MutableSharedFlow<TransactionData>()
     val toPrint: SharedFlow<TransactionData> = _toPrint
 
+    var allGoodsForScan: List<Good>? = null
+    var isIdentify = false
+
+    private val _scanResult = MutableSharedFlow<String>()
+    val scanResult: SharedFlow<String> = _scanResult
+
+    fun setScanResult(result: String) = viewModelScope.launch {
+        Log.e("scanResult", result)
+        allGoodsForScan?.let { goodList ->
+           val goods =  goodList.find { it.barCode == result }
+            goods?.let{
+                it.isScan = true
+                _showDetailEvent.emit(it)
+            }
+        }
+    }
+
     private fun tickerFlow() = flow {
         while (true) {
             emit(timeCount++)
@@ -112,6 +129,9 @@ class MenuViewModel @Inject constructor(
             onGroupChange("")
         }
 
+
+        allGoodsForScan = data.mainGroup.flatMap { it.kind }.flatMap { it.goods }
+
         currentGroup = data.mainGroup.first()
     }
 
@@ -124,7 +144,7 @@ class MenuViewModel @Inject constructor(
         }
 
         currentGroup?.let { mainGroup ->
-            var list = mainGroup.kind.filter { it.goods.isNotEmpty() }.map { it.desc }
+            val list = mainGroup.kind.filter { it.goods.isNotEmpty() }.map { it.desc }
             _groupDescName.emit(list)
             if(mainGroup.kind.isNotEmpty()) {
                 onDescChange(mainGroup.kind.first().desc)
@@ -134,12 +154,7 @@ class MenuViewModel @Inject constructor(
 
     fun onDescChange(desc: String) = viewModelScope.launch {
         currentGroup?.let { mainGroup ->
-            var goods = mainGroup.kind.find { it.desc == desc }?.goods!!
-            goods[0].price = 4.55
-            goods[0].tax = 7.0
-
-            goods[1].price = 3.25
-            goods[1].tax = 6.0
+            val goods = mainGroup.kind.find { it.desc == desc }?.goods!!
             _allGoods.emit(goods)
         }
     }

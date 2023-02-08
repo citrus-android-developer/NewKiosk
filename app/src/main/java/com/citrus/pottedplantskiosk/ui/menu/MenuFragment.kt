@@ -6,21 +6,18 @@ import android.animation.ValueAnimator
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.*
+import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,30 +35,23 @@ import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.ACTION_USB_PERMISSION
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.Constants.forEachReversedWithIndex
-import com.citrus.pottedplantskiosk.util.EcrProtocol
 import com.citrus.pottedplantskiosk.util.UsbUtil
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
 import com.citrus.pottedplantskiosk.util.base.lifecycleFlow
 import com.citrus.pottedplantskiosk.util.base.onSafeClick
 import com.citrus.pottedplantskiosk.util.navigateSafely
-import com.citrus.pottedplantskiosk.util.print.PrintOrderInfo
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
-import com.pos.sdklib.aidl.newprinter.AidlNewPrinter
-import com.pos.sdklib.util.PosSdkUtils
 import com.skydoves.elasticviews.ElasticAnimation
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import com.youth.banner.indicator.RectangleIndicator
 import com.youth.banner.transformer.AlphaPageTransformer
 import com.youth.banner.util.BannerUtils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_menu.*
 import kotlinx.android.synthetic.main.goods_item_view.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -112,12 +102,23 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private fun requestUsbPermission() {
         usbInfo.noPermissionDevice.forEachReversedWithIndex { i, usbDevice ->
             if (usbInfo.usbManager?.hasPermission(usbDevice) == false) {
-                val mPermissionIntent = PendingIntent.getBroadcast(
-                    requireContext(),
-                    0,
-                    Intent(ACTION_USB_PERMISSION),
-                    0
-                )
+                val mPermissionIntent: PendingIntent
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    mPermissionIntent = PendingIntent.getActivity(
+                        requireContext(),
+                        0,
+                        Intent(ACTION_USB_PERMISSION),
+                        PendingIntent.FLAG_MUTABLE
+                    )
+                } else {
+                     mPermissionIntent = PendingIntent.getBroadcast(
+                        requireContext(),
+                        0,
+                        Intent(ACTION_USB_PERMISSION),
+                        0
+                    )
+                }
+
                 usbInfo.usbManager?.requestPermission(usbDevice, mPermissionIntent)
             } else usbInfo.noPermissionDevice.removeAt(i)
         }
@@ -185,7 +186,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         lifecycleFlow(menuViewModel.currentCartGoods) { cartGoods ->
             if (cartGoods != null) {
                 /**非已編輯物件才有購物車動畫*/
-                if (cartGoods.isEdit.not()) {
+                if (cartGoods.isEdit.not() && cartGoods.isScan.not()) {
                     var item =
                         menuViewModel.currentDetailGoodsList.first { it.gID == cartGoods.gID && it.gKID == it.gKID }
                     var pos = menuViewModel.currentDetailGoodsList.indexOf(item)
@@ -230,11 +231,15 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
         lifecycleFlow(menuViewModel.showDetailEvent) { goods ->
+            menuViewModel.isIdentify = false
+            Log.e("showDetailEvent", goods.toString())
             findNavController().navigateSafely(
                 R.id.action_menuFragment_to_zoomPageFragment,
                 args = bundleOf("goods" to goods.deepCopy())
             )
         }
+
+
 
 
 //        lifecycleFlow(menuViewModel.needSetting) {

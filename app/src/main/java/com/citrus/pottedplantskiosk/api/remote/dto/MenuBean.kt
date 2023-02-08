@@ -75,6 +75,7 @@ data class Good(
     @SerializedName("TaxID")
     var taxID: String,
     var isEdit: Boolean = false,
+    var isScan: Boolean = false,
     var gst: Double = 0.0,
     /**bundle會遺失內部參數,以下兩個屬性的存在是為了保留內部屬性*/
     var _qty:Int,

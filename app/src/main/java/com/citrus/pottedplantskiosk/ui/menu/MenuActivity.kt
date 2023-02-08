@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import androidx.activity.viewModels
@@ -14,6 +15,8 @@ import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.databinding.ActivityMenuBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.i18n.LocaleHelper
+import com.citrus.pottedplantskiosk.util.phycicalScanner.ScanKeyManager
+import com.citrus.pottedplantskiosk.util.phycicalScanner.SoftKeyBoardListener
 import com.pos.sdklib.aidl.newprinter.AidlPrinterResultListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -23,8 +26,16 @@ class MenuActivity : AppCompatActivity() {
     private val menuViewModel: MenuViewModel by viewModels()
     private lateinit var binding: ActivityMenuBinding
 
-    lateinit var data:Data
-    private var banner:BannerResponse? = null
+    lateinit var data: Data
+    private var banner: BannerResponse? = null
+
+    /**掃描槍回調支援*/
+    private var isInput = false
+    private lateinit var scanKeyManager: ScanKeyManager
+    private var onScanListener: ((String) -> Unit)? = null
+    fun setOnScanListener(listener: (String) -> Unit) {
+        onScanListener = listener
+    }
 
     override fun onResume() {
         super.onResume()
@@ -42,10 +53,18 @@ class MenuActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val bundle = intent.extras
-         data = bundle?.getSerializable("data") as Data
-        var bannerData =  bundle?.getSerializable("banner")
+        data = bundle?.getSerializable("data") as Data
+        var bannerData = bundle?.getSerializable("banner")
 
-        bannerData?.let{
+        scanKeyManager = ScanKeyManager(object : ScanKeyManager.OnScanValueListener {
+            override fun onScanValue(value: String?) {
+                value?.let {
+                    onScanListener?.invoke(it)
+                }
+            }
+        })
+
+        bannerData?.let {
             banner = it as BannerResponse
         }
 
@@ -53,7 +72,7 @@ class MenuActivity : AppCompatActivity() {
             menuViewModel.showData(it)
         }
 
-        banner?.let{
+        banner?.let {
             menuViewModel.showBanner(it)
         }
 
@@ -68,6 +87,13 @@ class MenuActivity : AppCompatActivity() {
                 intent.putExtras(bundle)
                 this@MenuActivity.startActivity(intent)
                 finish()
+            }
+        }
+
+        setOnScanListener { scanValue ->
+            if (!menuViewModel.isIdentify) {
+                menuViewModel.isIdentify = true
+                menuViewModel.setScanResult(scanValue)
             }
         }
     }
@@ -92,8 +118,24 @@ class MenuActivity : AppCompatActivity() {
         return decorView
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        menuViewModel.timeCount = 0
-        return super.dispatchTouchEvent(ev)
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.keyCode != KeyEvent.KEYCODE_BACK && !isInput && event.keyCode != KeyEvent.KEYCODE_VOLUME_UP && event.keyCode != KeyEvent.KEYCODE_VOLUME_DOWN && event.keyCode != KeyEvent.KEYCODE_VOLUME_MUTE) {
+            scanKeyManager.analysisKeyEvent(event)
+            return true
+        }
+        return super.dispatchKeyEvent(event)
+    }
+
+    private fun onKeyBoardListener() {
+        SoftKeyBoardListener(this).setListener(object :
+            SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
+            override fun keyBoardShow(height: Int) {
+                isInput = true
+            }
+
+            override fun keyBoardHide(height: Int) {
+                isInput = false
+            }
+        })
     }
 }

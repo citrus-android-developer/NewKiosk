@@ -90,12 +90,11 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
 
     private fun initAction() {
 
-        goodsList = if(args.goods.isEdit){
+        goodsList = if(args.goods.isEdit || args.goods.isScan){
             goodsList + args.goods
         }else{
             menuViewModel.currentDetailGoodsList.map { it.deepCopy() }
         }
-
 
         currentIndex = goodsList.indexOf(args.goods)
         if (currentIndex == 0) {

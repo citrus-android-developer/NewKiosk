@@ -76,8 +76,8 @@ class BannerDataDeserializer : JsonDeserializer<BannerData> {
         typeOfT: Type,
         context: JsonDeserializationContext
     ): BannerData {
-
         val jsonObject = json.asJsonObject
+
         val data = jsonObject.get("Hyperlink").asString
         if (data.isEmpty()) {
             jsonObject.remove("Hyperlink")

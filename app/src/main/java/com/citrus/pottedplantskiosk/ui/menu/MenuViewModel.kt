@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-
 @HiltViewModel
 class MenuViewModel @Inject constructor(
     private val repository: RemoteRepository,
@@ -74,6 +73,15 @@ class MenuViewModel @Inject constructor(
     private val _toPrint = MutableSharedFlow<TransactionData>()
     val toPrint: SharedFlow<TransactionData> = _toPrint
 
+    private val _toActivityPrint = MutableSharedFlow<TransactionData>()
+    val toActivityPrint: SharedFlow<TransactionData> = _toActivityPrint
+
+    private val _printResult = MutableSharedFlow<Boolean>()
+    val printResult: SharedFlow<Boolean> = _printResult
+
+    private val _creditFlow = MutableSharedFlow<Orders.OrderDeliveryData>()
+    val creditFlow: SharedFlow<Orders.OrderDeliveryData> = _creditFlow
+
     var allGoodsForScan: List<Good>? = null
     var isIdentify = false
 
@@ -83,8 +91,8 @@ class MenuViewModel @Inject constructor(
     fun setScanResult(result: String) = viewModelScope.launch {
         Log.e("scanResult", result)
         allGoodsForScan?.let { goodList ->
-           val goods =  goodList.find { it.barCode == result }
-            goods?.let{
+            val goods = goodList.find { it.barCode == result }
+            goods?.let {
                 it.isScan = true
                 _showDetailEvent.emit(it)
             }
@@ -113,14 +121,14 @@ class MenuViewModel @Inject constructor(
     }
 
     private fun resetMenu() = viewModelScope.launch {
-        var groupList = _menuData.value.map { it.groupName }
+        val groupList = _menuData.value.map { it.groupName }
         onGroupChange(groupList[0])
         currentGroup = _menuData.value.first()
     }
 
     fun showData(data: Data) = viewModelScope.launch {
         _menuData.emit(data.mainGroup)
-        var groupList = data.mainGroup.filter{ it.kind.isNotEmpty() }.map { it.groupName }
+        val groupList = data.mainGroup.filter { it.kind.isNotEmpty() }.map { it.groupName }
 
         if (groupList.isNotEmpty() && groupList[0] != "") {
             _menuGroupName.emit(groupList)
@@ -146,7 +154,7 @@ class MenuViewModel @Inject constructor(
         currentGroup?.let { mainGroup ->
             val list = mainGroup.kind.filter { it.goods.isNotEmpty() }.map { it.desc }
             _groupDescName.emit(list)
-            if(mainGroup.kind.isNotEmpty()) {
+            if (mainGroup.kind.isNotEmpty()) {
                 onDescChange(mainGroup.kind.first().desc)
             }
         }
@@ -183,18 +191,17 @@ class MenuViewModel @Inject constructor(
 
     fun postOrderItem(deliveryInfo: DeliveryInfo) = viewModelScope.launch {
 
-        var list = deliveryInfo.goodsList
-        var sumQty = list.sumOf { goods ->
+        val list = deliveryInfo.goodsList
+        val sumQty = list.sumOf { goods ->
             goods.qty
         }
 
-        var sumPrice = list.sumOf { goods ->
+        val sumPrice = list.sumOf { goods ->
             goods.sPrice
         }
 
 
-
-        var ordersDelivery = Orders.OrdersDelivery(
+        val ordersDelivery = Orders.OrdersDelivery(
             storeID = 0,
             qty = sumQty,
             payType = deliveryInfo.payWay.desc,
@@ -202,14 +209,13 @@ class MenuViewModel @Inject constructor(
             gPrice = deliveryInfo.grandTotal,
             sPrice = sumPrice,
             totaltax = deliveryInfo.gst
-
         )
 
         var ordersItemDeliveryList = listOf<Orders.OrdersItemDelivery>()
 
         var seq = 1
         list.forEach { goods ->
-            var ordersItemDelivery =
+            val ordersItemDelivery =
                 Orders.OrdersItemDelivery(
                     storeID = 0,
                     orderSeq = seq,
@@ -228,7 +234,7 @@ class MenuViewModel @Inject constructor(
             ordersItemDeliveryList = ordersItemDeliveryList + ordersItemDelivery
         }
 
-        var orderDeliveryData = Orders.OrderDeliveryData(
+        val orderDeliveryData = Orders.OrderDeliveryData(
             ordersDelivery = ordersDelivery,
             ordersItemDelivery = ordersItemDeliveryList
         )
@@ -238,21 +244,44 @@ class MenuViewModel @Inject constructor(
                 prefs.serverIp + Constants.SET_ORDERS,
                 Gson().toJson(orderDeliveryData)
             ).collect { result ->
-                var printerData : TransactionData? = null
+                var printerData: TransactionData? = null
                 when (result) {
                     is Resource.Success -> {
+
                         orderDeliveryData.ordersItemDelivery.forEach { item ->
                             item.orderNO = result.data?.data!!
                         }
-                       printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null,null)
+
+                        if (deliveryInfo.payWay.payNo == Constants.PayWayType.CreditCard) {
+                            Log.e("credit", "credit");
+                            _creditFlow.emit(orderDeliveryData)
+                            return@collect
+                        } else {
+                            printerData = TransactionData(
+                                orders = orderDeliveryData,
+                                state = TransactionState.WorkFine,
+                                null,
+                                null
+                            )
+                        }
+
+
                     }
+
                     is Resource.Error -> {
-                        Log.e("error",result.message!!)
-                        printerData =   TransactionData(orders = orderDeliveryData,state = TransactionState.WorkFine, null,null)
-                         //printerData =   TransactionData(orders = null,state = TransactionState.NetworkIssue, null)
+                        Log.e("error", result.message!!)
+                        printerData = TransactionData(
+                            orders = orderDeliveryData,
+                            state = TransactionState.WorkFine,
+                            null,
+                            null
+                        )
+                        //printerData =   TransactionData(orders = null,state = TransactionState.NetworkIssue, null)
                     }
+
                     is Resource.Loading -> Unit
                 }
+
 
                 printerData?.let {
                     _toPrint.emit(it)
@@ -269,6 +298,26 @@ class MenuViewModel @Inject constructor(
 
     fun chosenLanComplete() = viewModelScope.launch {
         _reLaunchActivity.emit(true)
+    }
+
+    fun setCreditCardSuccess(orderDeliveryData: Orders.OrderDeliveryData) = viewModelScope.launch {
+        val printerData = TransactionData(
+            orders = orderDeliveryData,
+            state = TransactionState.WorkFine,
+            null,
+            null
+        )
+        _toPrint.emit(printerData)
+    }
+
+    fun setPrintData(data: TransactionData?) = viewModelScope.launch {
+        data?.let {
+            _toActivityPrint.emit(data!!)
+        }
+    }
+
+    fun setPrintResult(result: Boolean) = viewModelScope.launch {
+        _printResult.emit(result)
     }
 
 

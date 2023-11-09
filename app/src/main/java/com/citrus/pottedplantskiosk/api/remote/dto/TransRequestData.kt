@@ -1,0 +1,51 @@
+package com.citrus.pottedplantskiosk.api.remote.dto
+
+data class TransRequestData(
+    var title: String,
+    var source_package_name: String,
+    var destination_package_name: String,
+    var transaction_type: String,
+    var transaction_amount: String,
+    var command_identifier: String,
+    var retrieval_reference_number: String,
+    var approval_code: String,
+    var custom_data_2: String,
+    var custom_data_3: String,
+    var ecr_unique_trace_number: String,
+    var invoice_number: String,
+    var coupons_vouchers: String,
+    var external_device_invoice: String,
+    var employee_id: String,
+    var tms_app_name: String,
+    var tms_filename: String,
+    var tms_terminal_id: String,
+    var tms_tpdu: String,
+    var tms_enable: String,
+    var card_number: String,
+    var expiry_date: String
+) {
+    constructor() : this(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+    )
+}

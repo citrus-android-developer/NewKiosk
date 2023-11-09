@@ -42,6 +42,8 @@ data class Kind(
 data class Good(
     @SerializedName("add")
     var add: List<Add>,
+    @SerializedName("Note")
+    var note: String?,
     @SerializedName("BarCode")
     val barCode: String,
     @SerializedName("ChgPrice")

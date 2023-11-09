@@ -4,6 +4,7 @@ package com.citrus.pottedplantskiosk.ui.menu
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.app.PendingIntent
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.*
 import android.os.Build
@@ -23,7 +24,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.alibaba.fastjson.JSON
 import com.citrus.pottedplantskiosk.R
+import com.citrus.pottedplantskiosk.api.remote.dto.Orders
+import com.citrus.pottedplantskiosk.api.remote.dto.PayModel
+import com.citrus.pottedplantskiosk.api.remote.dto.TransBuilder
+import com.citrus.pottedplantskiosk.api.remote.dto.TransRequestData
+import com.citrus.pottedplantskiosk.api.remote.dto.TransResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
 import com.citrus.pottedplantskiosk.api.remote.dto.TransactionState
 import com.citrus.pottedplantskiosk.api.remote.dto.UsbInfo
@@ -43,6 +50,12 @@ import com.citrus.pottedplantskiosk.util.navigateSafely
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
+import com.pax.paxsemilinklibrary.api.SemiLinkApi
+import com.pax.paxsemilinklibrary.listener.ITransListener
+import com.pax.paxsemilinklibrary.listener.SearchDeviceListener
+import com.pax.paxsemilinklibrary.model.BaseSemiRequest
+import com.pax.paxsemilinklibrary.model.DeviceInfo
+import com.pax.paxsemilinklibrary.util.LogUtils
 import com.skydoves.elasticviews.ElasticAnimation
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import com.youth.banner.indicator.RectangleIndicator
@@ -50,9 +63,11 @@ import com.youth.banner.transformer.AlphaPageTransformer
 import com.youth.banner.util.BannerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.goods_item_view.view.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pax.comm.protocol.api.Debug
 import javax.inject.Inject
 
 
@@ -67,6 +82,14 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private var updateTimerJob: Job? = null
     private var currentClickView: View? = null
     private var dealingTransactionData: TransactionData? = null
+
+    private var progressDialog: ProgressDialog? = null
+    private val TAG = "EcrGatewayActivity"
+    private val currCommType = DeviceInfo.CommType.USB
+    private val mDeviceInfoListMap: MutableList<Map<String, String>> = mutableListOf()
+    private val mDeviceInfoList: MutableList<DeviceInfo> = mutableListOf()
+    private var payModel: PayModel? = null
+    private val transAmount = "0.01"
 
     @Inject
     lateinit var mainGroupItemAdapter: MainGroupItemAdapter
@@ -111,11 +134,11 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                         PendingIntent.FLAG_MUTABLE
                     )
                 } else {
-                     mPermissionIntent = PendingIntent.getBroadcast(
+                    mPermissionIntent = PendingIntent.getBroadcast(
                         requireContext(),
                         0,
                         Intent(ACTION_USB_PERMISSION),
-                        0
+                        PendingIntent.FLAG_IMMUTABLE
                     )
                 }
 
@@ -187,9 +210,9 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             if (cartGoods != null) {
                 /**非已編輯物件才有購物車動畫*/
                 if (cartGoods.isEdit.not() && cartGoods.isScan.not()) {
-                    var item =
+                    val item =
                         menuViewModel.currentDetailGoodsList.first { it.gID == cartGoods.gID && it.gKID == it.gKID }
-                    var pos = menuViewModel.currentDetailGoodsList.indexOf(item)
+                    val pos = menuViewModel.currentDetailGoodsList.indexOf(item)
                     currentClickView =
                         binding.goodsRv.findViewHolderForAdapterPosition(pos)?.itemView
                     currentClickView?.let {
@@ -240,8 +263,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         }
 
 
-
-
 //        lifecycleFlow(menuViewModel.needSetting) {
 //            if(it.isNotBlank()) {
 //                val dialog = SettingFragment(false)
@@ -256,26 +277,35 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         }
 
 
+        lifecycleFlow(menuViewModel.creditFlow) { deliveryInfo ->
+            Log.e("123", "creditFlow: " + deliveryInfo.toString())
+            deliveryInfo?.let {
+                findDevices(deliveryInfo)
+            }
+        }
+
+
 
         lifecycleFlow(menuViewModel.toPrint) { transactionData ->
 
-            if (usbInfo.deviceList.isEmpty()) {
-                transactionData.state = TransactionState.PrinterNotFoundIssue
-            }
+//            if (usbInfo.deviceList.isEmpty()) {
+//                transactionData.state = TransactionState.PrinterNotFoundIssue
+//            }
+//
+//            val item = usbInfo.deviceList.map {
+//                UsbNameWithID(
+//                    it.value.deviceName,
+//                    it.value.productId
+//                )
+//            }.find { it.id.toString() == prefs.printer }
+//
+//
+//            item?.let {
+//                transactionData.printer = usbInfo.deviceList[item.name]
+//            } ?: run {
+//                transactionData.state = TransactionState.PrinterNotFoundIssue
+//            }
 
-            var item = usbInfo.deviceList.map {
-                UsbNameWithID(
-                    it.value.deviceName,
-                    it.value.productId
-                )
-            }.find { it.id.toString() == prefs.printer }
-
-
-            item?.let {
-                transactionData.printer = usbInfo.deviceList[item.name]
-            } ?: run {
-                    transactionData.state = TransactionState.PrinterNotFoundIssue
-            }
 
             dealingTransactionData = transactionData
 
@@ -283,6 +313,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 R.id.action_menuFragment_to_printFragment,
                 args = bundleOf("transaction" to transactionData)
             )
+
+
         }
 
 
@@ -294,7 +326,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             if (timer == 100) {
                 var temp = 100
                 snackbar = Snackbar.make(requireView(), "", 20000)
-                val customSnackView: View = layoutInflater.inflate(R.layout.custom_snackbar_view, null)
+                val customSnackView: View =
+                    layoutInflater.inflate(R.layout.custom_snackbar_view, null)
                 snackbar!!.view.setBackgroundColor(Color.TRANSPARENT)
                 val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
                 snackbarLayout.setPadding(0, 0, 0, 50)
@@ -330,7 +363,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     }
 
 
-
     override fun initAction() {
         mainGroupItemAdapter.setOnMainGroupNameClickListener { menuGroupName ->
             menuViewModel.onGroupChange(menuGroupName)
@@ -356,6 +388,146 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 menuViewModel.postOrderItem(deliveryInfo)
             }
         }
+    }
+
+    private fun findDevices(orderDeliveryData: Orders.OrderDeliveryData) {
+
+        Log.e(TAG, "onClick: current comm type:$currCommType")
+        mDeviceInfoListMap.clear()
+        mDeviceInfoList.clear()
+        SemiLinkApi.getInstance(requireContext())
+            .getDevices(currCommType, object : SearchDeviceListener {
+                override fun onDiscovered(deviceInfo: DeviceInfo) {
+                    Log.e(
+                        TAG,
+                        "onDiscovered:name: " + deviceInfo.deviceName + ", id:" + deviceInfo.identifier
+                    )
+                    val map = LinkedHashMap<String, String>()
+                    map["deviceName"] = deviceInfo.deviceName
+                    map["identifier"] = deviceInfo.identifier
+                    mDeviceInfoListMap.add(map)
+                    mDeviceInfoList.add(deviceInfo)
+                    connectOnlyDevice(orderDeliveryData)
+                }
+
+                override fun onFinished() {
+
+                    Log.e(
+                        TAG,
+                        "onFinished, device size:" + mDeviceInfoList.size
+                    )
+
+
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        LogUtils.setDebugLevel(LogUtils.EDebugLevel.DEBUG_LEVEL_ALL)
+                        Debug.setDebugLevel(Debug.EDebugLevel.DEBUG_LEVEL_ALL)
+                        Log.e(
+                            TAG,
+                            "onFinished, device size:" + mDeviceInfoList.size
+                        )
+                    }
+                }
+
+                override fun onError(errorCode: Int) {
+                    LogUtils.e(
+                        TAG,
+                        "onError, errorCode:$errorCode"
+                    )
+                }
+            })
+    }
+
+    private fun connectOnlyDevice(orderDeliveryData: Orders.OrderDeliveryData) {
+        Thread {
+            val ret =
+                SemiLinkApi.getInstance(requireContext()).connect(mDeviceInfoList[0])
+            requireActivity().runOnUiThread {
+                if (ret == 0) {
+                    LogUtils.i(
+                        TAG,
+                        "connect success"
+                    )
+
+
+                    //1st Item
+                    payModel = PayModel("VISA", 0, false, orderDeliveryData)
+                    startSale(payModel!!)
+                } else {
+                    LogUtils.i(
+                        TAG,
+                        "connect failure"
+                    )
+                }
+            }
+        }.start()
+    }
+
+    fun startSale(payModel: PayModel) {
+        sendSaleRequest("sale", "C200", payModel.isWallet.toString(), payModel.orderDeliveryData)
+    }
+
+    private fun sendSaleRequest(task: String, command: String, walletName: String, orderDeliveryData: Orders.OrderDeliveryData) {
+        //BUILD SALE OBJECT TO BE SENT TO PAYMENT APP
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog!!.setTitle("Please Wait........")
+        progressDialog!!.setCancelable(false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            progressDialog!!.create()
+        }
+        progressDialog!!.show()
+        Thread {
+            val saleTrans: BaseSemiRequest<TransRequestData> = BaseSemiRequest<TransRequestData>()
+            saleTrans.task = task
+
+
+            saleTrans.data = TransBuilder().getSaleObject(String.format("%.2f", orderDeliveryData.ordersDelivery.sPrice))
+            LogUtils.d(
+                TAG,
+                "mBaseReque=" + JSON.toJSONString(saleTrans)
+            )
+            SemiLinkApi.getInstance(requireContext())
+                .doTransaction(saleTrans, 200, object : ITransListener {
+                    override fun onResponseSuccess(transResultInfo: String) {
+                        LogUtils.d("transResultInfo", transResultInfo)
+                        val jsonObject: com.alibaba.fastjson.JSONObject? =
+                            JSON.parseObject(transResultInfo)
+                        val data: String = jsonObject?.getJSONObject("data").toString()
+                        // Toast.makeText(context, data, Toast.LENGTH_SHORT).show();
+
+                        //Toast.makeText(context, saleResponseStr, Toast.LENGTH_SHORT).show();
+                        val saleResponse: TransResponse =
+                            com.google.gson.Gson().fromJson(data, TransResponse::class.java)
+                        //SaleResponse saleResponse = GsonUt.fromJson(data, SaleResponse.class);
+                        val responseCode: String = saleResponse.response_code //"00"
+                        val responseMsg: String = saleResponse.custom_data_2
+                        progressDialog!!.dismiss()
+                        requireActivity().runOnUiThread {
+                            if (responseCode == "00") {
+                                Toast.makeText(
+                                    requireContext(),
+                                    transResultInfo,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                menuViewModel.setCreditCardSuccess(orderDeliveryData)
+                                Log.e(TAG, "onResponseSuccess: " + transResultInfo)
+
+                            } else {
+                                requireActivity().runOnUiThread {
+                                    progressDialog!!.dismiss()
+                                }
+
+                            }
+                        }
+                    }
+
+                    override fun onResponseFailure(errorCode: Int) {
+                        requireActivity().runOnUiThread {
+                            progressDialog!!.dismiss()
+
+                        }
+                    }
+                })
+        }.start()
     }
 
     private fun backToMain() {

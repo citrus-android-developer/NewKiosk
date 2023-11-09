@@ -1,5 +1,6 @@
 package com.citrus.pottedplantskiosk.api.remote
 
+import android.util.Log
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,6 +19,7 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
                     if(result.data.data.mainGroup.isEmpty()){
                         Resource.Error("MainGroup is Empty", null)
                     }else {
+                        Log.e("Test", "getMenu: ${result.data.data.mainGroup}))")
                         Resource.Success(result.data)
                     }
                 }

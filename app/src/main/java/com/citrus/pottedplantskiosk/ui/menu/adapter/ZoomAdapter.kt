@@ -96,6 +96,14 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
                 tvName.text = item.gName
             }
 
+            tvDescribe.text = item.note?.let {
+                it.ifEmpty {
+                    if (prefs.languagePos == 1) item.gName2 else item.gName
+                }
+            }.run {
+                if (prefs.languagePos == 1) item.gName2 else item.gName
+            }
+
             tvPrice.text = "$" + Constants.getValByMathWay(item._sPrice)
 
             tvPrice.setOnClickListener {

@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--ASIX Elec. Corp AX7840 1 com port vendor-id="0x9710", product-id="0x7810"-->
+    <!--    <usb-device vendor-id="38672" product-id="30736"/>-->
+    <!--ASIX Elec. Corp AX7840 2 com port vendor-id="0x9710", product-id="0x7820"-->
+    <!--    <usb-device vendor-id="38672" product-id="30752"/>-->
+    <!--ASIX Elec. Corp AX7840 4 com port vendor-id="0x9710", product-id="0x7840"-->
+    <!--    <usb-device vendor-id="38672" product-id="30784"/>-->
+    <!-- 0x0D3A / Posiflex -->
+    <!--    <usb-device vendor-id="3386" />-->
+    <!--PP-7200U VirtualCom product-id="0x0320"-->
+    <usb-device vendor-id="3386" product-id="800"/>
+    <!--PP-8000U VirtualCom product-id="0x0330"-->
+    <usb-device vendor-id="3386" product-id="816"/>
+    <!--PP-6800U VirtualCom product-id="0x0368"-->
+    <usb-device vendor-id="3386" product-id="872"/>
+    <!--PP-5200E VirtualCom product-id="0x0352"-->
+    <usb-device vendor-id="3386" product-id="850"/>
+    <!--PP-9000 PrinterClass product-id="0x3330", VirtualCom product-id="0x3332"-->
+    <usb-device vendor-id="3386" product-id="13104"/>
+    <usb-device vendor-id="3386" product-id="13106"/>
+    <!--PP-8800 PrinterClass product-id="0x0338", VirtualCom product-id="0x0339"-->
+    <usb-device vendor-id="3386" product-id="824"/>
+    <usb-device vendor-id="3386" product-id="825"/>
+    <!--PP-6900 PrinterClass product-id="0x0369", VirtualCom product-id="0x036A"-->
+    <usb-device vendor-id="3386" product-id="873"/>
+    <usb-device vendor-id="3386" product-id="874"/>
+    <!--XPPRT PrinterClass product-id="0x036B", VirtualCom product-id="0x036C"-->
+    <usb-device vendor-id="3386" product-id="875"/>
+    <usb-device vendor-id="3386" product-id="876"/>
+    <!--PP-5200F PrinterClass product-id="0x0353", VirtualCom product-id="0x0352"-->
+    <usb-device vendor-id="3386" product-id="851"/>
+    <usb-device vendor-id="3386" product-id="850"/>
+    <!--HS3PRT PrinterClass product-id="0x036D", VirtualCom product-id="0x036E"-->
+    <usb-device vendor-id="3386" product-id="877"/>
+    <usb-device vendor-id="3386" product-id="878"/>
+    <!--DS210PRT PrinterClass product-id="0x0340", VirtualCom product-id="0x0341"-->
+    <usb-device vendor-id="3386" product-id="832"/>
+    <usb-device vendor-id="3386" product-id="833"/>
+    <!--HS-2008PRT VirtualCom product-id="0x036F"-->
+    <usb-device vendor-id="3386" product-id="879"/>
+    <!--HS-2410PRT PrinterClass product-id="0x0372", VirtualCom product-id="0x0373"-->
+    <usb-device vendor-id="3386" product-id="882"/>
+    <usb-device vendor-id="3386" product-id="883"/>
+    <!--HS-3510PRT PrinterClass product-id="0x0376", VirtualCom product-id="0x0377"-->
+    <usb-device vendor-id="3386" product-id="886"/>
+    <usb-device vendor-id="3386" product-id="887"/>
+    <!--PP-7600 PrinterClass product-id="0x0378", VirtualCom product-id="0x0379"-->
+    <usb-device vendor-id="3386" product-id="888"/>
+    <usb-device vendor-id="3386" product-id="889"/>
+    <!--PP-8900 PrinterClass product-id="0x037C", VirtualCom product-id="0x037D"-->
+    <usb-device vendor-id="3386" product-id="892"/>
+    <usb-device vendor-id="3386" product-id="893"/>
+    <!--DS220PRT PrinterClass product-id="0x0380", VirtualCom product-id="0x0381"-->
+    <usb-device vendor-id="3386" product-id="896"/>
+    <usb-device vendor-id="3386" product-id="897"/>
+    <!--PP-7600X PrinterClass product-id="0x0384", VirtualCom product-id="0x0385"-->
+    <usb-device vendor-id="3386" product-id="900"/>
+    <usb-device vendor-id="3386" product-id="901"/>
+    <!--PP6906-Pioner PrinterClass product-id="0x0366", VirtualCom product-id="0x0367"-->
+    <usb-device vendor-id="3386" product-id="870"/>
+    <usb-device vendor-id="3386" product-id="871"/>
+    <!--PP-8902 PrinterClass product-id="0x0354", VirtualCom product-id="0x0355"-->
+    <usb-device vendor-id="3386" product-id="852"/>
+    <usb-device vendor-id="3386" product-id="853"/>
+    <!--WT3007APRT PrinterClass product-id="0x0356", VirtualCom product-id="0x0357"-->
+    <usb-device vendor-id="3386" product-id="854"/>
+    <usb-device vendor-id="3386" product-id="855"/>
+    <!--PP-8802 PrinterClass product-id="0x0359", VirtualCom product-id="0x035A"-->
+    <usb-device vendor-id="3386" product-id="857"/>
+    <usb-device vendor-id="3386" product-id="858"/>
+    <!--RT 4" TP VirtualCom product-id="0x034F"-->
+    <!--    <usb-device product-id="847"/>-->
+    <!--PP-8800E PrinterClass product-id="0x0342", VirtualCom product-id="0x0343"-->
+    <usb-device vendor-id="3386" product-id="834"/>
+    <usb-device vendor-id="3386" product-id="835"/>
+    <!--PP-9500K, PP-9501K(LAN ver) PrinterClass product-id="0x03D0", VirtualCom product-id="0x03E0"-->
+    <usb-device vendor-id="3386" product-id="976"/>
+    <usb-device vendor-id="3386" product-id="992"/>
+    <!--HS-3500II PrinterClass product-id="0x0346", VirtualCom product-id="0x0347"-->
+    <usb-device vendor-id="3386" product-id="838"/>
+    <usb-device vendor-id="3386" product-id="839"/>
+    <!--WT1000APRT PrinterClass product-id="0x0348", VirtualCom product-id="0x0349"-->
+    <usb-device vendor-id="3386" product-id="840"/>
+    <usb-device vendor-id="3386" product-id="841"/>
+    <!--PP-8803 PrinterClass product-id="0x0300", VirtualCom product-id="0x0310"-->
+    <usb-device vendor-id="3386" product-id="768"/>
+    <usb-device vendor-id="3386" product-id="784"/>
+    <!--PP-8806 PrinterClass product-id="0x0309", VirtualCom product-id="0x0319"-->
+    <usb-device vendor-id="3386" product-id="777"/>
+    <usb-device vendor-id="3386" product-id="793"/>
+    <!--PP-7900 PrinterClass product-id="0x0306", VirtualCom product-id="0x0316"-->
+    <usb-device vendor-id="3386" product-id="774"/>
+    <usb-device vendor-id="3386" product-id="790"/>
+    <!--HS-3300SK PrinterClass product-id="0x03B0", VirtualCom product-id="0x03C0"-->
+    <usb-device vendor-id="3386" product-id="944"/>
+    <usb-device vendor-id="3386" product-id="960"/>
+
+
+    <!-- list all Posiflex Priner PID = 0x0300 ~ 0x03FF -->
+    <!--    <usb-device vendor-id="3386" product-id="768"/>-->
+    <usb-device vendor-id="3386" product-id="769"/>
+    <usb-device vendor-id="3386" product-id="770"/>
+    <usb-device vendor-id="3386" product-id="771"/>
+    <usb-device vendor-id="3386" product-id="772"/>
+    <usb-device vendor-id="3386" product-id="773"/>
+    <!--    <usb-device vendor-id="3386" product-id="774"/>-->
+    <usb-device vendor-id="3386" product-id="775"/>
+    <usb-device vendor-id="3386" product-id="776"/>
+    <!--    <usb-device vendor-id="3386" product-id="777"/>-->
+    <usb-device vendor-id="3386" product-id="778"/>
+    <usb-device vendor-id="3386" product-id="779"/>
+    <usb-device vendor-id="3386" product-id="780"/>
+    <usb-device vendor-id="3386" product-id="781"/>
+    <usb-device vendor-id="3386" product-id="782"/>
+    <usb-device vendor-id="3386" product-id="783"/>
+    <!--    <usb-device vendor-id="3386" product-id="784"/>-->
+    <usb-device vendor-id="3386" product-id="785"/>
+    <usb-device vendor-id="3386" product-id="786"/>
+    <usb-device vendor-id="3386" product-id="787"/>
+    <usb-device vendor-id="3386" product-id="788"/>
+    <usb-device vendor-id="3386" product-id="789"/>
+    <!--    <usb-device vendor-id="3386" product-id="790"/>-->
+    <usb-device vendor-id="3386" product-id="791"/>
+    <usb-device vendor-id="3386" product-id="792"/>
+    <!--    <usb-device vendor-id="3386" product-id="793"/>-->
+    <usb-device vendor-id="3386" product-id="794"/>
+    <usb-device vendor-id="3386" product-id="795"/>
+    <usb-device vendor-id="3386" product-id="796"/>
+    <usb-device vendor-id="3386" product-id="797"/>
+    <usb-device vendor-id="3386" product-id="798"/>
+    <usb-device vendor-id="3386" product-id="799"/>
+    <!--    <usb-device vendor-id="3386" product-id="800"/>-->
+    <usb-device vendor-id="3386" product-id="801"/>
+    <usb-device vendor-id="3386" product-id="802"/>
+    <usb-device vendor-id="3386" product-id="803"/>
+    <usb-device vendor-id="3386" product-id="804"/>
+    <usb-device vendor-id="3386" product-id="805"/>
+    <usb-device vendor-id="3386" product-id="806"/>
+    <usb-device vendor-id="3386" product-id="807"/>
+    <usb-device vendor-id="3386" product-id="808"/>
+    <usb-device vendor-id="3386" product-id="809"/>
+    <usb-device vendor-id="3386" product-id="810"/>
+    <usb-device vendor-id="3386" product-id="811"/>
+    <usb-device vendor-id="3386" product-id="812"/>
+    <usb-device vendor-id="3386" product-id="813"/>
+    <usb-device vendor-id="3386" product-id="814"/>
+    <usb-device vendor-id="3386" product-id="815"/>
+    <!--    <usb-device vendor-id="3386" product-id="816"/>-->
+    <usb-device vendor-id="3386" product-id="817"/>
+    <usb-device vendor-id="3386" product-id="818"/>
+    <usb-device vendor-id="3386" product-id="819"/>
+    <usb-device vendor-id="3386" product-id="820"/>
+    <usb-device vendor-id="3386" product-id="821"/>
+    <usb-device vendor-id="3386" product-id="822"/>
+    <usb-device vendor-id="3386" product-id="823"/>
+    <!--    <usb-device vendor-id="3386" product-id="824"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="825"/>-->
+    <usb-device vendor-id="3386" product-id="826"/>
+    <usb-device vendor-id="3386" product-id="827"/>
+    <usb-device vendor-id="3386" product-id="828"/>
+    <usb-device vendor-id="3386" product-id="829"/>
+    <usb-device vendor-id="3386" product-id="830"/>
+    <usb-device vendor-id="3386" product-id="831"/>
+    <!--    <usb-device vendor-id="3386" product-id="832"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="833"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="834"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="835"/>-->
+    <usb-device vendor-id="3386" product-id="836"/>
+    <usb-device vendor-id="3386" product-id="837"/>
+    <!--    <usb-device vendor-id="3386" product-id="838"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="839"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="840"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="841"/>-->
+    <usb-device vendor-id="3386" product-id="842"/>
+    <usb-device vendor-id="3386" product-id="843"/>
+    <usb-device vendor-id="3386" product-id="844"/>
+    <usb-device vendor-id="3386" product-id="845"/>
+    <usb-device vendor-id="3386" product-id="846"/>
+    <usb-device vendor-id="3386" product-id="847"/>
+    <usb-device vendor-id="3386" product-id="848"/>
+    <usb-device vendor-id="3386" product-id="849"/>
+    <!--    <usb-device vendor-id="3386" product-id="850"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="851"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="852"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="853"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="854"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="855"/>-->
+    <usb-device vendor-id="3386" product-id="856"/>
+    <!--    <usb-device vendor-id="3386" product-id="857"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="858"/>-->
+    <usb-device vendor-id="3386" product-id="859"/>
+    <usb-device vendor-id="3386" product-id="860"/>
+    <usb-device vendor-id="3386" product-id="861"/>
+    <usb-device vendor-id="3386" product-id="862"/>
+    <usb-device vendor-id="3386" product-id="863"/>
+    <usb-device vendor-id="3386" product-id="864"/>
+    <usb-device vendor-id="3386" product-id="865"/>
+    <usb-device vendor-id="3386" product-id="866"/>
+    <usb-device vendor-id="3386" product-id="867"/>
+    <usb-device vendor-id="3386" product-id="868"/>
+    <usb-device vendor-id="3386" product-id="869"/>
+    <!--    <usb-device vendor-id="3386" product-id="870"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="871"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="872"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="873"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="874"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="875"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="876"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="877"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="878"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="879"/>-->
+    <usb-device vendor-id="3386" product-id="880"/>
+    <usb-device vendor-id="3386" product-id="881"/>
+    <!--    <usb-device vendor-id="3386" product-id="882"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="883"/>-->
+    <usb-device vendor-id="3386" product-id="884"/>
+    <usb-device vendor-id="3386" product-id="885"/>
+    <!--    <usb-device vendor-id="3386" product-id="886"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="887"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="888"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="889"/>-->
+    <usb-device vendor-id="3386" product-id="890"/>
+    <usb-device vendor-id="3386" product-id="891"/>
+    <!--    <usb-device vendor-id="3386" product-id="892"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="893"/>-->
+    <usb-device vendor-id="3386" product-id="894"/>
+    <usb-device vendor-id="3386" product-id="895"/>
+    <!--    <usb-device vendor-id="3386" product-id="896"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="897"/>-->
+    <usb-device vendor-id="3386" product-id="898"/>
+    <usb-device vendor-id="3386" product-id="899"/>
+    <!--    <usb-device vendor-id="3386" product-id="900"/>-->
+    <!--    <usb-device vendor-id="3386" product-id="901"/>-->
+    <usb-device vendor-id="3386" product-id="902"/>
+    <usb-device vendor-id="3386" product-id="903"/>
+    <usb-device vendor-id="3386" product-id="904"/>
+    <usb-device vendor-id="3386" product-id="905"/>
+    <usb-device vendor-id="3386" product-id="906"/>
+    <usb-device vendor-id="3386" product-id="907"/>
+    <usb-device vendor-id="3386" product-id="908"/>
+    <usb-device vendor-id="3386" product-id="909"/>
+    <usb-device vendor-id="3386" product-id="910"/>
+    <usb-device vendor-id="3386" product-id="911"/>
+    <usb-device vendor-id="3386" product-id="912"/>
+    <usb-device vendor-id="3386" product-id="913"/>
+    <usb-device vendor-id="3386" product-id="914"/>
+    <usb-device vendor-id="3386" product-id="915"/>
+    <usb-device vendor-id="3386" product-id="916"/>
+    <usb-device vendor-id="3386" product-id="917"/>
+    <usb-device vendor-id="3386" product-id="918"/>
+    <usb-device vendor-id="3386" product-id="919"/>
+    <usb-device vendor-id="3386" product-id="920"/>
+    <usb-device vendor-id="3386" product-id="921"/>
+    <usb-device vendor-id="3386" product-id="922"/>
+    <usb-device vendor-id="3386" product-id="923"/>
+    <usb-device vendor-id="3386" product-id="924"/>
+    <usb-device vendor-id="3386" product-id="925"/>
+    <usb-device vendor-id="3386" product-id="926"/>
+    <usb-device vendor-id="3386" product-id="927"/>
+    <usb-device vendor-id="3386" product-id="928"/>
+    <usb-device vendor-id="3386" product-id="929"/>
+    <usb-device vendor-id="3386" product-id="930"/>
+    <usb-device vendor-id="3386" product-id="931"/>
+    <usb-device vendor-id="3386" product-id="932"/>
+    <usb-device vendor-id="3386" product-id="933"/>
+    <usb-device vendor-id="3386" product-id="934"/>
+    <usb-device vendor-id="3386" product-id="935"/>
+    <usb-device vendor-id="3386" product-id="936"/>
+    <usb-device vendor-id="3386" product-id="937"/>
+    <usb-device vendor-id="3386" product-id="938"/>
+    <usb-device vendor-id="3386" product-id="939"/>
+    <usb-device vendor-id="3386" product-id="940"/>
+    <usb-device vendor-id="3386" product-id="941"/>
+    <usb-device vendor-id="3386" product-id="942"/>
+    <usb-device vendor-id="3386" product-id="943"/>
+    <!--    <usb-device vendor-id="3386" product-id="944"/>-->
+    <usb-device vendor-id="3386" product-id="945"/>
+    <usb-device vendor-id="3386" product-id="946"/>
+    <usb-device vendor-id="3386" product-id="947"/>
+    <usb-device vendor-id="3386" product-id="948"/>
+    <usb-device vendor-id="3386" product-id="949"/>
+    <usb-device vendor-id="3386" product-id="950"/>
+    <usb-device vendor-id="3386" product-id="951"/>
+    <usb-device vendor-id="3386" product-id="952"/>
+    <usb-device vendor-id="3386" product-id="953"/>
+    <usb-device vendor-id="3386" product-id="954"/>
+    <usb-device vendor-id="3386" product-id="955"/>
+    <usb-device vendor-id="3386" product-id="956"/>
+    <usb-device vendor-id="3386" product-id="957"/>
+    <usb-device vendor-id="3386" product-id="958"/>
+    <usb-device vendor-id="3386" product-id="959"/>
+    <!--    <usb-device vendor-id="3386" product-id="960"/>-->
+    <usb-device vendor-id="3386" product-id="961"/>
+    <usb-device vendor-id="3386" product-id="962"/>
+    <usb-device vendor-id="3386" product-id="963"/>
+    <usb-device vendor-id="3386" product-id="964"/>
+    <usb-device vendor-id="3386" product-id="965"/>
+    <usb-device vendor-id="3386" product-id="966"/>
+    <usb-device vendor-id="3386" product-id="967"/>
+    <usb-device vendor-id="3386" product-id="968"/>
+    <usb-device vendor-id="3386" product-id="969"/>
+    <usb-device vendor-id="3386" product-id="970"/>
+    <usb-device vendor-id="3386" product-id="971"/>
+    <usb-device vendor-id="3386" product-id="972"/>
+    <usb-device vendor-id="3386" product-id="973"/>
+    <usb-device vendor-id="3386" product-id="974"/>
+    <usb-device vendor-id="3386" product-id="975"/>
+    <!--    <usb-device vendor-id="3386" product-id="976"/>-->
+    <usb-device vendor-id="3386" product-id="977"/>
+    <usb-device vendor-id="3386" product-id="978"/>
+    <usb-device vendor-id="3386" product-id="979"/>
+    <usb-device vendor-id="3386" product-id="980"/>
+    <usb-device vendor-id="3386" product-id="981"/>
+    <usb-device vendor-id="3386" product-id="982"/>
+    <usb-device vendor-id="3386" product-id="983"/>
+    <usb-device vendor-id="3386" product-id="984"/>
+    <usb-device vendor-id="3386" product-id="985"/>
+    <usb-device vendor-id="3386" product-id="986"/>
+    <usb-device vendor-id="3386" product-id="987"/>
+    <usb-device vendor-id="3386" product-id="988"/>
+    <usb-device vendor-id="3386" product-id="989"/>
+    <usb-device vendor-id="3386" product-id="990"/>
+    <usb-device vendor-id="3386" product-id="991"/>
+    <!--    <usb-device vendor-id="3386" product-id="992"/>-->
+    <usb-device vendor-id="3386" product-id="993"/>
+    <usb-device vendor-id="3386" product-id="994"/>
+    <usb-device vendor-id="3386" product-id="995"/>
+    <usb-device vendor-id="3386" product-id="996"/>
+    <usb-device vendor-id="3386" product-id="997"/>
+    <usb-device vendor-id="3386" product-id="998"/>
+    <usb-device vendor-id="3386" product-id="999"/>
+    <usb-device vendor-id="3386" product-id="1000"/>
+    <usb-device vendor-id="3386" product-id="1001"/>
+    <usb-device vendor-id="3386" product-id="1002"/>
+    <usb-device vendor-id="3386" product-id="1003"/>
+    <usb-device vendor-id="3386" product-id="1004"/>
+    <usb-device vendor-id="3386" product-id="1005"/>
+    <usb-device vendor-id="3386" product-id="1006"/>
+    <usb-device vendor-id="3386" product-id="1007"/>
+    <usb-device vendor-id="3386" product-id="1008"/>
+    <usb-device vendor-id="3386" product-id="1009"/>
+    <usb-device vendor-id="3386" product-id="1010"/>
+    <usb-device vendor-id="3386" product-id="1011"/>
+    <usb-device vendor-id="3386" product-id="1012"/>
+    <usb-device vendor-id="3386" product-id="1013"/>
+    <usb-device vendor-id="3386" product-id="1014"/>
+    <usb-device vendor-id="3386" product-id="1015"/>
+    <usb-device vendor-id="3386" product-id="1016"/>
+    <usb-device vendor-id="3386" product-id="1017"/>
+    <usb-device vendor-id="3386" product-id="1018"/>
+    <usb-device vendor-id="3386" product-id="1019"/>
+    <usb-device vendor-id="3386" product-id="1020"/>
+    <usb-device vendor-id="3386" product-id="1021"/>
+    <usb-device vendor-id="3386" product-id="1022"/>
+    <usb-device vendor-id="3386" product-id="1023"/>
+</resources>

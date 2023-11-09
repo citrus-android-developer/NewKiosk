@@ -61,6 +61,11 @@ object Constants {
         object English : LanguageType()
     }
 
+    sealed class PayWayType(values: String) {
+        object CreditCard : PayWayType("01")
+        object Cash : PayWayType("02")
+    }
+
 
     fun String.trimSpace(): String {
         return this.replace("\\s".toRegex(), "")
@@ -206,4 +211,30 @@ object Constants {
             else -> getDecimalFormat().format(orgValue)
         }
     }
+}
+
+
+object GlobalConstants {
+    const val ECR_SALE = "C200"
+    const val ECR_PRE_AUTH = "C201"
+    const val ECR_PRE_AUTH_CAPTURE = "C202"
+    const val ECR_REFUND = "C203"
+    const val ECR_QUASI_CASH_ADVANCE = "C204"
+    const val ECR_GET_CARD_DATA = "C209"
+    const val ECR_VOID = "C300"
+    const val ECR_PRE_AUTH_CANCEL =
+        "C301" // 2017032101 Rajesh: Added PRE AUTH CANCEL DEV TMS-13131313
+    const val ECR_INQUIRY = "C400"
+    const val ECR_ECHO = "C902"
+    const val ECR_BEGIN_SHIFT = "C800"
+    const val ECR_GET_MAGSTRIPE = "C810"
+    const val ECR_TIP_ADJUST = "C500"
+    const val ECR_CASH_ADVANCE = "C205"
+    const val ECR_SETTLEMENT = "C700"
+    const val ECR_WAIT = "C920"
+    const val ECR_RETRIEVE_TERMINAL_INFO =
+        "C900" // Retrieve terminal info ie. TID, Serial Number Etc..
+    const val ECR_EZLINK_SALE = "C610" //Ezlink sale
+    const val ECR_CUSTOM_RECEIPT = "C620" //Ezlink Blacklist Download
+    const val ECR_WALLET_SALE = "C640" //Ezlink Blacklist Download
 }

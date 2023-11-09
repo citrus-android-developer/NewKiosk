@@ -330,7 +330,7 @@ class CartMotionLayout @JvmOverloads constructor(
             gstValue = 0.0
             var pureSPrice = 0.0
 
-            var list = cartItemAdapter!!.getList()
+            val list = cartItemAdapter!!.getList()
             list.forEach { goods ->
                 pureSPrice = add(pureSPrice, goods.sPrice)
             }
@@ -342,7 +342,7 @@ class CartMotionLayout @JvmOverloads constructor(
             if (prefs.taxFunction == 1 || prefs.taxFunction == 0) {
                 grandTotalStr = pureSPrice.toString()
             } else if (prefs.taxFunction == 2) {
-                var gstRounding =
+                val gstRounding =
                     BigDecimal(gstValue).setScale(2, BigDecimal.ROUND_HALF_UP).toDouble()
                 grandTotalStr = (pureSPrice + gstRounding).toString()
             }

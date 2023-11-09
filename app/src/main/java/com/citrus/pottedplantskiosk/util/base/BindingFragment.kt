@@ -47,7 +47,7 @@ abstract class BindingFragment<out T : ViewBinding> : Fragment() {
 }
 
 fun <T> Fragment.lifecycleFlow(flow: Flow<T>, collect: suspend (T) -> Unit) {
-    viewLifecycleOwner.lifecycleScope.launch {
+    val launch = viewLifecycleOwner.lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             flow.collect(collect)
         }

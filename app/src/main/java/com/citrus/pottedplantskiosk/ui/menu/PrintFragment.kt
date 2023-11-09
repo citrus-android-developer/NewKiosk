@@ -14,6 +14,7 @@ import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
 import com.citrus.pottedplantskiosk.api.remote.dto.TransactionState
 import com.citrus.pottedplantskiosk.databinding.FragmentPrintBinding
+import com.citrus.pottedplantskiosk.util.base.lifecycleFlow
 import com.citrus.pottedplantskiosk.util.print.PrintOrderInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -72,6 +73,7 @@ class PrintFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setFullScreen()
+        initObserve()
         binding.printing.isVisible = true
 
         data = args.transaction
@@ -86,16 +88,30 @@ class PrintFragment : BottomSheetDialogFragment() {
             }
 
             is TransactionState.WorkFine -> {
-                when {
-                    data!!.printer != null -> {
-                        printStart(data!!)
-                    }
-                    else -> {
-                        showError()
-                    }
-                }
+                startPrint(data)
             }
         }
+    }
+
+
+    private fun initObserve() {
+        lifecycleFlow(menuViewModel.printResult) { isSuccess ->
+            if (isSuccess) {
+                showSuccess()
+                job = MainScope().launch {
+                    delay(4000)
+                    findNavController().popBackStack(R.id.mainFragment, false)
+                }
+                job?.start()
+            } else {
+                showError()
+            }
+        }
+    }
+
+
+    private fun startPrint(data: TransactionData?) {
+        menuViewModel.setPrintData(data)
     }
 
 

@@ -14,7 +14,6 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.view.KeyEvent
-import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
@@ -22,11 +21,15 @@ import androidx.lifecycle.lifecycleScope
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
+import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
 import com.citrus.pottedplantskiosk.databinding.ActivityMenuBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.Constants.getGstStr
 import com.citrus.pottedplantskiosk.util.PrintUtils
 import com.citrus.pottedplantskiosk.util.i18n.LocaleHelper
+import com.citrus.pottedplantskiosk.util.print.b
+import com.citrus.pottedplantskiosk.util.print.twoColumnBig
 import com.pos.poslibusb.MCS7840Driver
 import com.pos.poslibusb.PosLibUsb
 import com.pos.poslibusb.UsbDeviceFilter
@@ -40,7 +43,6 @@ import com.pos.printersdk.PrinterStatusInfo
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.UnsupportedEncodingException
 
@@ -150,7 +152,8 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
 
     /**掃描槍回調支援*/
     private var isInput = false
-   // private lateinit var scanKeyManager: ScanKeyManager
+
+    // private lateinit var scanKeyManager: ScanKeyManager
     private var onScanListener: ((String) -> Unit)? = null
     fun setOnScanListener(listener: (String) -> Unit) {
         onScanListener = listener
@@ -233,7 +236,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
 
         lifecycleScope.launchWhenStarted {
             menuViewModel.toActivityPrint.collect {
-                SampleReceipt_CHT("BIG5")
+                printSummery(it)
             }
         }
 
@@ -346,6 +349,180 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
         }
     }
 
+
+    fun printSummery(transactionData: TransactionData, characterSet: String = "BIG5") {
+        var deliveryItemList = transactionData.orders?.ordersItemDelivery
+
+        try {
+            PrinterFunctions.setReceiveEventListener(null)
+            mUnderline = PrintUtils.UNDERLINE_TOKEN_DEF.UNDERLINE_OFF
+            mHeight = 1
+            mWidth = 2
+            mAlignment = PrintUtils.ALIGNMENT_TOKEN_DEF.ALIGNMENT_CENTER
+            PrintTextByteArray(
+                "${deliveryItemList?.get(0)?.orderNO}\n\n".toByteArray(
+                    charset(
+                        characterSet!!
+                    )
+                )
+            )
+            mHeight = 0
+            mWidth = 0
+            if (prefs.header.isNotEmpty()) {
+                PrintTextByteArray(
+                    "${prefs.header}\n\n".toByteArray(
+                        charset(
+                            characterSet
+                        )
+                    )
+                )
+            }
+            mAlignment = PrintUtils.ALIGNMENT_TOKEN_DEF.ALIGNMENT_RIGHT
+
+            val currentDateTimeString = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+                java.util.Date()
+            )
+            PrintTextByteArray("${currentDateTimeString}\n".toByteArray(charset(characterSet!!)))
+            mAlignment = PrintUtils.ALIGNMENT_TOKEN_DEF.ALIGNMENT_LEFT
+            PrintTextByteArray(
+                "商店名稱:${prefs.storeName}              機台編號:${prefs.kioskId}\n".toByteArray(
+                    charset(
+                        characterSet
+                    )
+                )
+            )
+            PrintTextByteArray(
+                "地址:${prefs.storeAddress}            \n\n".toByteArray(
+                    charset(
+                        characterSet
+                    )
+                )
+            )
+
+            var sum = 0
+            if (deliveryItemList != null) {
+                for (item in deliveryItemList) {
+                    sum += item.qty
+                    val priceStr = String.format("%7s", Constants.getValByMathWay(item.gPrice))
+                    val qtyStr = String.format("%-3s", item.qty)
+
+                    PrintTextByteArray(
+                        "${if (prefs.languagePos == 1) item.gName2 else item.gname}x${qtyStr}                        $${priceStr} 元\n".toByteArray(
+                            charset(
+                                characterSet
+                            )
+                        )
+                    )
+
+                    val flavorAdd =
+                        if (!item.addGName.isNullOrEmpty() && !item.flavorDesc.isNullOrEmpty()) item.addGName + "/" + item.flavorDesc
+                        else if (!item.addGName.isNullOrEmpty()) item.addGName
+                        else if (!item.flavorDesc.isNullOrEmpty()) item.flavorDesc
+                        else null
+
+                    flavorAdd?.let {
+                        PrintTextByteArray(
+                            "\"  #\"$it                         \n".toByteArray(
+                                charset(
+                                    characterSet
+                                )
+                            )
+                        )
+                    }
+
+                }
+            }
+            var orgAmtStr =
+                String.format(
+                    "%7s",
+                    Constants.getValByMathWay(transactionData.orders?.ordersDelivery?.sPrice!!)
+                )
+            val qtyStr = String.format("%-3s", sum)
+            val gst =
+                String.format(
+                    "%7s",
+                    Constants.getValByMathWay(transactionData.orders.ordersDelivery.totaltax)
+                )
+            val grandTotal =
+                String.format(
+                    "%7s",
+                    Constants.getValByMathWay(transactionData.orders.ordersDelivery.sPrice + transactionData.orders.ordersDelivery.totaltax)
+                )
+
+            PrintTextByteArray("\n".toByteArray(charset(characterSet)))
+            mEmphasized = PrintUtils.EMPHASIZED_TOKEN_DEF.EMPHASIZED_OFF
+            PrintTextByteArray(
+                "${getString(R.string.Total)}                           ${qtyStr + orgAmtStr}\n".toByteArray(
+                    charset(
+                        characterSet
+                    )
+                )
+            )
+            PrintTextByteArray(
+                "${getString(R.string.paymentType)}                           ${transactionData.orders.ordersDelivery.payType}\n".toByteArray(
+                    charset(
+                        characterSet
+                    )
+                )
+            )
+            PrintTextByteArray(
+                "${getString(R.string.SubTotal)}                           ${orgAmtStr}\n".toByteArray(
+                    charset(
+                        characterSet
+                    )
+                )
+            )
+            PrintTextByteArray(
+                "${getGstStr()}                           ${gst}\n".toByteArray(
+                    charset(
+                        characterSet
+                    )
+                )
+            )
+
+            if (prefs.taxFunction == 2) {
+                PrintTextByteArray(
+                    "${getString(R.string.grandTotal)}                           ${grandTotal}\n\n".toByteArray(
+                        charset(
+                            characterSet
+                        )
+                    )
+                )
+            } else {
+                PrintTextByteArray(
+                    "${getString(R.string.grandTotal)}                           ${orgAmtStr}\n\n".toByteArray(
+                        charset(
+                            characterSet
+                        )
+                    )
+                )
+            }
+
+            if (prefs.footer.isNotEmpty()) {
+                PrintTextByteArray(
+                    "${prefs.footer}\n\n".toByteArray(
+                        charset(
+                            characterSet
+                        )
+                    )
+                )
+
+            }
+
+            PrinterFunctions.setReceiveEventListener(this)
+            PrintTextByteArray("".toByteArray(charset(characterSet)))
+            PrinterFunctions.PreformCut(
+                mPortName,
+                mPortSettings,
+                PrintUtils.CUT_TYPE_TOKEN_DEF.CUT_TYPE_WITH_FEED
+            )
+
+        } catch (e: UnsupportedEncodingException) {
+
+        }
+
+    }
+
     open fun SampleReceipt_CHT(characterSet: String?) {
         Utils.logd("SampleReceipt_CHT characterSet = %s", characterSet)
         try {
@@ -361,7 +538,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
             PrintTextByteArray(
                 "統一編號:12345678\n電話:(02)2299-1234\n\n".toByteArray(
                     charset(
-                        characterSet!!
+                        characterSet
                     )
                 )
             )
@@ -371,42 +548,42 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
             PrintTextByteArray(
                 "商店編號:0001              收銀機編號:0001\n".toByteArray(
                     charset(
-                        characterSet!!
+                        characterSet
                     )
                 )
             )
             PrintTextByteArray(
                 "收銀員編號:0001              銷售編號:0003\n\n".toByteArray(
                     charset(
-                        characterSet!!
+                        characterSet
                     )
                 )
             )
             PrintTextByteArray(
                 "牛肉漢堡                          $40.0 元\n".toByteArray(
                     charset(
-                        characterSet!!
+                        characterSet
                     )
                 )
             )
             PrintTextByteArray(
                 "蔬菜莎拉                          $20.0 元\n".toByteArray(
                     charset(
-                        characterSet!!
+                        characterSet
                     )
                 )
             )
             PrintTextByteArray(
                 "柳橙汁                            $30.0 元\n".toByteArray(
                     charset(
-                        characterSet!!
+                        characterSet
                     )
                 )
             )
             PrintTextByteArray(
                 "烤雞腿                            $30.0 元\n".toByteArray(
                     charset(
-                        characterSet!!
+                        characterSet
                     )
                 )
             )
@@ -416,23 +593,23 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
                     String.format("蔬菜汁 %02d                         $10.0 元\n", i + 1)
                         .toByteArray(
                             charset(
-                                characterSet!!
+                                characterSet
                             )
                         )
                 )
             }
-            PrintTextByteArray("\n".toByteArray(charset(characterSet!!)))
+            PrintTextByteArray("\n".toByteArray(charset(characterSet)))
             mEmphasized = PrintUtils.EMPHASIZED_TOKEN_DEF.EMPHASIZED_OFF
             PrintTextByteArray(
                 "總計:                            $530.0 元\n".toByteArray(
                     charset(
-                        characterSet!!
+                        characterSet
                     )
                 )
             )
             //SampleReceipt_BarCode_QRCode()
             PrinterFunctions.setReceiveEventListener(this)
-            PrintTextByteArray("".toByteArray(charset(characterSet!!)))
+            PrintTextByteArray("".toByteArray(charset(characterSet)))
             PrinterFunctions.PreformCut(
                 mPortName,
                 mPortSettings,
@@ -489,7 +666,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (event.keyCode != KeyEvent.KEYCODE_BACK && !isInput && event.keyCode != KeyEvent.KEYCODE_VOLUME_UP && event.keyCode != KeyEvent.KEYCODE_VOLUME_DOWN && event.keyCode != KeyEvent.KEYCODE_VOLUME_MUTE) {
-           // scanKeyManager.analysisKeyEvent(event)
+            // scanKeyManager.analysisKeyEvent(event)
             return true
         }
         return super.dispatchKeyEvent(event)
@@ -514,16 +691,14 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
                 errMsg
             )
 
-            if(errMsg.isEmpty()) {
+            if (errMsg.isEmpty()) {
                 Log.e("print", "success")
                 menuViewModel.setPrintResult(true)
-            }else {
+            } else {
                 menuViewModel.setPrintResult(false)
             }
 
         }
-
-
 
 
     }

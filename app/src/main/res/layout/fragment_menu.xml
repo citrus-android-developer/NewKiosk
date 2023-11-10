@@ -9,6 +9,119 @@
     tools:context=".ui.menu.MenuFragment"
     android:id="@+id/outSideCons">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ProceedCons"
+        android:visibility="gone"
+        android:clickable="true"
+        android:elevation="@dimen/dp_40"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/progress_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:clickable="true"
+            android:elevation="@dimen/dp_40"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:background="@drawable/lottie_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_progress"
+                android:layout_width="@dimen/dp_130"
+                android:layout_height="@dimen/dp_130"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="centerCrop"
+                android:tint="@color/lightGreen"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="creditPay.json"
+                app:lottie_loop="true" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/failCons"
+        android:visibility="gone"
+        android:clickable="true"
+        android:elevation="@dimen/dp_40"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/progress_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:elevation="@dimen/dp_40"
+            android:layout_width="250dp"
+            android:layout_height="300dp"
+            android:background="@drawable/lottie_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_fail"
+                android:layout_width="@dimen/dp_130"
+                android:layout_height="@dimen/dp_130"
+                app:layout_constraintBottom_toTopOf="@+id/btnRetry"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="centerCrop"
+                android:tint="@color/lightGreen"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="pay_fail.json"
+                app:lottie_loop="false" />
+
+            <Button
+                android:id="@+id/btnRetry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/lottie_fail"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnCancel"
+                android:text="Retry"
+                />
+
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/lottie_fail"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btnRetry"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="Cancel"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
     <ImageView
         android:visibility="gone"
         android:id="@+id/logo"

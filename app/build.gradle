@@ -45,6 +45,7 @@ android {
     kotlinOptions {
         jvmTarget = '11'
     }
+    namespace 'com.citrus.pottedplantskiosk'
 }
 
 dependencies {
@@ -110,7 +111,7 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
 
     /** Navigation Component */
-    def navigationVersion = "2.3.5"
+    def navigationVersion = "2.5.0"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
 

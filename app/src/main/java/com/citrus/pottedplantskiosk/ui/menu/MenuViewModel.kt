@@ -9,6 +9,7 @@ import com.citrus.pottedplantskiosk.api.remote.Resource
 import com.citrus.pottedplantskiosk.api.remote.dto.*
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.base.fineEmit
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.Default
@@ -290,6 +291,10 @@ class MenuViewModel @Inject constructor(
         }
     }
 
+    fun setCreditFlow(data: Orders.OrderDeliveryData) = viewModelScope.launch {
+        _creditFlow.emit(data)
+    }
+
     fun setPrintStatus(status: Int) = viewModelScope.launch {
         if (status == 1) {
             _clearCartGoods.emit(true)
@@ -311,13 +316,14 @@ class MenuViewModel @Inject constructor(
     }
 
     fun setPrintData(data: TransactionData?) = viewModelScope.launch {
+        delay(2000)
         data?.let {
             _toActivityPrint.emit(data!!)
         }
     }
 
     fun setPrintResult(result: Boolean) = viewModelScope.launch {
-        _printResult.emit(result)
+        _printResult.fineEmit(result)
     }
 
 

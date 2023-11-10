@@ -44,7 +44,6 @@ class PrintFragment : BottomSheetDialogFragment() {
         val behavior = BottomSheetBehavior.from(view)
         behavior.peekHeight = resources.getDimension(R.dimen.dp_400).toInt()
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
-
     }
 
 
@@ -88,6 +87,7 @@ class PrintFragment : BottomSheetDialogFragment() {
             }
 
             is TransactionState.WorkFine -> {
+
                 startPrint(data)
             }
         }

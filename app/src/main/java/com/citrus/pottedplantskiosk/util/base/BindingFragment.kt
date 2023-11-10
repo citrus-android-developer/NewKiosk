@@ -11,7 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
 import com.skydoves.elasticviews.ElasticAnimation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -49,9 +51,20 @@ abstract class BindingFragment<out T : ViewBinding> : Fragment() {
 fun <T> Fragment.lifecycleFlow(flow: Flow<T>, collect: suspend (T) -> Unit) {
     val launch = viewLifecycleOwner.lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            flow.collect(collect)
+            flow.collectLatest(collect)
         }
     }
+}
+
+suspend fun <T> MutableSharedFlow<T>.fineEmit(obj: T, expectObserveCount: Int = 1) = run {
+    do {
+        val count = this.subscriptionCount.value
+        if (count < expectObserveCount) {
+            delay(50)
+        }
+    } while (count < expectObserveCount)
+
+    this.emit(obj)
 }
 
 fun <T> Fragment.lifecycleLatestFlow(flow: Flow<T>, collect: suspend (T) -> Unit) {

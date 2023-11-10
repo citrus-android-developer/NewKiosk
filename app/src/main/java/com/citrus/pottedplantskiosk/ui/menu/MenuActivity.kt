@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Parcelable
@@ -23,6 +24,7 @@ import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.Data
 import com.citrus.pottedplantskiosk.databinding.ActivityMenuBinding
 import com.citrus.pottedplantskiosk.di.prefs
+import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.PrintUtils
 import com.citrus.pottedplantskiosk.util.i18n.LocaleHelper
 import com.pos.poslibusb.MCS7840Driver
@@ -279,7 +281,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
         // usbDevice port name need check has permission, new flow must use this.
         if (mUsbDevice != null && mUsbManager!!.hasPermission(mUsbDevice)) {
             lifecycleScope.launch(Dispatchers.IO) {
-                delay(1000)
+                delay(3000)
                 val iOpenRes =
                     PrinterFunctions.OpenPort(mPortName, mPortSettings)
 
@@ -302,7 +304,24 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
         val filterDetached = IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED)
         registerReceiver(mUsbDeviceAttachedDetachedReceiver, filterAttached)
         registerReceiver(mUsbDeviceAttachedDetachedReceiver, filterDetached)
-        mPermissionIntent = PendingIntent.getBroadcast(this, 0, Intent(ACTION_USB_PERMISSION), 0)
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            mPermissionIntent = PendingIntent.getActivity(
+                this,
+                0,
+                Intent(Constants.ACTION_USB_PERMISSION),
+                PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            mPermissionIntent = PendingIntent.getBroadcast(
+                this,
+                0,
+                Intent(Constants.ACTION_USB_PERMISSION),
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        }
+
     }
 
     open fun unregisterUsbReceiver() {
@@ -496,6 +515,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
             )
 
             if(errMsg.isEmpty()) {
+                Log.e("print", "success")
                 menuViewModel.setPrintResult(true)
             }else {
                 menuViewModel.setPrintResult(false)

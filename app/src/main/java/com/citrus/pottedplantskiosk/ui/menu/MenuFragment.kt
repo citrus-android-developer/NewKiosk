@@ -91,6 +91,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private var payModel: PayModel? = null
     private val transAmount = "0.01"
 
+    private var processingData: Orders.OrderDeliveryData? = null
+
     @Inject
     lateinit var mainGroupItemAdapter: MainGroupItemAdapter
     private var updateMainGroupItemJob: Job? = null
@@ -113,7 +115,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         super.onCreate(savedInstanceState)
         onTransformationStartContainer()
         menuViewModel.intentNavigateToMenu()
-        refreshUsbDevice()
+        //refreshUsbDevice()
     }
 
 
@@ -178,6 +180,17 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 it.clickAnimation {
                     backToMain()
                 }
+            }
+
+            btnCancel.onSafeClick {
+                failCons.visibility = View.GONE
+            }
+
+            btnRetry.onSafeClick {
+                processingData?.let {
+                    menuViewModel.setCreditFlow(it)
+                }
+                failCons.visibility = View.GONE
             }
         }
     }
@@ -278,8 +291,9 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
         lifecycleFlow(menuViewModel.creditFlow) { deliveryInfo ->
-            Log.e("123", "creditFlow: " + deliveryInfo.toString())
+
             deliveryInfo?.let {
+                processingData = deliveryInfo
                 findDevices(deliveryInfo)
             }
         }
@@ -466,21 +480,27 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         sendSaleRequest("sale", "C200", payModel.isWallet.toString(), payModel.orderDeliveryData)
     }
 
-    private fun sendSaleRequest(task: String, command: String, walletName: String, orderDeliveryData: Orders.OrderDeliveryData) {
+    private fun sendSaleRequest(
+
+        task: String,
+        command: String,
+        walletName: String,
+        orderDeliveryData: Orders.OrderDeliveryData
+    ) {
         //BUILD SALE OBJECT TO BE SENT TO PAYMENT APP
-        progressDialog = ProgressDialog(requireContext())
-        progressDialog!!.setTitle("Please Wait........")
-        progressDialog!!.setCancelable(false)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            progressDialog!!.create()
-        }
-        progressDialog!!.show()
+        binding.ProceedCons.visibility = View.VISIBLE
+
         Thread {
             val saleTrans: BaseSemiRequest<TransRequestData> = BaseSemiRequest<TransRequestData>()
             saleTrans.task = task
 
 
-            saleTrans.data = TransBuilder().getSaleObject(String.format("%.2f", orderDeliveryData.ordersDelivery.sPrice))
+            saleTrans.data = TransBuilder().getSaleObject(
+                String.format(
+                    "%.2f",
+                    orderDeliveryData.ordersDelivery.sPrice
+                )
+            )
             LogUtils.d(
                 TAG,
                 "mBaseReque=" + JSON.toJSONString(saleTrans)
@@ -500,30 +520,24 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                         //SaleResponse saleResponse = GsonUt.fromJson(data, SaleResponse.class);
                         val responseCode: String = saleResponse.response_code //"00"
                         val responseMsg: String = saleResponse.custom_data_2
-                        progressDialog!!.dismiss()
-                        requireActivity().runOnUiThread {
-                            if (responseCode == "00") {
-                                Toast.makeText(
-                                    requireContext(),
-                                    transResultInfo,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                menuViewModel.setCreditCardSuccess(orderDeliveryData)
-                                Log.e(TAG, "onResponseSuccess: " + transResultInfo)
 
+
+                        requireActivity().runOnUiThread {
+                            binding.ProceedCons.visibility = View.GONE
+                            if (responseCode == "00") {
+                                menuViewModel.setCreditCardSuccess(orderDeliveryData)
                             } else {
                                 requireActivity().runOnUiThread {
-                                    progressDialog!!.dismiss()
+                                    binding.ProceedCons.visibility = View.GONE
                                 }
-
                             }
                         }
                     }
 
                     override fun onResponseFailure(errorCode: Int) {
                         requireActivity().runOnUiThread {
-                            progressDialog!!.dismiss()
-
+                            binding.ProceedCons.visibility = View.GONE
+                            binding.failCons.visibility = View.VISIBLE
                         }
                     }
                 })

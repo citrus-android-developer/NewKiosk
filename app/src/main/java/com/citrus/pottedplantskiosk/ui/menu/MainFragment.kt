@@ -1,7 +1,6 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -16,18 +15,14 @@ import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
 import dagger.hilt.android.AndroidEntryPoint
-
-
 import com.skydoves.balloon.BalloonSizeSpec.WRAP
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import com.skydoves.balloon.overlay.BalloonOverlayRect
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.Button
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.di.prefs
@@ -38,7 +33,7 @@ import com.citrus.pottedplantskiosk.util.base.lifecycleFlow
 import com.citrus.pottedplantskiosk.util.base.onSevenClick
 import com.citrus.pottedplantskiosk.util.navigateSafely
 import com.skydoves.balloon.*
-import kotlinx.coroutines.flow.collect
+
 
 
 @AndroidEntryPoint

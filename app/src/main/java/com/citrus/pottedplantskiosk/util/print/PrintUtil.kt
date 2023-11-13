@@ -292,6 +292,10 @@ fun twoColumnBig(title: String, content: String, is80mm: Boolean): ByteArray {
     return (fillBlank(title, content, 12, 24, if (is80mm) 24 else 16) + "\n").toByteArray(charset(prefs.charSet))
 }
 
+fun twoColumn(title: String, content: String): ByteArray {
+    return (fillBlank(title, content, 12, 24,42 ) + "\n").toByteArray(charset("BIG5"))
+}
+
 fun fillBlank(title: String, content: String, enUnit: Int, cnUnit: Int, totalLen: Int): String {
     val w = mul(enUnit.toDouble(), totalLen.toDouble()).toInt()
     val p1: Int = getStringPixLength(title, enUnit, cnUnit)

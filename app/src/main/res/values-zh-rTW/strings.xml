@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CitrusKiosk</string>
+    <string name="touch_to_start">觸碰以開始</string>
+    <string name="orderTime">預點時間:</string>
+    <string name="orderNo">單號:</string>
+    <string name="printTime">列印時間:</string>
+    <string name="item">品項</string>
+    <string name="qty">數量</string>
+    <string name="Total">總計:</string>
+    <string name="TotalItem">品項總計:</string>
+    <string name="TotalPrice">金額總計:</string>
+    <string name="SubTotal">未稅總計:</string>
+    <string name="gstF">稅額(免税):</string>
+    <string name="gstI">税额(税內含):</string>
+    <string name="gstE">税额(税外加):</string>
+    <string name="grandTotal">含税總計:</string>
+    <string name="paymentType">付款方式:</string>
+    <string name="paymentType_">付款方式</string>
+    <string name="myCart">購物車</string>
+    <string name="orderDetail">購物明细</string>
+    <string name="close">返回購物</string>
+    <string name="addToCart">加入購物車</string>
+    <string name="done">完成</string>
+    <string name="back">返回</string>
+    <string name="cartHint">請選購商品</string>
+    <string name="home">主畫面</string>
+    <string name="idle">檢測到空閒狀態</string>
+    <string name="idleHint">%d 秒後將返回主畫面</string>
+    <string name="address">地址:</string>
+    <string name="storeName">商店名稱:</string>
+    <string name="kioskId">Kiosk ID:</string>
+</resources>

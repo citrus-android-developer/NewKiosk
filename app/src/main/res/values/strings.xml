@@ -8,6 +8,8 @@
     <string name="item">item</string>
     <string name="qty">qty</string>
     <string name="Total">Total:</string>
+    <string name="TotalItem">Total:</string>
+    <string name="TotalPrice">Total Price:</string>
     <string name="SubTotal">Sub Total:</string>
     <string name="gstF">GST(Free.):</string>
     <string name="gstI">GST(Incl.):</string>
@@ -25,6 +27,9 @@
     <string name="home">Home</string>
     <string name="idle">Idle State Detected</string>
     <string name="idleHint">Will back to main page after %d sec</string>
+    <string name="address">Address</string>
+    <string name="storeName">Store Name</string>
+    <string name="kioskId">Kiosk ID</string>
 
 
     <string-array name="IdleTime">

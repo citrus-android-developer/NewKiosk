@@ -8,6 +8,8 @@
     <string name="item">品项</string>
     <string name="qty">数量</string>
     <string name="Total">总计:</string>
+    <string name="TotalItem">品项总计:</string>
+    <string name="TotalPrice">金额总计:</string>
     <string name="SubTotal">未稅总计:</string>
     <string name="gstF">税额(免税):</string>
     <string name="gstI">税额(税內含):</string>
@@ -24,4 +26,7 @@
     <string name="addToCart">加入购物车</string>
     <string name="idle">检测到空闲状态</string>
     <string name="idleHint">%d 秒后将返回主画面</string>
+    <string name="address">地址:</string>
+    <string name="storeName">商店名称:</string>
+    <string name="kioskId">Kiosk ID:</string>
 </resources>

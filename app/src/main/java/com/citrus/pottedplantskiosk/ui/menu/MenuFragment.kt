@@ -526,6 +526,9 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                             binding.ProceedCons.visibility = View.GONE
                             if (responseCode == "00") {
                                 menuViewModel.setCreditCardSuccess(orderDeliveryData)
+
+                                Log.e("saleResponse", saleResponse.toString())
+                                Log.e("custom_data_2", saleResponse.custom_data_2)
                             } else {
                                 requireActivity().runOnUiThread {
                                     binding.ProceedCons.visibility = View.GONE

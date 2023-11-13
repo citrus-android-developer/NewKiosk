@@ -29,6 +29,7 @@ import com.citrus.pottedplantskiosk.util.Constants.getGstStr
 import com.citrus.pottedplantskiosk.util.PrintUtils
 import com.citrus.pottedplantskiosk.util.i18n.LocaleHelper
 import com.citrus.pottedplantskiosk.util.print.b
+import com.citrus.pottedplantskiosk.util.print.twoColumn
 import com.citrus.pottedplantskiosk.util.print.twoColumnBig
 import com.pos.poslibusb.MCS7840Driver
 import com.pos.poslibusb.PosLibUsb
@@ -357,7 +358,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
             PrinterFunctions.setReceiveEventListener(null)
             mUnderline = PrintUtils.UNDERLINE_TOKEN_DEF.UNDERLINE_OFF
             mHeight = 1
-            mWidth = 2
+            mWidth = 1
             mAlignment = PrintUtils.ALIGNMENT_TOKEN_DEF.ALIGNMENT_CENTER
             PrintTextByteArray(
                 "${deliveryItemList?.get(0)?.orderNO}\n\n".toByteArray(
@@ -384,15 +385,37 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
             )
             PrintTextByteArray("${currentDateTimeString}\n".toByteArray(charset(characterSet!!)))
             mAlignment = PrintUtils.ALIGNMENT_TOKEN_DEF.ALIGNMENT_LEFT
-            PrintTextByteArray(
-                "商店名稱:${prefs.storeName}              機台編號:${prefs.kioskId}\n".toByteArray(
-                    charset(
-                        characterSet
+
+
+            if (prefs.kioskId.isNotEmpty()) {
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "${getString(R.string.kioskId)}",
+                        "${prefs.kioskId}\n"
                     )
                 )
-            )
+            }
+
+            if (prefs.storeName.isNotEmpty()) {
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "${getString(R.string.storeName)}",
+                        "${prefs.storeName}\n"
+                    )
+                )
+            }
+
+            if (prefs.storeAddress.isNotEmpty()) {
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "${getString(R.string.address)}",
+                        "${prefs.storeAddress}\n"
+                    )
+                )
+            }
+
             PrintTextByteArray(
-                "地址:${prefs.storeAddress}            \n\n".toByteArray(
+                "------------------------------------------\n".toByteArray(
                     charset(
                         characterSet
                     )
@@ -406,11 +429,12 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
                     val priceStr = String.format("%7s", Constants.getValByMathWay(item.gPrice))
                     val qtyStr = String.format("%-3s", item.qty)
 
+
+
                     PrintTextByteArray(
-                        "${if (prefs.languagePos == 1) item.gName2 else item.gname}x${qtyStr}                        $${priceStr} 元\n".toByteArray(
-                            charset(
-                                characterSet
-                            )
+                        createPrintStrFormat(
+                            "$qtyStr x \"${if (prefs.languagePos == 1) item.gName2 else item.gname}",
+                            "$${priceStr}${if (prefs.languagePos == 1) "元" else ""}\n"
                         )
                     )
 
@@ -422,7 +446,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
 
                     flavorAdd?.let {
                         PrintTextByteArray(
-                            "\"  #\"$it                         \n".toByteArray(
+                            "\"#\"$it\n".toByteArray(
                                 charset(
                                     characterSet
                                 )
@@ -432,7 +456,16 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
 
                 }
             }
-            var orgAmtStr =
+
+            PrintTextByteArray(
+                "------------------------------------------\n".toByteArray(
+                    charset(
+                        characterSet
+                    )
+                )
+            )
+
+            val orgAmtStr =
                 String.format(
                     "%7s",
                     Constants.getValByMathWay(transactionData.orders?.ordersDelivery?.sPrice!!)
@@ -451,49 +484,58 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
 
             PrintTextByteArray("\n".toByteArray(charset(characterSet)))
             mEmphasized = PrintUtils.EMPHASIZED_TOKEN_DEF.EMPHASIZED_OFF
+
+
             PrintTextByteArray(
-                "${getString(R.string.Total)}                           ${qtyStr + orgAmtStr}\n".toByteArray(
-                    charset(
-                        characterSet
-                    )
-                )
-            )
-            PrintTextByteArray(
-                "${getString(R.string.paymentType)}                           ${transactionData.orders.ordersDelivery.payType}\n".toByteArray(
-                    charset(
-                        characterSet
-                    )
-                )
-            )
-            PrintTextByteArray(
-                "${getString(R.string.SubTotal)}                           ${orgAmtStr}\n".toByteArray(
-                    charset(
-                        characterSet
-                    )
-                )
-            )
-            PrintTextByteArray(
-                "${getGstStr()}                           ${gst}\n".toByteArray(
-                    charset(
-                        characterSet
-                    )
+                createPrintStrFormat(
+                    "${getString(R.string.TotalItem)}",
+                    qtyStr
                 )
             )
 
+            PrintTextByteArray(
+                createPrintStrFormat(
+                    "${getString(R.string.TotalPrice)}",
+                    orgAmtStr
+                )
+            )
+
+            PrintTextByteArray(
+                createPrintStrFormat(
+                    "${getString(R.string.paymentType)}",
+                    "${transactionData.orders.ordersDelivery.payType}"
+                )
+            )
+
+            PrintTextByteArray(
+                createPrintStrFormat(
+                    "${getString(R.string.SubTotal)}",
+                    orgAmtStr
+                )
+            )
+
+            PrintTextByteArray(
+                createPrintStrFormat(
+                    "${getGstStr()}",
+                    gst
+                )
+            )
+
+
             if (prefs.taxFunction == 2) {
                 PrintTextByteArray(
-                    "${getString(R.string.grandTotal)}                           ${grandTotal}\n\n".toByteArray(
-                        charset(
-                            characterSet
-                        )
+                    createPrintStrFormat(
+                        "${getString(R.string.grandTotal)}",
+                        "${grandTotal}\n" +
+                                "\n"
                     )
                 )
             } else {
                 PrintTextByteArray(
-                    "${getString(R.string.grandTotal)}                           ${orgAmtStr}\n\n".toByteArray(
-                        charset(
-                            characterSet
-                        )
+                    createPrintStrFormat(
+                        "${getString(R.string.grandTotal)}",
+                        "${orgAmtStr}\n" +
+                                "\n"
                     )
                 )
             }
@@ -521,6 +563,21 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
 
         }
 
+    }
+
+    private fun createPrintStrFormat(title: String, content: String): ByteArray {
+        return twoColumn(title, content)
+    }
+
+    fun combineStrings(item: String, price: String): String {
+        val totalLength = 42
+        val spaceLength = totalLength - item.length - price.length
+
+        // 如果空格不足，則忽略多餘的空格
+        val spaces = if (spaceLength > 0) " ".repeat(spaceLength) else ""
+
+        // 組合字串
+        return "$item$spaces$price"
     }
 
     open fun SampleReceipt_CHT(characterSet: String?) {

@@ -8,7 +8,7 @@ data class PayWay(val imgRes: Int, val payNo : Constants.PayWayType, val desc: S
 
 fun payWayList(): List<PayWay> {
     return listOf(
-        PayWay(R.drawable.credit_cards, Constants.PayWayType.CreditCard,"Credit Cards"),
+        PayWay(R.drawable.credit_cards, Constants.PayWayType.CreditCard,"Credit Card"),
         PayWay(R.drawable.dollar, Constants.PayWayType.Cash,"Cash")
     )
 }

@@ -83,6 +83,9 @@ class MenuViewModel @Inject constructor(
     private val _creditFlow = MutableSharedFlow<Orders.OrderDeliveryData>()
     val creditFlow: SharedFlow<Orders.OrderDeliveryData> = _creditFlow
 
+    private val _errMsg = MutableSharedFlow<String>()
+    val errMsg: SharedFlow<String> = _errMsg
+
     var allGoodsForScan: List<Good>? = null
     var isIdentify = false
 
@@ -190,6 +193,18 @@ class MenuViewModel @Inject constructor(
     }
 
 
+    fun postWhenChangeToCash(deliveryInfo: Orders.OrderDeliveryData?) = viewModelScope.launch {
+        deliveryInfo?.ordersDelivery?.payType = "Cash"
+        deliveryInfo?.ordersDelivery?.isPay = "N"
+        var printerData = TransactionData(
+            orders = deliveryInfo,
+            state = TransactionState.WorkFine,
+            null,
+            null
+        )
+        _toPrint.emit(printerData)
+    }
+
     fun postOrderItem(deliveryInfo: DeliveryInfo) = viewModelScope.launch {
 
         val list = deliveryInfo.goodsList
@@ -270,13 +285,8 @@ class MenuViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        Log.e("error", result.message!!)
-                        printerData = TransactionData(
-                            orders = orderDeliveryData,
-                            state = TransactionState.WorkFine,
-                            null,
-                            null
-                        )
+                        _errMsg.emit(result.message ?: "error")
+                        return@collect
                         //printerData =   TransactionData(orders = null,state = TransactionState.NetworkIssue, null)
                     }
 

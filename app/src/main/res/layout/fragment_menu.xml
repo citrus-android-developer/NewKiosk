@@ -11,7 +11,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ProceedCons"
-        android:visibility="gone"
+        android:visibility="visible"
         android:clickable="true"
         android:elevation="@dimen/dp_40"
         android:layout_width="0dp"
@@ -37,7 +37,7 @@
                 android:id="@+id/lottie_progress"
                 android:layout_width="@dimen/dp_130"
                 android:layout_height="@dimen/dp_130"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tvProgress"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -46,6 +46,18 @@
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="creditPay.json"
                 app:lottie_loop="true" />
+
+            <TextView
+                android:id="@+id/tvProgress"
+                app:layout_constraintTop_toBottomOf="@+id/lottie_progress"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/holdCard"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/sp_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -86,6 +98,17 @@
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="pay_fail.json"
                 app:lottie_loop="false" />
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/lottie_fail"
+                app:layout_constraintBottom_toTopOf="@+id/btnRetry"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/creditPayFail"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/sp_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
             <Button
                 android:id="@+id/btnRetry"

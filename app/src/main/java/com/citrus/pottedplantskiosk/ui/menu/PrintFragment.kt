@@ -87,7 +87,6 @@ class PrintFragment : BottomSheetDialogFragment() {
             }
 
             is TransactionState.WorkFine -> {
-
                 startPrint(data)
             }
         }
@@ -104,6 +103,7 @@ class PrintFragment : BottomSheetDialogFragment() {
                 }
                 job?.start()
             } else {
+                data!!.state = TransactionState.PrinterNotFoundIssue
                 showError()
             }
         }
@@ -123,9 +123,9 @@ class PrintFragment : BottomSheetDialogFragment() {
             hintArea.isVisible = true
 
             if (data!!.state == TransactionState.NetworkIssue) {
-                tvHint.text = "The order has failed, please contact the service staff"
+                tvHint.text = context?.getString(R.string.printNetWorkFail)
             } else {
-                tvHint.text = "Please contact the service staff to confirm the problem"
+                tvHint.text = context?.getString(R.string.printHardwareFail)
             }
 
         }

@@ -46,6 +46,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.UnsupportedEncodingException
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @AndroidEntryPoint
 class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, PrinterReceiveListener {
@@ -354,6 +356,8 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
     fun printSummery(transactionData: TransactionData, characterSet: String = "BIG5") {
         var deliveryItemList = transactionData.orders?.ordersItemDelivery
 
+        var creditInfo = transactionData.orders?.creditInfo
+
         try {
             PrinterFunctions.setReceiveEventListener(null)
             mUnderline = PrintUtils.UNDERLINE_TOKEN_DEF.UNDERLINE_OFF
@@ -551,7 +555,9 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
 
             }
 
-            PrinterFunctions.setReceiveEventListener(this)
+            if (creditInfo == null) {
+                PrinterFunctions.setReceiveEventListener(this)
+            }
             PrintTextByteArray("".toByteArray(charset(characterSet)))
             PrinterFunctions.PreformCut(
                 mPortName,
@@ -559,10 +565,145 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
                 PrintUtils.CUT_TYPE_TOKEN_DEF.CUT_TYPE_WITH_FEED
             )
 
+            creditInfo?.let {
+                mAlignment = PrintUtils.ALIGNMENT_TOKEN_DEF.ALIGNMENT_CENTER
+                PrintTextByteArray(
+                    "刷卡明細\n\n".toByteArray(
+                        charset(
+                            characterSet!!
+                        )
+                    )
+                )
+                mAlignment = PrintUtils.ALIGNMENT_TOKEN_DEF.ALIGNMENT_RIGHT
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "商店代號",
+                        "${it.merchantId}"
+                    )
+                )
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "端末機代號",
+                        "${it.terminalId}"
+                    )
+                )
+                PrintTextByteArray(
+                    "==========================================\n".toByteArray(
+                        charset(
+                            characterSet
+                        )
+                    )
+                )
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "卡別",
+                        "${it.cardLabel}"
+                    )
+                )
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "卡號",
+                        "${it.cardNumber.replace("X", "*")}"
+                    )
+                )
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "交易類別",
+                        "銷售"
+                    )
+                )
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "授權號碼",
+                        "${it.approvalCode}"
+                    )
+                )
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "批次號碼",
+                        "${it.batchNumber}"
+                    )
+                )
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "序號",
+                        "${it.retrievalReferenceNumber}\n"
+                    )
+                )
+
+
+                val inputDateString = it.dateTime
+                val inputFormat = SimpleDateFormat("yyyyMMddHHmmss")
+                val outputFormat = SimpleDateFormat("yyyy/MM/dd HH:mm")
+
+                try {
+                    val date: Date = inputFormat.parse(inputDateString)
+                    val formattedDate: String = outputFormat.format(date)
+                    println(formattedDate)
+                    PrintTextByteArray(
+                        createPrintStrFormat(
+                            "日期時間",
+                            formattedDate
+                        )
+                    )
+                } catch (e: Exception) {
+                    println("日期格式轉換失敗：${e.message}")
+                }
+
+
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        "消費金額",
+                        "$${formatNumberString(it.transactionAmount)}\n"
+                    )
+                )
+
+                mAlignment = PrintUtils.ALIGNMENT_TOKEN_DEF.ALIGNMENT_CENTER
+                PrintTextByteArray(
+                    "持卡人存根  CARDHOLDER COPY\n".toByteArray(
+                        charset(
+                            characterSet!!
+                        )
+                    )
+                )
+                PrintTextByteArray(
+                    "..........................................\n".toByteArray(
+                        charset(
+                            characterSet
+                        )
+                    )
+                )
+                PrintTextByteArray(
+                    "I AGREE TO PAY TOTAL AMOUNT\n ACCORDING TO CARD ISSUER AGREEMENT\n".toByteArray(
+                        charset(
+                            characterSet!!
+                        )
+                    )
+                )
+
+                PrinterFunctions.setReceiveEventListener(this)
+                PrintTextByteArray("".toByteArray(charset(characterSet)))
+                PrinterFunctions.PreformCut(
+                    mPortName,
+                    mPortSettings,
+                    PrintUtils.CUT_TYPE_TOKEN_DEF.CUT_TYPE_WITH_FEED
+                )
+
+
+            }
+
         } catch (e: UnsupportedEncodingException) {
 
         }
 
+    }
+
+    private fun formatNumberString(input: String): String {
+        val length = input.length
+        val numericValue = input.toDouble() / 100  // 將數字轉換為浮點數，再除以 100
+
+        // 格式化浮點數，並返回字串
+        return String.format("%.2f", numericValue)
     }
 
     private fun createPrintStrFormat(title: String, content: String): ByteArray {

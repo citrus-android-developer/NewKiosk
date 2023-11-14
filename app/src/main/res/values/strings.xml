@@ -30,6 +30,16 @@
     <string name="address">Address</string>
     <string name="storeName">Store Name</string>
     <string name="kioskId">Kiosk ID</string>
+    <string name="printNetWorkFail">The order has failed, please contact the service staff</string>
+    <string name="printHardwareFail">Please contact the service staff to confirm the problem</string>
+    <string name="creditCard">Credit Card</string>
+    <string name="cash">Cash</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="orderFail">The order establishment failed. Please try to place the order again or contact customer service.</string>
+    <string name="ErrorOccurred">Error Occurred</string>
+    <string name="holdCard">Please hold your card against the card reader</string>
+    <string name="creditPayFail">Transaction declined, please try again or choose other pay type</string>
 
 
     <string-array name="IdleTime">
@@ -69,5 +79,6 @@
     <string-array name="CharSet">
         <item>UTF-8</item>
         <item>GBK</item>
+        <item>BIG5</item>
     </string-array>
 </resources>

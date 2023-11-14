@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:layout_gravity="center_horizontal"
+    android:paddingStart="@dimen/padding_15"
+    android:paddingEnd="@dimen/padding_15"
+    android:paddingTop="@dimen/padding_15"
+    android:background="@drawable/custom_dialog_bg"
+    android:orientation="vertical"
+    android:clipToPadding="false">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:clickable="false"
+            android:paddingTop="@dimen/padding_10">
+
+            <ImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/padding_10"
+                android:src="@drawable/ic_warning"
+                 />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="@dimen/padding_10"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="@dimen/sp_20"
+                android:textStyle="bold"
+                tools:text="Title" />
+
+            <TextView
+                android:id="@+id/tvMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingTop="@dimen/padding_10"
+                android:paddingBottom="@dimen/padding_10"
+                android:paddingStart="@dimen/padding_15"
+                android:paddingEnd="@dimen/padding_15"
+                android:textColor="@color/colorSecondText"
+                android:textSize="@dimen/sp_18"
+                android:gravity="start"
+                android:autoLink="web"
+                tools:text="Message Message Message Message Message Message Message "
+                tools:visibility="visible"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/tvServerError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:visibility="gone"
+                >
+                <TextView
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" 本地狀態變更成功。"
+                    android:drawableStart="@drawable/ic_baseline_check_circle_outline_24"
+                    android:textSize="@dimen/sp_18"
+                    android:textColor="@color/colorSecondText"
+                    android:drawablePadding="@dimen/padding_10"
+                    android:padding="@dimen/padding_10"
+                    />
+
+                <TextView
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" 雲端狀態備份失敗。"
+                    android:drawableStart="@drawable/ic_warning"
+                    android:textSize="@dimen/sp_18"
+                    android:drawablePadding="@dimen/padding_10"
+                    android:textColor="@color/colorSecondText"
+                    android:padding="@dimen/padding_10"
+                    />
+
+                <TextView
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="備份失敗將導致客戶端瀏覽訂單訊息不一致，請確認雲端IP是否有誤。"
+                    android:textSize="@dimen/sp_18"
+                    android:textColor="@color/colorSecondText"
+                    android:padding="@dimen/padding_10"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:paddingStart="@dimen/padding_20"
+        android:paddingEnd="@dimen/padding_20"
+        android:paddingTop="@dimen/padding_15"
+        android:paddingBottom="@dimen/padding_25"
+        android:clipToPadding="false"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+
+        <Button
+            android:id="@+id/btnOK"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/padding_5"
+
+            android:textStyle="bold"
+            android:background="@drawable/button_overlay_15"
+            android:textColor="@color/selector_text"
+            android:elevation="5dp"
+            android:padding="@dimen/padding_20"
+            android:textSize="@dimen/sp_16"
+            android:text="@string/confirm"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

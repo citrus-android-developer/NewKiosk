@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.PayWay
 import com.citrus.pottedplantskiosk.api.remote.dto.payWayList
 import com.citrus.pottedplantskiosk.databinding.PayWayItemViewBinding
@@ -31,17 +32,19 @@ class PayWayAdapter(val context: Context) : RecyclerView.Adapter<PayWayAdapter.P
     }
 
 
-
     override fun onBindViewHolder(holder: PayWayViewHolder, position: Int) {
         val item = payList[position]
         holder.binding.apply {
-            payWayImg.setImageDrawable(context.resources.getDrawable(item.imgRes,null))
-            payWayHint.text = item.desc
+            payWayImg.setImageDrawable(context.resources.getDrawable(item.imgRes, null))
+            payWayHint.text =
+                if (item.desc == "Credit Card") context.getString(R.string.creditCard) else context.getString(
+                    R.string.cash
+                )
 
 
             root.setOnClickListener {
                 it.clickAnimation {
-                    onPayWayClickListener?.let {  click ->
+                    onPayWayClickListener?.let { click ->
                         click(item)
                     }
                 }

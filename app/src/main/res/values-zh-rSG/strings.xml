@@ -29,4 +29,15 @@
     <string name="address">地址:</string>
     <string name="storeName">商店名称:</string>
     <string name="kioskId">Kiosk ID:</string>
+    <string name="printNetWorkFail">订单失败，请联系服务人员</string>
+    <string name="printHardwareFail">打印失败，请联系服务人员</string>
+    <string name="creditCard">信用卡</string>
+    <string name="cash">现金</string>
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
+    <string name="orderFail">订单成立失败，请尝试重新送出订单，或联络客服</string>
+    <string name="ErrorOccurred">发生错误</string>
+    <string name="holdCard">请靠卡感应支付装置</string>
+    <string name="creditPayFail">交易失败，请重试或选择其他付款方式</string>
+
 </resources>

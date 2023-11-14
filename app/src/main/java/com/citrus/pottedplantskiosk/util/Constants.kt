@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.citrus.pottedplantskiosk.R
@@ -237,4 +238,18 @@ object GlobalConstants {
     const val ECR_EZLINK_SALE = "C610" //Ezlink sale
     const val ECR_CUSTOM_RECEIPT = "C620" //Ezlink Blacklist Download
     const val ECR_WALLET_SALE = "C640" //Ezlink Blacklist Download
+}
+
+
+fun Fragment.showDialog(
+    title: String,
+    msg: String,
+    icon: Int = R.drawable.ic_warning,
+    onConfirmListener: (() -> Unit)? = null,
+): CustomAlertDialog {
+    return CustomAlertDialog(
+        requireActivity(), title, msg,
+        icon,
+        onConfirmListener = { onConfirmListener?.invoke() }
+    )
 }

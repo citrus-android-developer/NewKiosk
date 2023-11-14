@@ -32,21 +32,21 @@ import com.citrus.pottedplantskiosk.api.remote.dto.TransBuilder
 import com.citrus.pottedplantskiosk.api.remote.dto.TransRequestData
 import com.citrus.pottedplantskiosk.api.remote.dto.TransResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
-import com.citrus.pottedplantskiosk.api.remote.dto.TransactionState
 import com.citrus.pottedplantskiosk.api.remote.dto.UsbInfo
 import com.citrus.pottedplantskiosk.databinding.FragmentMenuBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.ui.menu.adapter.*
-import com.citrus.pottedplantskiosk.ui.setting.adapter.UsbNameWithID
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.ACTION_USB_PERMISSION
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.Constants.forEachReversedWithIndex
+import com.citrus.pottedplantskiosk.util.CustomAlertDialog
 import com.citrus.pottedplantskiosk.util.UsbUtil
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
 import com.citrus.pottedplantskiosk.util.base.lifecycleFlow
 import com.citrus.pottedplantskiosk.util.base.onSafeClick
 import com.citrus.pottedplantskiosk.util.navigateSafely
+import com.citrus.pottedplantskiosk.util.showDialog
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
@@ -103,6 +103,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
     @Inject
     lateinit var goodsItemAdapter: GoodsItemAdapter
+
+    var customDialog: CustomAlertDialog? = null
 
 
     override fun onStop() {
@@ -289,6 +291,19 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             binding.cartMotionLayout.clearCartGoods()
         }
 
+        lifecycleFlow(menuViewModel.errMsg) {
+            //Toast.makeText(requireContext(),it,Toast.LENGTH_LONG).show()
+            customDialog?.dismiss()
+            customDialog = showDialog(
+                title = context?.getString(R.string.ErrorOccurred) ?: "",
+                    msg = context?.getString(R.string.orderFail) ?: "",
+                icon = R.drawable.ic_warning,
+            ) {
+                customDialog?.dismiss()
+            }
+            customDialog?.show()
+        }
+
 
         lifecycleFlow(menuViewModel.creditFlow) { deliveryInfo ->
 
@@ -358,6 +373,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
                 bGotoWebsite.setOnClickListener { v ->
                     ElasticAnimation(v)
+
                         .setScaleX(0.85f)
                         .setScaleY(0.85f)
                         .setDuration(100)
@@ -399,6 +415,12 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             }
 
             setonOrderDoneListener { deliveryInfo ->
+
+                if(processingData != null) {
+                    menuViewModel.postWhenChangeToCash(processingData)
+                    return@setonOrderDoneListener
+                }
+
                 menuViewModel.postOrderItem(deliveryInfo)
             }
         }
@@ -443,10 +465,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 }
 
                 override fun onError(errorCode: Int) {
-                    LogUtils.e(
-                        TAG,
-                        "onError, errorCode:$errorCode"
-                    )
+                    Log.e("Error","設備異常，請選擇其他付款方式")
                 }
             })
     }
@@ -480,6 +499,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         sendSaleRequest("sale", "C200", payModel.isWallet.toString(), payModel.orderDeliveryData)
     }
 
+
+    //    TransResponse(source_package_name=, destination_package_name=, transaction_type=R200, card_number=XXXXXXXXXXXX9551, transaction_amount=000000000160, date_time=20231114111400, expiry_date=XXXX, entry_mode=P, retrieval_reference_number=231114111400, approval_code=111400, response_code=00, terminal_id=23060101, merchant_id=168353110196, host_label=DBS, emv_data=00000000000000A0000000031010  Visa Credit                     , card_label=VISA, card_type=V, host_type=3, command_identifier=, custom_data_2=, custom_data_3=, ecr_unique_trace_number=, invoice_number=000072, transaction_info=000000000160000000000160000000000000, batch_number=000006, coupons_vouchers=, additional_printing_flag=, external_device_invoice=, card_holder_name= /, employee_id=, original_trans_type=003134)
     private fun sendSaleRequest(
 
         task: String,
@@ -489,6 +510,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     ) {
         //BUILD SALE OBJECT TO BE SENT TO PAYMENT APP
         binding.ProceedCons.visibility = View.VISIBLE
+
 
         Thread {
             val saleTrans: BaseSemiRequest<TransRequestData> = BaseSemiRequest<TransRequestData>()
@@ -525,6 +547,18 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                         requireActivity().runOnUiThread {
                             binding.ProceedCons.visibility = View.GONE
                             if (responseCode == "00") {
+
+                                orderDeliveryData.creditInfo = Orders.CreditInfo(
+                                    saleResponse.card_number,
+                                    saleResponse.transaction_amount,
+                                    saleResponse.date_time,
+                                    saleResponse.retrieval_reference_number,
+                                    saleResponse.approval_code,
+                                    saleResponse.batch_number,
+                                    saleResponse.terminal_id,
+                                    saleResponse.merchant_id,
+                                    saleResponse.card_label
+                                )
                                 menuViewModel.setCreditCardSuccess(orderDeliveryData)
 
                                 Log.e("saleResponse", saleResponse.toString())

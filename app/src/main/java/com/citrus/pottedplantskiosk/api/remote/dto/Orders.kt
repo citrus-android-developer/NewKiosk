@@ -5,16 +5,37 @@ import java.io.Serializable
 
 class Orders {
 
-    data class OrderDeliveryData (
+    data class CreditInfo(
+        /**卡號*/
+        val cardNumber: String,
+        /**消費金額*/
+        val transactionAmount: String,
+        /**刷卡日期*/
+        val dateTime: String,
+        /**序號*/
+        val retrievalReferenceNumber: String,
+        /**授權碼*/
+        val approvalCode:String,
+        /**批次編號*/
+        val batchNumber:String,
+        /**端末機代號*/
+        val terminalId:String,
+        /**商家ID*/
+        val merchantId:String,
+        /**卡別*/
+        val cardLabel:String,
+    ) : Serializable
+
+    data class OrderDeliveryData(
         @SerializedName("OrdersDelivery")
         val ordersDelivery: OrdersDelivery,
-
         @SerializedName("OrdersItemDelivery")
-        val ordersItemDelivery: List<OrdersItemDelivery>
-    ):Serializable
+        val ordersItemDelivery: List<OrdersItemDelivery>,
+        var creditInfo: CreditInfo? = null
+    ) : Serializable
 
 
-    data class OrdersDelivery (
+    data class OrdersDelivery(
         @SerializedName("StoreID")
         val storeID: Int,
 
@@ -28,67 +49,67 @@ class Orders {
         val disPrice: Double = 0.0,
 
         @SerializedName("SPrice")
-        val sPrice: Double ,
+        val sPrice: Double,
 
         @SerializedName("IsSend")
         val isSend: String = "Y",
 
         @SerializedName("CloseTime")
-        val closeTime: String ="",
+        val closeTime: String = "",
 
         @SerializedName("IsClose")
-        val isClose: String ="",
+        val isClose: String = "",
 
         @SerializedName("IsDel")
-        val isDel: String ="",
+        val isDel: String = "",
 
         @SerializedName("DelReason")
-        val delReason: String ="",
+        val delReason: String = "",
 
         @SerializedName("ServiceType")
-        val serviceType: String ="",
+        val serviceType: String = "",
 
         @SerializedName("PayType")
-        val payType: String,
+        var payType: String,
 
         @SerializedName("WorkClass")
-        val workClass: String ="",
+        val workClass: String = "",
 
         @SerializedName("Qty")
         val qty: Int,
 
         @SerializedName("DisID")
-        val disID: String ="",
+        val disID: String = "",
 
         @SerializedName("DisQty")
         val disQty: Int = 0,
 
         @SerializedName("CName")
-        val cName: String ="",
+        val cName: String = "",
 
         @SerializedName("Tel")
-        val tel: String ="",
+        val tel: String = "",
 
         @SerializedName("IsDataToERP")
-        val isDataToERP: String ="",
+        val isDataToERP: String = "",
 
         @SerializedName("UserID")
-        val userID: String ="",
+        val userID: String = "",
 
         @SerializedName("Status")
-        val status: String ="",
+        val status: String = "",
 
         @SerializedName("Invamt")
         val invamt: Int = 0,
 
         @SerializedName("CustNo")
-        val custNo: String ="",
+        val custNo: String = "",
 
         @SerializedName("ServiceOutStatus")
-        val serviceOutStatus: String ="",
+        val serviceOutStatus: String = "",
 
         @SerializedName("InvoiceFail")
-        val invoiceFail: String ="",
+        val invoiceFail: String = "",
 
         @SerializedName("cust_num")
         val custNum: Int = 1,
@@ -102,43 +123,43 @@ class Orders {
         val cardType: String = "",
 
         @SerializedName("CardUser")
-        val cardUser: String ="",
+        val cardUser: String = "",
 
         @SerializedName("CardNO")
-        val cardNO: String ="",
+        val cardNO: String = "",
 
         @SerializedName("ServiceCust")
-        val serviceCust: String ="",
+        val serviceCust: String = "",
 
         @SerializedName("OrderState")
-        val orderState: String ="",
+        val orderState: String = "",
 
         @SerializedName("ServicePric")
         val servicePrice: Double = 0.0,
 
         @SerializedName("OrderNote")
-        val orderNote: String ="",
+        val orderNote: String = "",
 
         @SerializedName("Rounding")
         val rounding: Int = 0,
 
         @SerializedName("Memo")
-        val memo: String ="",
+        val memo: String = "",
 
         @SerializedName("DelUser")
-        val delUser: String ="",
+        val delUser: String = "",
 
         val totaltax: Double = 0.0,
         val weight: Int = 0,
 
         @SerializedName("IsPay")
-        val isPay: String,
+        var isPay: String,
 
         val tkey: String = ""
-    ):Serializable
+    ) : Serializable
 
 
-    data class OrdersItemDelivery (
+    data class OrdersItemDelivery(
         @SerializedName("StoreID")
         val storeID: Int,
 
@@ -221,45 +242,45 @@ class Orders {
         val kitStatic: String = "",
 
         @SerializedName("PrintGroup")
-        val printGroup: String  = "",
+        val printGroup: String = "",
 
         @SerializedName("ServiceType")
-        val serviceType: String  = "",
+        val serviceType: String = "",
 
         @SerializedName("ItemStatus")
-        val itemStatus: String  = "",
+        val itemStatus: String = "",
 
         @SerializedName("DisID")
-        val disID: String  = "",
+        val disID: String = "",
 
-        val tax: Double  = 0.0,
+        val tax: Double = 0.0,
         val weight: Int = 0,
 
         @SerializedName("GName2")
-        val gName2: String  = "",
+        val gName2: String = "",
 
-        val kdstime: String  = "",
+        val kdstime: String = "",
 
         @SerializedName("Flag")
-        val flag: String  = "",
+        val flag: String = "",
 
         @SerializedName("CreateUser")
-        val createUser: String  = "",
+        val createUser: String = "",
 
         @SerializedName("CreateDate")
-        val createDate: String  = "",
+        val createDate: String = "",
 
         @SerializedName("UpdateUser")
-        val updateUser: String  = "",
+        val updateUser: String = "",
 
         @SerializedName("UpdateDate")
-        val updateDate: String  = "",
+        val updateDate: String = "",
 
         @SerializedName("AddGname2")
-        val addGname2: String  = "",
+        val addGname2: String = "",
 
         @SerializedName("FlavorDesc2")
-        val flavorDesc2: String  = ""
-    ):Serializable
+        val flavorDesc2: String = ""
+    ) : Serializable
 
 }

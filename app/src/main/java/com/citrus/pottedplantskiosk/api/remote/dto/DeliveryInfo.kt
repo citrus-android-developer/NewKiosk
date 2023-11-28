@@ -5,5 +5,5 @@ data class DeliveryInfo(
     val payWay: PayWay,
     val orderNo: String,
     val gst: Double,
-    val grandTotal: Double
+    val grandTotal: Double,
 )

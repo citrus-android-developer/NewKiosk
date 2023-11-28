@@ -56,7 +56,7 @@ class SlashViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getBanner(
                 prefs.serverIp + Constants.GET_BANNER,
-                Gson().toJson(BannerRequest(rsno = "33014"))
+                Gson().toJson(BannerRequest(rsno = prefs.storeId))
             ).collect { result ->
                 Log.e("result",result.data.toString())
 

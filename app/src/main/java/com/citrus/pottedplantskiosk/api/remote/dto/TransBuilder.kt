@@ -22,11 +22,11 @@ class TransBuilder {
     val REAL_FORMATTER = DecimalFormat("0.00")
 
     //BUILD SALE OBJECT TO BE SENT TO PAYMENT APP
-    fun getSaleObject(amount: String?): TransRequestData {
+    fun getSaleObject(amount: String?,orderNo:String): TransRequestData {
         val `object` = TransRequestData()
         `object`.transaction_amount = getConvertedAmount(amount)
         `object`.transaction_type = ECR_SALE
-        `object`.command_identifier = currentDate
+        `object`.command_identifier = orderNo
         return `object`
     }
 
@@ -41,7 +41,7 @@ class TransBuilder {
     }
 
     //BUILD REFUND OBJECT TO BE SENT TO PAYMENT APP
-    fun getRefundObject(amount: String?): TransRequestData {
+    fun getRefundObject(amount: String?,orderNo:String): TransRequestData {
         val `object` = TransRequestData()
         `object`.transaction_amount = getConvertedAmount(amount)
         `object`.transaction_type = ECR_REFUND

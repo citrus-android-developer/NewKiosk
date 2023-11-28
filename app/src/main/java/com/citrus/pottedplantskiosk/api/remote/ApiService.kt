@@ -32,4 +32,14 @@ interface ApiService {
         @Field("jsonData") jsonData: String
     ): ApiResponse<UploadResponse>
 
+
+    /**編輯付款方式、已付款狀態 */
+    @FormUrlEncoded
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @POST
+    suspend fun setOrdersPayStatus(
+        @Url url: String,
+        @Field("jsonData") jsonData: String
+    ): ApiResponse<UploadResponse>
+
 }

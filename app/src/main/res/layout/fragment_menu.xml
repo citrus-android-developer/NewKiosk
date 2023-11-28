@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/outSideCons"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/plants_bg2"
-    tools:context=".ui.menu.MenuFragment"
-    android:id="@+id/outSideCons">
+    tools:context=".ui.menu.MenuFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ProceedCons"
-        android:visibility="visible"
-        android:clickable="true"
-        android:elevation="@dimen/dp_40"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/progress_bg"
+        android:clickable="true"
+        android:elevation="@dimen/dp_40"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,52 +23,52 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="@dimen/dp_300"
+            android:layout_height="@dimen/dp_300"
+            android:background="@drawable/lottie_bg"
             android:clickable="true"
             android:elevation="@dimen/dp_40"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:background="@drawable/lottie_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/lottie_progress"
                 android:layout_width="@dimen/dp_130"
                 android:layout_height="@dimen/dp_130"
+                android:scaleType="centerCrop"
                 app:layout_constraintBottom_toTopOf="@+id/tvProgress"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:scaleType="centerCrop"
-                android:tint="@color/lightGreen"
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="creditPay.json"
                 app:lottie_loop="true" />
 
             <TextView
                 android:id="@+id/tvProgress"
-                app:layout_constraintTop_toBottomOf="@+id/lottie_progress"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="@dimen/dp_200"
+                android:layout_height="wrap_content"
                 android:text="@string/holdCard"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/sp_10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:textSize="@dimen/sp_12"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lottie_progress" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/failCons"
-        android:visibility="gone"
-        android:clickable="true"
-        android:elevation="@dimen/dp_40"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/progress_bg"
+        android:clickable="true"
+        android:elevation="@dimen/dp_40"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -77,82 +76,76 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:elevation="@dimen/dp_40"
-            android:layout_width="250dp"
-            android:layout_height="300dp"
+            android:layout_width="@dimen/dp_300"
+            android:layout_height="@dimen/dp_300"
             android:background="@drawable/lottie_bg"
+            android:elevation="@dimen/dp_40"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/lottie_fail"
                 android:layout_width="@dimen/dp_130"
                 android:layout_height="@dimen/dp_130"
+                android:scaleType="centerCrop"
+                android:tint="@color/lightGreen"
                 app:layout_constraintBottom_toTopOf="@+id/btnRetry"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:scaleType="centerCrop"
-                android:tint="@color/lightGreen"
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="pay_fail.json"
                 app:lottie_loop="false" />
 
             <TextView
-                app:layout_constraintTop_toBottomOf="@+id/lottie_fail"
-                app:layout_constraintBottom_toTopOf="@+id/btnRetry"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="@dimen/dp_200"
+                android:layout_height="wrap_content"
                 android:text="@string/creditPayFail"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/sp_10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:textSize="@dimen/sp_12"
+                android:layout_marginHorizontal="@dimen/dp_10"
+                app:layout_constraintBottom_toTopOf="@+id/btnRetry"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lottie_fail" />
 
             <Button
                 android:id="@+id/btnRetry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/lottie_fail"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btnCancel"
                 android:text="Retry"
-                />
+                android:layout_marginTop="@dimen/dp_30"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnCancel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lottie_fail" />
 
             <Button
                 android:id="@+id/btnCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/lottie_fail"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/btnRetry"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:text="Cancel"
-                />
+                android:layout_marginTop="@dimen/dp_30"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btnRetry"
+                app:layout_constraintTop_toBottomOf="@+id/lottie_fail" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-
     <ImageView
-        android:visibility="gone"
         android:id="@+id/logo"
         android:layout_width="@dimen/dp_100"
         android:layout_height="0dp"
         android:padding="@dimen/dp_10"
         android:scaleType="centerInside"
         android:src="@drawable/citrus_logo"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/topInfoLine"
         app:layout_constraintDimensionRatio="1:0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -171,39 +164,38 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/topLine" >
+        app:layout_constraintTop_toTopOf="@id/topLine">
 
 
         <TextView
-            android:elevation="@dimen/dp_40"
             android:id="@+id/homeBtn"
-            android:padding="@dimen/dp_10"
-            android:layout_margin="@dimen/dp_15"
-            android:drawableTop="@drawable/ic_round_home_24"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/home"
-            android:textStyle="bold"
-            android:textSize="@dimen/sp_6"
-            android:drawablePadding="@dimen/dp_m_3"
+            android:layout_margin="@dimen/dp_15"
             android:background="@drawable/text_btn_shape_home"
-            android:textColor="@color/greenDark"
+            android:drawableTop="@drawable/ic_round_home_24"
+            android:drawablePadding="@dimen/dp_m_3"
             android:drawableTint="@color/greenDark"
-            />
+            android:elevation="@dimen/dp_40"
+            android:padding="@dimen/dp_10"
+            android:text="@string/home"
+            android:textColor="@color/greenDark"
+            android:textSize="@dimen/sp_6"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:visibility="invisible"
         android:id="@+id/mainGroupRv"
-        android:splitMotionEvents="false"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fadingEdgeLength="@dimen/dp_60"
         android:requiresFadingEdge="horizontal"
+        android:splitMotionEvents="false"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="@+id/rightLine"
         app:layout_constraintStart_toStartOf="@+id/leftLine"
         app:layout_constraintTop_toBottomOf="@+id/topLine"
@@ -243,11 +235,11 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:visibility="invisible"
         android:id="@+id/itemRvArea"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/menu_item_rv_bg"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/BottomLine"
         app:layout_constraintEnd_toEndOf="@+id/rightLine"
         app:layout_constraintStart_toStartOf="@+id/leftLine"
@@ -263,8 +255,8 @@
             android:layout_marginBottom="@dimen/dp_6"
             android:fadingEdgeLength="@dimen/dp_50"
             android:requiresFadingEdge="vertical"
-            app:animationDuration="300"
             android:splitMotionEvents="false"
+            app:animationDuration="300"
             app:layoutAnimation="@anim/layout_animation_from_bottom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -278,7 +270,6 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:visibility="invisible"
         android:id="@+id/groupRvArea"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -287,6 +278,7 @@
         android:background="@drawable/goods_bg"
         android:clickable="false"
         android:orientation="vertical"
+        android:visibility="invisible"
         app:cardCornerRadius="@dimen/dp_10"
         app:cardElevation="2dp"
         app:layout_constraintBottom_toBottomOf="@+id/BottomLine"
@@ -298,17 +290,17 @@
             android:id="@+id/groupRv"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_margin="@dimen/dp_10"
+            android:fadingEdgeLength="@dimen/dp_50"
+            android:padding="@dimen/dp_2"
+            android:requiresFadingEdge="vertical"
+            android:splitMotionEvents="false"
+            app:animationDuration="300"
+            app:layoutAnimation="@anim/layout_animation_from_bottom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="@dimen/dp_10"
-            android:padding="@dimen/dp_2"
-            android:fadingEdgeLength="@dimen/dp_50"
-            android:requiresFadingEdge="vertical"
-            app:animationDuration="300"
-            android:splitMotionEvents="false"
-            app:layoutAnimation="@anim/layout_animation_from_bottom"
             tools:itemCount="5"
             tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/group_name_item_view"
@@ -335,8 +327,7 @@
         android:layout_marginBottom="@dimen/dp_18"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-       ></View>
+        app:layout_constraintEnd_toEndOf="parent"></View>
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -349,35 +340,33 @@
 
     <com.youth.banner.Banner
         android:id="@+id/banner"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/topLine"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_10"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_10"
         android:visibility="invisible"
-        />
+        app:layout_constraintBottom_toTopOf="@+id/topLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <ImageView
         android:id="@+id/bannerBackground"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/topLine"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_10"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:src="@drawable/plants1"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_10"
         android:scaleType="centerCrop"
-        />
+        android:src="@drawable/plants1"
+        app:layout_constraintBottom_toTopOf="@+id/topLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/cart_sheet_guideLine"

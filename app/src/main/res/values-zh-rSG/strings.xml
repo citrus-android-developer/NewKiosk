@@ -39,5 +39,6 @@
     <string name="ErrorOccurred">发生错误</string>
     <string name="holdCard">请靠卡感应支付装置</string>
     <string name="creditPayFail">交易失败，请重试或选择其他付款方式</string>
+    <string name="refundHint">订单成立失败，预收的款项已退款。</string>
 
 </resources>

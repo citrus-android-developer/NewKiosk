@@ -9,6 +9,8 @@ import com.citrus.pottedplantskiosk.api.remote.Resource
 import com.citrus.pottedplantskiosk.api.remote.dto.*
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.util.Constants
+import com.citrus.pottedplantskiosk.util.Constants.OrderUploadFail
+import com.citrus.pottedplantskiosk.util.Constants.RefundSuccess
 import com.citrus.pottedplantskiosk.util.base.fineEmit
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -80,8 +82,11 @@ class MenuViewModel @Inject constructor(
     private val _printResult = MutableSharedFlow<Boolean>()
     val printResult: SharedFlow<Boolean> = _printResult
 
-    private val _creditFlow = MutableSharedFlow<Orders.OrderDeliveryData>()
-    val creditFlow: SharedFlow<Orders.OrderDeliveryData> = _creditFlow
+    private val _creditFlow = MutableSharedFlow<OrderDeliveryData>()
+    val creditFlow: SharedFlow<OrderDeliveryData> = _creditFlow
+
+    private val _creditRefundFlow = MutableSharedFlow<OrderDeliveryData>()
+    val creditRefundFlow: SharedFlow<OrderDeliveryData> = _creditRefundFlow
 
     private val _errMsg = MutableSharedFlow<String>()
     val errMsg: SharedFlow<String> = _errMsg
@@ -188,24 +193,51 @@ class MenuViewModel @Inject constructor(
         _currentCartGoods.emit(good)
     }
 
+
+    fun setErrorMsg(msg: String) = viewModelScope.launch {
+        _errMsg.emit(msg)
+    }
+
     fun showBanner(bannerResponse: BannerResponse) = viewModelScope.launch {
         _showBannerData.emit(bannerResponse.data)
     }
 
 
-    fun postWhenChangeToCash(deliveryInfo: Orders.OrderDeliveryData?) = viewModelScope.launch {
-        deliveryInfo?.ordersDelivery?.payType = "Cash"
-        deliveryInfo?.ordersDelivery?.isPay = "N"
-        var printerData = TransactionData(
-            orders = deliveryInfo,
-            state = TransactionState.WorkFine,
-            null,
-            null
-        )
-        _toPrint.emit(printerData)
+    fun postWhenChangeToCash(deliveryInfo: OrderDeliveryData?) = viewModelScope.launch {
+        val orderNo = deliveryInfo?.ordersItemDelivery?.get(0)?.orderNO ?: ""
+        val orderStatusEditRequest =
+            OrderStatusEditRequest(
+                rsno = prefs.storeId,
+                orderNo = orderNo,
+                isPay = "N",
+                payType = "Cash"
+            )
+
+        repository.postOrders(
+            prefs.serverIp + Constants.SET_ORDER_EDIT,
+            Gson().toJson(orderStatusEditRequest)
+        ).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val printerData = TransactionData(
+                        orders = deliveryInfo,
+                        state = TransactionState.WorkFine,
+                        null,
+                        null
+                    )
+                    _toPrint.emit(printerData)
+                }
+
+                is Resource.Error -> {
+                    _errMsg.emit(OrderUploadFail)
+                }
+
+                is Resource.Loading -> Unit
+            }
+        }
     }
 
-    fun postOrderItem(deliveryInfo: DeliveryInfo) = viewModelScope.launch {
+    fun postNewOrder(deliveryInfo: DeliveryInfo) = viewModelScope.launch {
 
         val list = deliveryInfo.goodsList
         val sumQty = list.sumOf { goods ->
@@ -217,22 +249,24 @@ class MenuViewModel @Inject constructor(
         }
 
 
-        val ordersDelivery = Orders.OrdersDelivery(
+        /**未付款狀態*/
+        val ordersDelivery = OrdersDelivery(
             storeID = 0,
             qty = sumQty,
             payType = deliveryInfo.payWay.desc,
-            isPay = "Y",
+            isPay = "N",
             gPrice = deliveryInfo.grandTotal,
             sPrice = sumPrice,
-            totaltax = deliveryInfo.gst
+            totaltax = deliveryInfo.gst,
+            serviceOutStatus = "A"
         )
 
-        var ordersItemDeliveryList = listOf<Orders.OrdersItemDelivery>()
+        var ordersItemDeliveryList = listOf<OrdersItemDelivery>()
 
         var seq = 1
         list.forEach { goods ->
             val ordersItemDelivery =
-                Orders.OrdersItemDelivery(
+                OrdersItemDelivery(
                     storeID = 0,
                     orderSeq = seq,
                     gid = goods.gID,
@@ -250,58 +284,75 @@ class MenuViewModel @Inject constructor(
             ordersItemDeliveryList = ordersItemDeliveryList + ordersItemDelivery
         }
 
-        val orderDeliveryData = Orders.OrderDeliveryData(
+        val orderDeliveryData = OrderDeliveryData(
+            rsno = prefs.storeId,
             ordersDelivery = ordersDelivery,
             ordersItemDelivery = ordersItemDeliveryList
         )
 
+        var printerData: TransactionData?
         viewModelScope.launch {
-            repository.postOrders(
-                prefs.serverIp + Constants.SET_ORDERS,
-                Gson().toJson(orderDeliveryData)
-            ).collect { result ->
-                var printerData: TransactionData? = null
-                when (result) {
-                    is Resource.Success -> {
+            syncToServer(deliveryInfo = orderDeliveryData) { orderNo ->
+                orderNo?.let {
+                    orderDeliveryData.ordersItemDelivery.forEach { item ->
+                        item.orderNO = it
+                    }
 
-                        orderDeliveryData.ordersItemDelivery.forEach { item ->
-                            item.orderNO = result.data?.data!!
-                        }
-
-                        if (deliveryInfo.payWay.payNo == Constants.PayWayType.CreditCard) {
-                            Log.e("credit", "credit");
+                    if (deliveryInfo.payWay.payNo == Constants.PayWayType.CreditCard) {
+                        Log.e("credit", "credit")
+                        viewModelScope.launch {
                             _creditFlow.emit(orderDeliveryData)
-                            return@collect
-                        } else {
-                            printerData = TransactionData(
-                                orders = orderDeliveryData,
-                                state = TransactionState.WorkFine,
-                                null,
-                                null
-                            )
                         }
-
-
+                        return@syncToServer
+                    } else {
+                        printerData = TransactionData(
+                            orders = orderDeliveryData,
+                            state = TransactionState.WorkFine,
+                            null,
+                            null
+                        )
                     }
-
-                    is Resource.Error -> {
-                        _errMsg.emit(result.message ?: "error")
-                        return@collect
-                        //printerData =   TransactionData(orders = null,state = TransactionState.NetworkIssue, null)
+                    viewModelScope.launch {
+                        printerData?.let {
+                            _toPrint.emit(it)
+                        }
                     }
-
-                    is Resource.Loading -> Unit
-                }
-
-
-                printerData?.let {
-                    _toPrint.emit(it)
+                } ?: run {
+                    viewModelScope.launch {
+                        _errMsg.emit(OrderUploadFail)
+                    }
                 }
             }
         }
     }
 
-    fun setCreditFlow(data: Orders.OrderDeliveryData) = viewModelScope.launch {
+    private suspend fun syncToServer(
+        deliveryInfo: OrderDeliveryData,
+        callback: (String?) -> Unit
+    ) =
+        viewModelScope.launch {
+            val dataJson =   Gson().toJson(deliveryInfo)
+            Log.e("dataJson",dataJson)
+            repository.postOrders(
+                prefs.serverIp + Constants.SET_ORDERS,
+                Gson().toJson(deliveryInfo)
+            ).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        callback.invoke(result.data?.data)
+                    }
+
+                    is Resource.Error -> {
+                        callback.invoke(null)
+                    }
+
+                    is Resource.Loading -> Unit
+                }
+            }
+
+        }
+
+    fun setCreditFlow(data: OrderDeliveryData) = viewModelScope.launch {
         _creditFlow.emit(data)
     }
 
@@ -315,15 +366,41 @@ class MenuViewModel @Inject constructor(
         _reLaunchActivity.emit(true)
     }
 
-    fun setCreditCardSuccess(orderDeliveryData: Orders.OrderDeliveryData) = viewModelScope.launch {
-        val printerData = TransactionData(
-            orders = orderDeliveryData,
-            state = TransactionState.WorkFine,
-            null,
-            null
-        )
-        _toPrint.emit(printerData)
-    }
+    fun setCreditCardSuccess(orderDeliveryData: OrderDeliveryData) =
+        viewModelScope.launch {
+            val orderNo = orderDeliveryData.ordersItemDelivery[0].orderNO
+            val orderStatusEditRequest =
+                OrderStatusEditRequest(rsno = prefs.storeId, orderNo = orderNo, isPay = "Y")
+
+            val request = Gson().toJson(orderStatusEditRequest)
+
+            Log.e("request", request)
+
+            repository.postOrders(
+                prefs.serverIp + Constants.SET_ORDER_EDIT,
+                request
+            ).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        val printerData = TransactionData(
+                            orders = orderDeliveryData,
+                            state = TransactionState.WorkFine,
+                            null,
+                            null
+                        )
+                        _toPrint.emit(printerData)
+                    }
+
+                    is Resource.Error -> {
+                        _errMsg.emit(OrderUploadFail)
+                        _creditRefundFlow.emit(orderDeliveryData)
+                    }
+
+                    is Resource.Loading -> Unit
+                }
+            }
+
+        }
 
     fun setPrintData(data: TransactionData?) = viewModelScope.launch {
         delay(2000)
@@ -334,6 +411,10 @@ class MenuViewModel @Inject constructor(
 
     fun setPrintResult(result: Boolean) = viewModelScope.launch {
         _printResult.fineEmit(result)
+    }
+
+    fun setCreditRefundSuccess() = viewModelScope.launch {
+        _errMsg.fineEmit(RefundSuccess)
     }
 
 

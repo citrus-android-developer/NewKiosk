@@ -26,7 +26,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.alibaba.fastjson.JSON
 import com.citrus.pottedplantskiosk.R
-import com.citrus.pottedplantskiosk.api.remote.dto.Orders
+import com.citrus.pottedplantskiosk.api.remote.dto.CreditInfo
+import com.citrus.pottedplantskiosk.api.remote.dto.OrderDeliveryData
 import com.citrus.pottedplantskiosk.api.remote.dto.PayModel
 import com.citrus.pottedplantskiosk.api.remote.dto.TransBuilder
 import com.citrus.pottedplantskiosk.api.remote.dto.TransRequestData
@@ -91,7 +92,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private var payModel: PayModel? = null
     private val transAmount = "0.01"
 
-    private var processingData: Orders.OrderDeliveryData? = null
+    private var processingData: OrderDeliveryData? = null
 
     @Inject
     lateinit var mainGroupItemAdapter: MainGroupItemAdapter
@@ -291,12 +292,19 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             binding.cartMotionLayout.clearCartGoods()
         }
 
-        lifecycleFlow(menuViewModel.errMsg) {
+        lifecycleFlow(menuViewModel.errMsg) {  type ->
+
+            val msg = when (type) {
+                Constants.RefundSuccess -> context?.getString(R.string.refundHint)
+                Constants.OrderUploadFail -> context?.getString(R.string.orderFail)
+                else -> ""
+            }
+
             //Toast.makeText(requireContext(),it,Toast.LENGTH_LONG).show()
             customDialog?.dismiss()
             customDialog = showDialog(
                 title = context?.getString(R.string.ErrorOccurred) ?: "",
-                    msg = context?.getString(R.string.orderFail) ?: "",
+                msg = msg ?: "",
                 icon = R.drawable.ic_warning,
             ) {
                 customDialog?.dismiss()
@@ -306,10 +314,15 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
         lifecycleFlow(menuViewModel.creditFlow) { deliveryInfo ->
-
             deliveryInfo?.let {
                 processingData = deliveryInfo
                 findDevices(deliveryInfo)
+            }
+        }
+
+        lifecycleFlow(menuViewModel.creditRefundFlow) { deliveryInfo ->
+            deliveryInfo?.let {
+                findDevices(deliveryInfo, isRefund = true)
             }
         }
 
@@ -416,17 +429,20 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
             setonOrderDoneListener { deliveryInfo ->
 
-                if(processingData != null) {
+                if (processingData != null && deliveryInfo.payWay.payNo == Constants.PayWayType.Cash) {
                     menuViewModel.postWhenChangeToCash(processingData)
                     return@setonOrderDoneListener
                 }
 
-                menuViewModel.postOrderItem(deliveryInfo)
+                menuViewModel.postNewOrder(deliveryInfo)
             }
         }
     }
 
-    private fun findDevices(orderDeliveryData: Orders.OrderDeliveryData) {
+    private fun findDevices(
+        orderDeliveryData: OrderDeliveryData,
+        isRefund: Boolean = false
+    ) {
 
         Log.e(TAG, "onClick: current comm type:$currCommType")
         mDeviceInfoListMap.clear()
@@ -443,7 +459,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     map["identifier"] = deviceInfo.identifier
                     mDeviceInfoListMap.add(map)
                     mDeviceInfoList.add(deviceInfo)
-                    connectOnlyDevice(orderDeliveryData)
+                    connectOnlyDevice(orderDeliveryData, isRefund)
                 }
 
                 override fun onFinished() {
@@ -465,12 +481,15 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 }
 
                 override fun onError(errorCode: Int) {
-                    Log.e("Error","設備異常，請選擇其他付款方式")
+                    Log.e("Error", "設備異常，請選擇其他付款方式")
                 }
             })
     }
 
-    private fun connectOnlyDevice(orderDeliveryData: Orders.OrderDeliveryData) {
+    private fun connectOnlyDevice(
+        orderDeliveryData: OrderDeliveryData,
+        isRefund: Boolean = false
+    ) {
         Thread {
             val ret =
                 SemiLinkApi.getInstance(requireContext()).connect(mDeviceInfoList[0])
@@ -484,7 +503,15 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
                     //1st Item
                     payModel = PayModel("VISA", 0, false, orderDeliveryData)
-                    startSale(payModel!!)
+
+                    if (isRefund) {
+                        Log.e("isRefund", "isRefund")
+                        startRefund(payModel!!)
+                    } else {
+                        Log.e("notRefund", "notRefund")
+                        startSale(payModel!!)
+                    }
+
                 } else {
                     LogUtils.i(
                         TAG,
@@ -496,17 +523,21 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     }
 
     fun startSale(payModel: PayModel) {
-        sendSaleRequest("sale", "C200", payModel.isWallet.toString(), payModel.orderDeliveryData)
+        sendRequest("sale", "C200", payModel.isWallet.toString(), payModel.orderDeliveryData)
+    }
+
+    fun startRefund(payModel: PayModel) {
+        sendRefundRequest("refund", "C203", payModel.isWallet.toString(), payModel.orderDeliveryData)
     }
 
 
     //    TransResponse(source_package_name=, destination_package_name=, transaction_type=R200, card_number=XXXXXXXXXXXX9551, transaction_amount=000000000160, date_time=20231114111400, expiry_date=XXXX, entry_mode=P, retrieval_reference_number=231114111400, approval_code=111400, response_code=00, terminal_id=23060101, merchant_id=168353110196, host_label=DBS, emv_data=00000000000000A0000000031010  Visa Credit                     , card_label=VISA, card_type=V, host_type=3, command_identifier=, custom_data_2=, custom_data_3=, ecr_unique_trace_number=, invoice_number=000072, transaction_info=000000000160000000000160000000000000, batch_number=000006, coupons_vouchers=, additional_printing_flag=, external_device_invoice=, card_holder_name= /, employee_id=, original_trans_type=003134)
-    private fun sendSaleRequest(
+    private fun sendRequest(
 
         task: String,
         command: String,
         walletName: String,
-        orderDeliveryData: Orders.OrderDeliveryData
+        orderDeliveryData: OrderDeliveryData
     ) {
         //BUILD SALE OBJECT TO BE SENT TO PAYMENT APP
         binding.ProceedCons.visibility = View.VISIBLE
@@ -521,7 +552,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 String.format(
                     "%.2f",
                     orderDeliveryData.ordersDelivery.sPrice
-                )
+                ),
+                orderDeliveryData.ordersItemDelivery[0].orderNO
             )
             LogUtils.d(
                 TAG,
@@ -548,7 +580,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                             binding.ProceedCons.visibility = View.GONE
                             if (responseCode == "00") {
 
-                                orderDeliveryData.creditInfo = Orders.CreditInfo(
+                                orderDeliveryData.creditInfo = CreditInfo(
                                     saleResponse.card_number,
                                     saleResponse.transaction_amount,
                                     saleResponse.date_time,
@@ -574,6 +606,71 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     override fun onResponseFailure(errorCode: Int) {
                         requireActivity().runOnUiThread {
                             binding.ProceedCons.visibility = View.GONE
+                            binding.failCons.visibility = View.VISIBLE
+                        }
+                    }
+                })
+        }.start()
+    }
+
+
+    private fun sendRefundRequest(
+        task: String,
+        command: String,
+        walletName: String,
+        orderDeliveryData: OrderDeliveryData
+    ) {
+
+        Thread {
+            val saleTrans: BaseSemiRequest<TransRequestData> = BaseSemiRequest<TransRequestData>()
+            saleTrans.task = task
+
+
+            saleTrans.data = TransBuilder().getRefundObject(
+                String.format(
+                    "%.2f",
+                    orderDeliveryData.ordersDelivery.sPrice
+                ),
+                orderDeliveryData.ordersItemDelivery[0].orderNO
+            )
+            LogUtils.d(
+                TAG,
+                "mBaseReque=" + JSON.toJSONString(saleTrans)
+            )
+            SemiLinkApi.getInstance(requireContext())
+                .doTransaction(saleTrans, 200, object : ITransListener {
+                    override fun onResponseSuccess(transResultInfo: String) {
+                        LogUtils.d("transResultInfo", transResultInfo)
+                        val jsonObject: com.alibaba.fastjson.JSONObject? =
+                            JSON.parseObject(transResultInfo)
+                        val data: String = jsonObject?.getJSONObject("data").toString()
+                        // Toast.makeText(context, data, Toast.LENGTH_SHORT).show();
+
+                        //Toast.makeText(context, saleResponseStr, Toast.LENGTH_SHORT).show();
+                        val saleResponse: TransResponse =
+                            com.google.gson.Gson().fromJson(data, TransResponse::class.java)
+                        //SaleResponse saleResponse = GsonUt.fromJson(data, SaleResponse.class);
+                        val responseCode: String = saleResponse.response_code //"00"
+                        val responseMsg: String = saleResponse.custom_data_2
+
+
+                        requireActivity().runOnUiThread {
+                            if (responseCode == "00") {
+
+                                menuViewModel.setCreditRefundSuccess()
+
+                                Log.e("saleResponse", saleResponse.toString())
+                                Log.e("custom_data_2", saleResponse.custom_data_2)
+                            } else {
+                                requireActivity().runOnUiThread {
+                                    binding.ProceedCons.visibility = View.GONE
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onResponseFailure(errorCode: Int) {
+                        requireActivity().runOnUiThread {
                             binding.failCons.visibility = View.VISIBLE
                         }
                     }

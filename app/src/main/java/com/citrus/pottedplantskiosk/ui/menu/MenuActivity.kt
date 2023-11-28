@@ -353,10 +353,10 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
     }
 
 
-    fun printSummery(transactionData: TransactionData, characterSet: String = "BIG5") {
-        var deliveryItemList = transactionData.orders?.ordersItemDelivery
+    private fun printSummery(transactionData: TransactionData, characterSet: String = "BIG5") {
+        val deliveryItemList = transactionData.orders?.ordersItemDelivery
 
-        var creditInfo = transactionData.orders?.creditInfo
+        val creditInfo = transactionData.orders?.creditInfo
 
         try {
             PrinterFunctions.setReceiveEventListener(null)
@@ -530,23 +530,28 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
                 PrintTextByteArray(
                     createPrintStrFormat(
                         "${getString(R.string.grandTotal)}",
-                        "${grandTotal}\n" +
-                                "\n"
+                        grandTotal
                     )
                 )
             } else {
                 PrintTextByteArray(
                     createPrintStrFormat(
                         "${getString(R.string.grandTotal)}",
-                        "${orgAmtStr}\n" +
-                                "\n"
+                        orgAmtStr
                     )
                 )
             }
 
+            PrintTextByteArray(
+                createPrintStrFormat(
+                    " ",
+                    "\n"
+                )
+            )
+
             if (prefs.footer.isNotEmpty()) {
                 PrintTextByteArray(
-                    "${prefs.footer}\n\n".toByteArray(
+                    "${prefs.footer}\n".toByteArray(
                         charset(
                             characterSet
                         )
@@ -627,7 +632,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
                 PrintTextByteArray(
                     createPrintStrFormat(
                         "序號",
-                        "${it.retrievalReferenceNumber}\n"
+                        "${it.retrievalReferenceNumber}"
                     )
                 )
 
@@ -654,7 +659,14 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
                 PrintTextByteArray(
                     createPrintStrFormat(
                         "消費金額",
-                        "$${formatNumberString(it.transactionAmount)}\n"
+                        "$${formatNumberString(it.transactionAmount)}"
+                    )
+                )
+
+                PrintTextByteArray(
+                    createPrintStrFormat(
+                        " ",
+                        "\n"
                     )
                 )
 

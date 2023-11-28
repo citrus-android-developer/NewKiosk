@@ -1,6 +1,8 @@
 package com.citrus.pottedplantskiosk.api.remote
 
 import android.util.Log
+import com.citrus.pottedplantskiosk.api.remote.dto.UploadResponse
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,12 +15,12 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
             if (result.data.status != 1 || result.data.data.mainGroup.isEmpty()) {
                 Resource.Error("Menu not found", null)
             } else {
-                if(result.data.data.mainGroup.find { it.kind.isNotEmpty() } == null){
+                if (result.data.data.mainGroup.find { it.kind.isNotEmpty() } == null) {
                     Resource.Error("Menu not found", null)
-                }else{
-                    if(result.data.data.mainGroup.isEmpty()){
+                } else {
+                    if (result.data.data.mainGroup.isEmpty()) {
                         Resource.Error("MainGroup is Empty", null)
-                    }else {
+                    } else {
                         Log.e("Test", "getMenu: ${result.data.data.mainGroup}))")
                         Resource.Success(result.data)
                     }
@@ -31,7 +33,7 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
             if (result.data.status != 1 || result.data.data.isEmpty()) {
                 Resource.Error("Banner not found", null)
             } else {
-                    Resource.Success(result.data)
+                Resource.Success(result.data)
             }
         })
 
@@ -44,6 +46,18 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
             }
         })
 
-
+    override suspend fun postOrderPayStatusEdit(
+        url: String,
+        jsonData: String
+    ) =
+        resultFlowData(
+            apiQuery = { apiService.setOrdersPayStatus(url, jsonData) },
+            onSuccess = { result ->
+                if (result.data.status != 1) {
+                    Resource.Error("Orders edit fail", null)
+                } else {
+                    Resource.Success(result.data)
+                }
+            })
 
 }

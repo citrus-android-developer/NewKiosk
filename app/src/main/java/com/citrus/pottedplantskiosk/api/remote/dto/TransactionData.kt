@@ -10,5 +10,5 @@ sealed class TransactionState {
     object WorkFine:TransactionState()
 }
 
-data class TransactionData (val orders: Orders.OrderDeliveryData?, var state:TransactionState, var printer: UsbDevice?, var mNewPrinter: AidlNewPrinter?) :
+data class TransactionData (val orders: OrderDeliveryData?, var state:TransactionState, var printer: UsbDevice?, var mNewPrinter: AidlNewPrinter?) :
     Serializable

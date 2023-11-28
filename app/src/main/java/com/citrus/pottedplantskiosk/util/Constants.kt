@@ -27,6 +27,7 @@ object Constants {
     const val GET_MENU = "/POSServer/UploadDataWS/Service1.asmx/getAllKindGoods_KIOSK"
     const val GET_BANNER = "/POSServer/UploadDataWS/Service1.asmx/GetAdvertise_KIOSK"
     const val SET_ORDERS = "/POSServer/UploadDataWS/Service1.asmx/SetOrdersDeliveryData_KIOSK"
+    const val SET_ORDER_EDIT = "/POSServer/UploadDataWS/Service1.asmx/UpdateOrdersDeliveryData_KIOSK"
     const val USB_NO_PERMISSION = "USB_NO_PERMISSION"
     const val SHARED_PREFERENCES_NAME = "sharedPref"
     const val TWO_MINUTES = 120
@@ -53,6 +54,11 @@ object Constants {
     const val KEY_HEADER = "KEY_HEADER"
     const val KEY_FOOTER = "KEY_FOOTER"
     const val KEY_ORDER_STRING = "KEY_ORDER_STRING"
+
+
+    /**Fail Message Type*/
+    const val RefundSuccess = "RefundSuccess"
+    const val OrderUploadFail = "OrderUploadFail"
 
     var screenW = 0
     var screenH = 0

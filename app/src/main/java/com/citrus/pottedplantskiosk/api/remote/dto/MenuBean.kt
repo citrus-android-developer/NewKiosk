@@ -47,15 +47,15 @@ data class Good(
     @SerializedName("flavor")
     var flavor: List<Flavor>?,
     @SerializedName("GID")
-    var gID: String?,
+    var gID: String,
     @SerializedName("GKID")
-    var gKID: String?,
+    var gKID: String,
     @SerializedName("GName")
     var gName: String?,
     @SerializedName("GName2")
     var gName2: String?,
     @SerializedName("GType")
-    var gType: String?,
+    var gType: String,
     @SerializedName("Group")
     var group: List<Group>?,
     @SerializedName("IsPrint")
@@ -106,15 +106,15 @@ data class Good(
          * */
         setsPriceChangedListener { sPrice ->
             _sPrice = sPrice
-            val itemTaxPct = tax
-            if (itemTaxPct?.toDouble() != 0.0) {
+            val itemTaxPct = (tax ?: 0) / 100.0
+            if (itemTaxPct != 0.0) {
                 var taxBase = 0.0
                 when (prefs.taxFunction) {
                     0 -> return@setsPriceChangedListener
-                    1 -> taxBase = add(itemTaxPct?.toDouble() ?: 0.0, 100.0)
+                    1 -> taxBase = add(itemTaxPct, 100.0)
                     2 -> taxBase = 100.0
                 }
-                gst = round(mul(sPrice, div(itemTaxPct?.toDouble() ?: 0.0, taxBase)), 3)
+                gst = round(mul(sPrice, div(itemTaxPct, taxBase)), 3)
             }
         }
     }

@@ -42,7 +42,7 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
         holder.binding.apply {
 
             Glide.with(root)
-                .load(Constants.IMG_URL + item.picName)
+                .load(Constants.IMG_URL + item.picname)
                 .placeholder(R.drawable.ic_image_gallery__2_)
                 .fallback(R.drawable.ic_image_gallery__2_)
                 .into(itemImage)
@@ -54,7 +54,7 @@ class GoodsItemAdapter @Inject constructor(val context: Context) :
             }
 
 
-            tvPrice.text = "$" + Constants.getValByMathWay(item.price)
+            tvPrice.text = "$" + Constants.getValByMathWay(item.price ?: 0.0)
 
             root.onSafeClick {
                 it.clickAnimation {

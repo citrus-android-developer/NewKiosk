@@ -3,7 +3,6 @@ package com.citrus.pottedplantskiosk.api.remote
 import com.citrus.pottedplantskiosk.api.remote.dto.*
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
-import javax.net.ssl.SSLEngineResult
 
 
 interface ApiService {
@@ -14,7 +13,7 @@ interface ApiService {
     @POST
     suspend fun getMenu(
         @Url url: String,
-        @Field("rsNo") rsNo: String
+        @Field("jsonData") jsonData: String
     ): ApiResponse<MenuBean>
 
     /**取得廣告輪播資訊 */

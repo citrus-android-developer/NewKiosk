@@ -1,5 +1,6 @@
 package com.citrus.pottedplantskiosk.ui.menu
 
+
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -135,12 +136,12 @@ class MenuViewModel @Inject constructor(
         currentGroup = _menuData.value.first()
     }
 
-    fun showData(data: Data) = viewModelScope.launch {
+    fun showData(data: MenuBean) = viewModelScope.launch {
         _menuData.emit(data.mainGroup)
         val groupList = data.mainGroup.filter { it.kind.isNotEmpty() }.map { it.groupName }
 
         if (groupList.isNotEmpty() && groupList[0] != "") {
-            _menuGroupName.emit(groupList)
+            _menuGroupName.emit(groupList.distinct())
             onGroupChange(groupList[0])
         } else {
             onGroupChange("")
@@ -164,7 +165,9 @@ class MenuViewModel @Inject constructor(
             val list = mainGroup.kind.filter { it.goods.isNotEmpty() }.map { it.desc }
             _groupDescName.emit(list)
             if (mainGroup.kind.isNotEmpty()) {
-                onDescChange(mainGroup.kind.first().desc)
+                 (mainGroup.kind.first().desc)
+                val goods = mainGroup.kind.find { it.desc == mainGroup.kind.first().desc }?.goods!!
+                _allGoods.emit(goods)
             }
         }
     }
@@ -239,91 +242,82 @@ class MenuViewModel @Inject constructor(
 
     fun postNewOrder(deliveryInfo: DeliveryInfo) = viewModelScope.launch {
 
-        val list = deliveryInfo.goodsList
-        val sumQty = list.sumOf { goods ->
-            goods.qty
-        }
 
-        val sumPrice = list.sumOf { goods ->
-            goods.sPrice
-        }
-
-
-        /**未付款狀態*/
-        val ordersDelivery = OrdersDelivery(
-            storeID = 0,
-            qty = sumQty,
-            payType = deliveryInfo.payWay.desc,
-            isPay = "N",
-            gPrice = deliveryInfo.grandTotal,
-            sPrice = sumPrice,
-            totaltax = deliveryInfo.gst,
-            serviceOutStatus = "A"
-        )
-
-        var ordersItemDeliveryList = listOf<OrdersItemDelivery>()
-
-        var seq = 1
-        list.forEach { goods ->
-            val ordersItemDelivery =
-                OrdersItemDelivery(
-                    storeID = 0,
-                    orderSeq = seq,
-                    gid = goods.gID,
-                    sPrice = goods.sPrice,
-                    gPrice = goods.price,
-                    qty = goods.qty,
-                    gkid = goods.gKID,
-                    gType = goods.gType,
-                    gname = goods.gName,
-                    gName2 = goods.gName2,
-                    tax = goods.gst
-
-                )
-            seq++
-            ordersItemDeliveryList = ordersItemDeliveryList + ordersItemDelivery
-        }
-
-        val orderDeliveryData = OrderDeliveryData(
-            rsno = prefs.storeId,
-            ordersDelivery = ordersDelivery,
-            ordersItemDelivery = ordersItemDeliveryList
-        )
-
-        var printerData: TransactionData?
-        viewModelScope.launch {
-            syncToServer(deliveryInfo = orderDeliveryData) { orderNo ->
-                orderNo?.let {
-                    orderDeliveryData.ordersItemDelivery.forEach { item ->
-                        item.orderNO = it
-                    }
-
-                    if (deliveryInfo.payWay.payNo == Constants.PayWayType.CreditCard) {
-                        Log.e("credit", "credit")
-                        viewModelScope.launch {
-                            _creditFlow.emit(orderDeliveryData)
-                        }
-                        return@syncToServer
-                    } else {
-                        printerData = TransactionData(
-                            orders = orderDeliveryData,
-                            state = TransactionState.WorkFine,
-                            null,
-                            null
-                        )
-                    }
-                    viewModelScope.launch {
-                        printerData?.let {
-                            _toPrint.emit(it)
-                        }
-                    }
-                } ?: run {
-                    viewModelScope.launch {
-                        _errMsg.emit(OrderUploadFail)
-                    }
-                }
-            }
-        }
+//        /**未付款狀態*/
+//        val ordersDelivery = OrdersDelivery(
+//            storeID = 0,
+//            qty = sumQty,
+//            payType = deliveryInfo.payWay.desc,
+//            isPay = "N",
+//            gPrice = deliveryInfo.grandTotal,
+//            sPrice = sumPrice,
+//            totaltax = deliveryInfo.gst,
+//            serviceOutStatus = "A"
+//        )
+//
+//        var ordersItemDeliveryList = listOf<OrdersItemDelivery>()
+//
+//        var seq = 1
+//        list.forEach { goods ->
+//            val ordersItemDelivery =
+//                OrdersItemDelivery(
+//                    storeID = 0,
+//                    orderSeq = seq,
+//                    gid = goods.gID,
+//                    sPrice = goods.sPrice,
+//                    gPrice = goods.price,
+//                    qty = goods.qty,
+//                    gkid = goods.gKID,
+//                    gType = goods.gType,
+//                    gname = goods.gName,
+//                    gName2 = goods.gName2,
+//                    tax = goods.gst
+//
+//                )
+//            seq++
+//            ordersItemDeliveryList = ordersItemDeliveryList + ordersItemDelivery
+//        }
+//
+//        val orderDeliveryData = OrderDeliveryData(
+//            rsno = prefs.storeId,
+//            ordersDelivery = ordersDelivery,
+//            ordersItemDelivery = ordersItemDeliveryList
+//        )
+//
+//        var printerData: TransactionData?
+//        viewModelScope.launch {
+//            syncToServer(deliveryInfo = orderDeliveryData) { orderNo ->
+//                orderNo?.let {
+//                    orderDeliveryData.ordersItemDelivery.forEach { item ->
+//                        item.orderNO = it
+//                    }
+//
+//                    if (deliveryInfo.payWay.payNo == Constants.PayWayType.CreditCard) {
+//                        Log.e("credit", "credit")
+//                        viewModelScope.launch {
+//                            _creditFlow.emit(orderDeliveryData)
+//                        }
+//                        return@syncToServer
+//                    } else {
+//                        printerData = TransactionData(
+//                            orders = orderDeliveryData,
+//                            state = TransactionState.WorkFine,
+//                            null,
+//                            null
+//                        )
+//                    }
+//                    viewModelScope.launch {
+//                        printerData?.let {
+//                            _toPrint.emit(it)
+//                        }
+//                    }
+//                } ?: run {
+//                    viewModelScope.launch {
+//                        _errMsg.emit(OrderUploadFail)
+//                    }
+//                }
+//            }
+//        }
     }
 
     private suspend fun syncToServer(
@@ -405,7 +399,7 @@ class MenuViewModel @Inject constructor(
     fun setPrintData(data: TransactionData?) = viewModelScope.launch {
         delay(2000)
         data?.let {
-            _toActivityPrint.emit(data!!)
+            _toActivityPrint.emit(data)
         }
     }
 

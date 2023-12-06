@@ -58,15 +58,15 @@ class  StatusCodeDeserializer<T> : JsonDeserializer<StatusCode<T>> {
 
 
 data class BannerData(
-    val autoNo: Long,
+    val autoNo: Long? = null,
     @SerializedName("OnSaleName")
-    val onSaleName: String,
+    val onSaleName: String? = null,
     @SerializedName("Seq")
-    val seq: Long,
+    val seq: Long? = null,
     @SerializedName("Pic")
     val pic: String,
     @SerializedName("Hyperlink")
-    val hyperlink: String
+    val hyperlink: String? = null,
 ): Serializable
 
 class BannerDataDeserializer : JsonDeserializer<BannerData> {

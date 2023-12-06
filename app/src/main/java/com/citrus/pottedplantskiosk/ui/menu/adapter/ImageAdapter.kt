@@ -33,8 +33,8 @@ class ImageAdapter(datas: List<BannerData>?):BannerAdapter<BannerData, ImageAdap
                     BannerUtils.setBannerRound(image, 20f)
                 }
 
-                Glide.with(holder!!.itemView)
-                    .load(Constants.IMG_URL + data.pic)
+                Glide.with(holder.itemView)
+                    .load(data.pic)
                     .apply(RequestOptions.bitmapTransform( RoundedCorners(60)))
                     .into(image)
             }

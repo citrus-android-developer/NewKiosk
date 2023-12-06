@@ -142,7 +142,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
     ) {
         myBanner.scrollTime = 300
         myBanner.setLoopTime(5000)
-        var banner: Banner<BannerData, BannerImageAdapter<BannerData>> = myBanner
+        val banner: Banner<BannerData, BannerImageAdapter<BannerData>> = myBanner
         banner.setAdapter(object : BannerImageAdapter<BannerData>(imgList) {
             override fun onBindView(
                 holder: BannerImageHolder,
@@ -153,7 +153,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
                 holder.imageView.scaleType = ImageView.ScaleType.FIT_CENTER
 
                 Glide.with(holder.itemView)
-                    .load(Constants.IMG_URL + data.pic)
+                    .load(data.pic)
                     .into(holder.imageView)
 
                 holder.imageView.setOnClickListener {

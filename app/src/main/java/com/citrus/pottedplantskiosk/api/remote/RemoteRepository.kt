@@ -10,21 +10,26 @@ import javax.inject.Singleton
 @Singleton
 class RemoteRepository @Inject constructor(private val apiService: ApiService) : Repository {
 
-    override suspend fun getMenu(url: String, rsNo: String) =
-        resultFlowData(apiQuery = { apiService.getMenu(url, rsNo) }, onSuccess = { result ->
-            if (result.data.status != 1 || result.data.data.mainGroup.isEmpty()) {
-                Resource.Error("Menu not found", null)
-            } else {
-                if (result.data.data.mainGroup.find { it.kind.isNotEmpty() } == null) {
+    override suspend fun getMenu(url: String) =
+        resultFlowData(apiQuery = { apiService.getMenu(url, "") }, onSuccess = { result ->
+            try {
+                if (result.data.status != 1 || result.data.mainGroup.isEmpty()) {
                     Resource.Error("Menu not found", null)
                 } else {
-                    if (result.data.data.mainGroup.isEmpty()) {
-                        Resource.Error("MainGroup is Empty", null)
+                    if (result.data.mainGroup.find { it.kind.isNotEmpty() } == null) {
+                        Resource.Error("Menu not found", null)
                     } else {
-                        Log.e("Test", "getMenu: ${result.data.data.mainGroup}))")
-                        Resource.Success(result.data)
+                        if (result.data.mainGroup.isEmpty()) {
+                            Resource.Error("MainGroup is Empty", null)
+                        } else {
+                            Log.e("Test", "getMenu: ${result.data.mainGroup}))")
+                            Resource.Success(result.data)
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                Log.e("Test", "getMenu: ${e.message}")
+                Resource.Error("${e.message}", null)
             }
         })
 

@@ -8,86 +8,91 @@ import com.citrus.pottedplantskiosk.util.round
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-
 data class MenuBean(
-    @SerializedName("data")
-    val data: Data,
-    @SerializedName("status")
-    val status: Int
-) : Serializable
-
-data class Data(
     @SerializedName("MainGroup")
-    val mainGroup: List<MainGroup>
+    var mainGroup: List<MainGroup>,
+    @SerializedName("status")
+    var status: Int
 ) : Serializable
-
 
 data class MainGroup(
     @SerializedName("GroupName")
-    val groupName: String,
+    var groupName: String,
     @SerializedName("Kind")
-    val kind: List<Kind>
+    var kind: List<Kind>
 ) : Serializable
 
 data class Kind(
     @SerializedName("Desc")
-    val desc: String,
+    var desc: String,
     @SerializedName("GKID")
-    val gKID: String,
+    var gKID: String,
     @SerializedName("Goods")
-    val goods: List<Good>
+    var goods: List<Good>
 ) : Serializable
-
 
 data class Good(
     @SerializedName("add")
-    var add: List<Add>,
+    var add: List<Add>?,
+    @SerializedName("BarCode")
+    var barCode: String?,
+    @SerializedName("ChgPrice")
+    var chgPrice: String?,
+    @SerializedName("Color")
+    var color: String?,
+    @SerializedName("Desc")
+    var desc: String?,
+    @SerializedName("Desc2")
+    var desc2: String?,
+    @SerializedName("flavor")
+    var flavor: List<Flavor>?,
+    @SerializedName("GID")
+    var gID: String?,
+    @SerializedName("GKID")
+    var gKID: String?,
+    @SerializedName("GName")
+    var gName: String?,
+    @SerializedName("GName2")
+    var gName2: String?,
+    @SerializedName("GType")
+    var gType: String?,
+    @SerializedName("Group")
+    var group: List<Group>?,
+    @SerializedName("IsPrint")
+    var isPrint: String?,
     @SerializedName("Note")
     var note: String?,
-    @SerializedName("BarCode")
-    val barCode: String,
-    @SerializedName("ChgPrice")
-    val chgPrice: String,
-    @SerializedName("flavor")
-    var flavor: List<Flavor>,
-    @SerializedName("GID")
-    var gID: String,
-    @SerializedName("GKID")
-    val gKID: String,
-    @SerializedName("GName")
-    val gName: String,
-    @SerializedName("GName2")
-    val gName2: String,
-    @SerializedName("GType")
-    val gType: String,
-    @SerializedName("IsPrint")
-    val isPrint: String,
     @SerializedName("picname")
-    val picName: String,
-    @SerializedName("PrintGroup")
-    val printGroup: String,
+    var picname: String?,
     @SerializedName("Price")
-    var price: Double,
+    var price: Double?,
+    @SerializedName("PrintGroup")
+    var printGroup: String?,
+    @SerializedName("SID")
+    var sID: String?,
+    @SerializedName("SOType")
+    var sOType: String?,
     @SerializedName("Size")
     var size: List<Size>?,
+    @SerializedName("SoldOut")
+    var soldOut: String?,
     @SerializedName("Stock")
-    val stock: Int,
+    var stock: String?,
     @SerializedName("Tax")
-    var tax: Double,
+    var tax: Int?,
     @SerializedName("TaxID")
-    var taxID: String,
+    var taxID: String?,
     var isEdit: Boolean = false,
     var isScan: Boolean = false,
     var gst: Double = 0.0,
     /**bundle會遺失內部參數,以下兩個屬性的存在是為了保留內部屬性*/
-    var _qty:Int,
-    var _sPrice:Double
+    var _qty: Int,
+    var _sPrice: Double
 ) : Serializable {
-
 
     init {
         setQtyChangedListener { qty ->
-            sPrice = qty * price
+            sPrice = qty * (price ?: 0.0)
             _qty = qty
         }
 
@@ -102,73 +107,112 @@ data class Good(
         setsPriceChangedListener { sPrice ->
             _sPrice = sPrice
             val itemTaxPct = tax
-            if (itemTaxPct != 0.0) {
+            if (itemTaxPct?.toDouble() != 0.0) {
                 var taxBase = 0.0
                 when (prefs.taxFunction) {
                     0 -> return@setsPriceChangedListener
-                    1 -> taxBase = add(itemTaxPct, 100.0)
+                    1 -> taxBase = add(itemTaxPct?.toDouble() ?: 0.0, 100.0)
                     2 -> taxBase = 100.0
                 }
-                gst = round(mul(sPrice, div(itemTaxPct, taxBase)), 3)
-            }
-        }
-}
-
-private var qtyChangedListener: ((Int) -> Unit)? = null
-private fun setQtyChangedListener(listener: (Int) -> Unit) {
-    qtyChangedListener = listener
-}
-
-private var priceChangedListener: ((Double) -> Unit)? = null
-private fun setPriceChangedListener(listener: (Double) -> Unit) {
-    priceChangedListener = listener
-}
-
-private var sPriceChangedListener: ((Double) -> Unit)? = null
-private fun setsPriceChangedListener(listener: (Double) -> Unit) {
-    sPriceChangedListener = listener
-}
-
-
-var sPrice = 0.0
-    set(value) {
-        synchronized(field) {
-            field = value
-            sPriceChangedListener?.let { change ->
-                change(value)
+                gst = round(mul(sPrice, div(itemTaxPct?.toDouble() ?: 0.0, taxBase)), 3)
             }
         }
     }
 
-var qty = 0
-    set(value) {
-        synchronized(field) {
-            field = value
-            qtyChangedListener?.let { change ->
-                change(value)
-            }
-        }
+    private var qtyChangedListener: ((Int) -> Unit)? = null
+    private fun setQtyChangedListener(listener: (Int) -> Unit) {
+        qtyChangedListener = listener
     }
 
-var _Price: Double = 0.0
-    get() = price
-    set(value) {
-        synchronized(field) {
-            field = value
-            priceChangedListener?.let { change ->
-                change(value)
-            }
-        }
+    private var priceChangedListener: ((Double) -> Unit)? = null
+    private fun setPriceChangedListener(listener: (Double) -> Unit) {
+        priceChangedListener = listener
     }
 
-/**avoid shallow copy*/
-fun deepCopy(
-    add: List<Add> = this.add.map { it?.copy() },
-    flavor: List<Flavor> = this.flavor.map { it.copy() },
-    size: List<Size>? = this.size?.map { it.copy() } ?: null,
-) = this.copy(add = add, flavor = flavor, size = size)
+    private var sPriceChangedListener: ((Double) -> Unit)? = null
+    private fun setsPriceChangedListener(listener: (Double) -> Unit) {
+        sPriceChangedListener = listener
+    }
+
+
+    var sPrice = 0.0
+        set(value) {
+            synchronized(field) {
+                field = value
+                sPriceChangedListener?.let { change ->
+                    change(value)
+                }
+            }
+        }
+
+    var qty = 0
+        set(value) {
+            synchronized(field) {
+                field = value
+                qtyChangedListener?.let { change ->
+                    change(value)
+                }
+            }
+        }
+
+    var _Price: Double = 0.0
+        get() = price ?: 0.0
+        set(value) {
+            synchronized(field) {
+                field = value
+                priceChangedListener?.let { change ->
+                    change(value)
+                }
+            }
+        }
+
+    /**avoid shallow copy*/
+    fun deepCopy(
+        add: List<Add>? = this.add?.map { it.copy() } ?: listOf(),
+        flavor: List<Flavor>? = this.flavor?.map { it.copy() } ?: listOf(),
+        size: List<Size>? = this.size?.map { it.copy() },
+    ) = this.copy(add = add, flavor = flavor, size = size)
 
 }
+
+data class Group(
+    @SerializedName("Goods")
+    var goods: List<Good>,
+    @SerializedName("MGID")
+    var mGID: String,
+    @SerializedName("MGKID")
+    var mGKID: String,
+    @SerializedName("MSGroup")
+    var mSGroup: String,
+    @SerializedName("SOType")
+    var sOType: String,
+    @SerializedName("SoldOut")
+    var soldOut: String,
+    @SerializedName("TotalQTY")
+    var totalQTY: Int
+) : Serializable
+
+data class Size(
+    @SerializedName("Color")
+    var color: String,
+    @SerializedName("Desc")
+    var desc: String,
+    @SerializedName("GID")
+    var gID: String,
+    @SerializedName("Note")
+    var note: String,
+    @SerializedName("price")
+    var price: Double,
+    @SerializedName("SID")
+    var sID: String,
+    @SerializedName("SName2")
+    var sName2: String,
+    @SerializedName("SOType")
+    var sOType: String,
+    @SerializedName("Stock")
+    var stock: String,
+    var isCheck: Boolean = false
+) : Serializable
 
 
 data class Add(
@@ -179,32 +223,19 @@ data class Add(
     @SerializedName("GName2")
     val gName2: String,
     @SerializedName("Price")
-    val price: Double
+    val price: Double,
+    @SerializedName("Qty")
+    val qty: Int
 ) : Serializable
 
 
 data class Flavor(
-    @SerializedName("Desc")
-    val desc: String,
+    @SerializedName("FlavorName")
+    val desc: String?,
     @SerializedName("FlavorID")
-    val flavorID: Int,
+    val flavorID: String?,
     @SerializedName("GName2")
-    val gName2: String
+    val gName2: String?
 ) : Serializable
 
 
-data class Size(
-    @SerializedName("Desc")
-    val desc: String,
-    @SerializedName("GID")
-    val gID: String,
-    @SerializedName("Price")
-    val price: Double,
-    @SerializedName("SID")
-    val sID: String,
-    @SerializedName("SName2")
-    val sName2: String,
-    @SerializedName("Stock")
-    val stock: String,
-    var isCheck: Boolean = false
-) : Serializable

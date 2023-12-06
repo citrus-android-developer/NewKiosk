@@ -31,6 +31,12 @@ object Constants {
     const val USB_NO_PERMISSION = "USB_NO_PERMISSION"
     const val SHARED_PREFERENCES_NAME = "sharedPref"
     const val TWO_MINUTES = 120
+
+    const val POS_GET_MENU = "/CitrusKioskC/Service.asmx/Q_AllKindGoods"
+    const val POS_SET_ORDERS = "/CitrusKioskC/Service.asmx/I_OrdersData"
+    const val POS_EDIT_ORDERS = "/CitrusKioskC/Service.asmx/U_Orders"
+
+
     var df = DecimalFormat("#,###,##0.###")
     var dfShow = DecimalFormat("###,###,###,##0.##")
     var dateTimeFormatSql = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")

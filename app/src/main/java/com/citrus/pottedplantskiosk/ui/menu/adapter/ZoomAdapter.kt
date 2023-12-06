@@ -111,7 +111,7 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
             }
 
             Glide.with(root)
-                .load(Constants.IMG_URL + item.picName)
+                .load(Constants.IMG_URL + item.picname)
                 .fallback(R.drawable.ic_image_gallery__2_)
                 .error(R.drawable.ic_image_gallery__2_)
                 .into(photo)
@@ -185,7 +185,7 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
                 } else {
                     val checkSize = goods.size?.first { it.isCheck }
                     goods.gID = checkSize!!.gID
-                    goods.price = checkSize!!.price
+                    goods.price = checkSize.price
                 }
                 true
             }

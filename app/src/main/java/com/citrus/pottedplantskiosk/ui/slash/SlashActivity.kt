@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.ui.slash
 
 
+
 import android.content.Intent
 import android.graphics.Point
 import android.os.Bundle
@@ -14,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.Resource
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
-import com.citrus.pottedplantskiosk.api.remote.dto.Data
+import com.citrus.pottedplantskiosk.api.remote.dto.MenuBean
 import com.citrus.pottedplantskiosk.databinding.ActivitySlashBinding
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.ui.menu.MenuActivity
@@ -30,7 +31,7 @@ class SlashActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySlashBinding
     private val viewModel: SlashViewModel by viewModels()
 
-    private var menuData: Data? = null
+    private var menuData: MenuBean? = null
     private var bannerData: BannerResponse? = null
 
     override fun onResume() {
@@ -62,7 +63,7 @@ class SlashActivity : AppCompatActivity() {
             prefs.orderStr = "true"
             Toast.makeText(this, it, Toast.LENGTH_LONG).show()
             Log.e("onNewIntent msg from symLink", msg.toString())
-        } ?:    Log.e("onNewIntent msg from symLink", "null")
+        } ?: Log.e("onNewIntent msg from symLink", "null")
     }
 
     private fun initObserve() {
@@ -71,15 +72,16 @@ class SlashActivity : AppCompatActivity() {
                 when (result) {
                     is Resource.Loading -> Unit
                     is Resource.Success -> {
-                        menuData = result.data?.data
+                        menuData = result.data
                         checkEachFun()
                     }
+
                     is Resource.Error -> {
 
                         viewModel.fetchError()
 
                         delay(2000)
-                        var dialog = MsgAlertDialog(this@SlashActivity,result.message!! )
+                        var dialog = MsgAlertDialog(this@SlashActivity, result.message!!)
                         dialog?.show()
                         dialog?.window?.setLayout(
                             (Constants.screenW * 0.8).toInt(),
@@ -92,17 +94,19 @@ class SlashActivity : AppCompatActivity() {
 
         lifecycleScope.launchWhenStarted {
             viewModel.allBannerData.collect { result ->
-                when (result) {
-                    is Resource.Loading -> Unit
-                    is Resource.Success -> {
-                        bannerData = result.data
-                        checkEachFun()
-                    }
-                    is Resource.Error -> {
-                        Log.e("error",result.message!!)
-                        checkEachFun()
-                    }
-                }
+//                when (result) {
+//                    is Resource.Loading -> Unit
+//                    is Resource.Success -> {
+//                        bannerData = result.data
+//                        checkEachFun()
+//                    }
+//                    is Resource.Error -> {
+//                        Log.e("error",result.message!!)
+//                        checkEachFun()
+//                    }
+//                }
+                bannerData = result
+                checkEachFun()
             }
         }
 

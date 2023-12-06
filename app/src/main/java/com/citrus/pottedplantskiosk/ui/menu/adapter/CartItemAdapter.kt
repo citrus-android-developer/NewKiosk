@@ -118,7 +118,7 @@ class CartItemAdapter @Inject constructor(val context: Context) :
             }
 
             Glide.with(holder.itemView)
-                .load(Constants.IMG_URL + item.picName)
+                .load(Constants.IMG_URL + item.picname)
                 .placeholder(R.drawable.ic_image_gallery__2_)
                 .fallback(R.drawable.ic_image_gallery__2_)
                 .into(goodsImg)
@@ -135,7 +135,7 @@ class CartItemAdapter @Inject constructor(val context: Context) :
             numberPicker.setOnButtonClickListener { _, newValue ->
                 if (newValue > 0) {
                     item.qty = newValue
-                    item.sPrice = checkPrice(item.price, item.qty)
+                    item.sPrice = checkPrice(item.price ?: 0.0, item.qty)
                     tvPrice.text = "$" + Constants.getValByMathWay(item.sPrice)
                     notifyItemChanged(position)
                     onChangedListener?.let { notify ->

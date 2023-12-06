@@ -1,5 +1,6 @@
 package com.citrus.pottedplantskiosk.ui.slash
 
+
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -13,6 +14,10 @@ import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import okhttp3.Dispatcher
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.URL
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,8 +29,8 @@ class SlashViewModel @Inject constructor(
     private val _allMenuData = MutableSharedFlow<Resource<MenuBean>>()
     val allMenuData: SharedFlow<Resource<MenuBean>> = _allMenuData
 
-    private val _allBannerData = MutableSharedFlow<Resource<BannerResponse>>()
-    val allBannerData: SharedFlow<Resource<BannerResponse>> = _allBannerData
+    private val _allBannerData = MutableSharedFlow<BannerResponse>()
+    val allBannerData: SharedFlow<BannerResponse> = _allBannerData
 
     private val _allData = MutableSharedFlow<Boolean>()
     val allData: SharedFlow<Boolean> = _allData
@@ -34,7 +39,7 @@ class SlashViewModel @Inject constructor(
     val errorNotify: SharedFlow<Boolean> = _errorNotify
 
 
-    fun asyncTask() = viewModelScope.launch {
+    fun asyncTask() = viewModelScope.launch(Dispatchers.IO) {
         val deferred = listOf(
             async { getMenu() },
             async { getBanner() }
@@ -45,22 +50,17 @@ class SlashViewModel @Inject constructor(
 
     private fun getMenu() =
         viewModelScope.launch {
-            Log.e("url",prefs.serverIp + Constants.GET_MENU)
-            Log.e("storeId",prefs.storeId)
-            repository.getMenu(prefs.serverIp + Constants.GET_MENU, prefs.storeId).collect { result ->
-                _allMenuData.emit(result)
-            }
+            repository.getMenu("http://192.168.0.160" + Constants.POS_GET_MENU)
+                .collect { result ->
+                    _allMenuData.emit(result)
+                }
         }
 
     private fun getBanner() =
-        viewModelScope.launch {
-            repository.getBanner(
-                prefs.serverIp + Constants.GET_BANNER,
-                Gson().toJson(BannerRequest(rsno = prefs.storeId))
-            ).collect { result ->
-                Log.e("result",result.data.toString())
-
-                _allBannerData.emit(result)
+        viewModelScope.launch(Dispatchers.IO) {
+            val data = getPicUrlFromFolder()
+            if (data.isNotEmpty()) {
+                _allBannerData.emit(BannerResponse(1, data))
             }
         }
 
@@ -76,4 +76,33 @@ class SlashViewModel @Inject constructor(
         asyncTask()
     }
 
+    private fun getPicUrlFromFolder(): List<BannerData> {
+        val folderUrl = "http://192.168.0.160/advImages"
+        var data = listOf<BannerData>()
+        val pattern = """<A HREF="/[^/]+/([^"]+\.(?:jpg|jpeg|png))">""".toRegex()
+
+        try {
+            val url = URL(folderUrl)
+            val urlConnection = url.openConnection()
+            val inputStream = BufferedReader(InputStreamReader(urlConnection.getInputStream()))
+
+            var line: String?
+            while (inputStream.readLine().also { line = it } != null) {
+                if (line?.contains("jpg|jpeg|png".toRegex()) == true) {
+                    val matches = pattern.findAll(line!!)
+                    val imageNames = matches.map { it.groups[1]?.value }.toList()
+
+                    if (imageNames.isNotEmpty()) {
+                        data = imageNames.map {
+                            BannerData(pic = "$folderUrl/$it")
+                        }.toList()
+                    }
+                }; continue
+            }
+            inputStream.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return data
+    }
 }

@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.api.remote
 
 
+
 import android.util.Log
 import com.citrus.pottedplantskiosk.api.remote.dto.*
 import com.citrus.pottedplantskiosk.api.remote.dto.StatusCode
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.*
 import java.lang.Exception
 
 interface Repository {
-    suspend fun getMenu(url: String, rsNo: String): Flow<Resource<MenuBean>>
+    suspend fun getMenu(url: String): Flow<Resource<MenuBean>>
     suspend fun getBanner(url: String, jsonData: String): Flow<Resource<BannerResponse>>
     suspend fun postOrders(url: String, jsonData: String): Flow<Resource<UploadResponse>>
     suspend fun postOrderPayStatusEdit(url: String, jsonData: String): Flow<Resource<UploadResponse>>
@@ -30,6 +31,7 @@ fun <T> resultFlowData(
     onSuccess: (ApiResponse.Success<T>) -> Resource<T>
 ) = flow {
     apiQuery.invoke().suspendOnSuccess {
+        Log.e("Test", "resultFlowData: ${this.data}")
         emit(onSuccess(this))
     }.suspendOnError {
         throw RetryCondition(this.statusCode.name)
@@ -45,6 +47,7 @@ fun <T> resultFlowData(
         return@retryWhen false
     }
 }.catch {
+    Log.e("Test", "resultFlowData: ${it.message}")
     emit(Resource.Error("unexpected error", null))
 }.onStart { emit(Resource.Loading(null,true)) }
     .onCompletion { emit(Resource.Loading(null,false)) }

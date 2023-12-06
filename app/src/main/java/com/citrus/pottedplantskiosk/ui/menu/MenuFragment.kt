@@ -235,7 +235,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 /**非已編輯物件才有購物車動畫*/
                 if (cartGoods.isEdit.not() && cartGoods.isScan.not()) {
                     val item =
-                        menuViewModel.currentDetailGoodsList.first { it.gID == cartGoods.gID && it.gKID == it.gKID }
+                        menuViewModel.currentDetailGoodsList.first { it.gID == cartGoods.gID && it.gKID == cartGoods.gKID }
                     val pos = menuViewModel.currentDetailGoodsList.indexOf(item)
                     currentClickView =
                         binding.goodsRv.findViewHolderForAdapterPosition(pos)?.itemView

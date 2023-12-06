@@ -1,6 +1,7 @@
 package com.citrus.pottedplantskiosk.ui.menu.adapter
 
 
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
@@ -59,10 +60,10 @@ class CheckoutAdapter (val context: Context) :
                 tvGoodsName.text = item.gName
             }
 
-            tvQtyPrice.text = "$" + Constants.getValByMathWay(item.price) + " x " + item.qty
+            tvQtyPrice.text = "$" + Constants.getValByMathWay(item.price ?: 0.0) + " x " + item.qty
 
             Glide.with(holder.itemView)
-                .load(Constants.IMG_URL + item.picName)
+                .load(Constants.IMG_URL + item.picname)
                 .into(goodsImg)
         }
     }

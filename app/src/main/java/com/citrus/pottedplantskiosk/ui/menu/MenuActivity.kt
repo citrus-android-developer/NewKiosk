@@ -20,7 +20,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
-import com.citrus.pottedplantskiosk.api.remote.dto.Data
+import com.citrus.pottedplantskiosk.api.remote.dto.MenuBean
 import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
 import com.citrus.pottedplantskiosk.databinding.ActivityMenuBinding
 import com.citrus.pottedplantskiosk.di.prefs
@@ -54,7 +54,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
     private val menuViewModel: MenuViewModel by viewModels()
     private lateinit var binding: ActivityMenuBinding
 
-    lateinit var data: Data
+    lateinit var data: MenuBean
     private var banner: BannerResponse? = null
 
     val READ_REQUEST_CODE = 42
@@ -200,7 +200,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
         PrinterFunctions.setCallback(printerFunctionsCallback)
 
         val bundle = intent.extras
-        data = bundle?.getSerializable("data") as Data
+        data = bundle?.getSerializable("data") as MenuBean
         var bannerData = bundle?.getSerializable("banner")
 
 //        scanKeyManager = ScanKeyManager(object : ScanKeyManager.OnScanValueListener {

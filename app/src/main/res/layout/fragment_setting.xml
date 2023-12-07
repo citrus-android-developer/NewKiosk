@@ -27,12 +27,12 @@
 
 
     <com.google.android.material.tabs.TabLayout
-        android:layout_marginTop="@dimen/dp_10"
         android:id="@+id/tab_layout"
         style="@style/Widget.MaterialComponents.TabLayout.PrimarySurface"
         android:layout_width="0dp"
         android:layout_height="@dimen/dp_40"
         android:layout_marginLeft="2dp"
+        android:layout_marginTop="@dimen/dp_10"
         android:layout_marginRight="2dp"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,13 +46,13 @@
         app:tabTextColor="@color/lightBlack" />
 
     <androidx.viewpager2.widget.ViewPager2
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:layout_marginRight="2dp"
-        android:layout_marginLeft="2dp"
         android:id="@+id/viewPager2"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginRight="2dp"
+        android:layout_marginBottom="@dimen/dp_10"
         app:layout_constraintBottom_toTopOf="@+id/applyBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,7 +62,7 @@
     <TextView
         android:id="@+id/applyBtn"
         android:layout_width="@dimen/dp_70"
-        android:layout_height="@dimen/dp_38"
+        android:layout_height="@dimen/dp_45"
         android:background="@drawable/bg_add_btn"
         android:fontFamily="@font/droidbold"
         android:gravity="center"

@@ -8,12 +8,12 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:fadingEdgeLength="@dimen/dp_50"
+        android:requiresFadingEdge="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:requiresFadingEdge="vertical"
-        android:fadingEdgeLength="@dimen/dp_50">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -162,7 +162,6 @@
                 app:spinner_popup_animation="dropdown"
                 app:spinner_popup_background="@color/background800"
                 app:spinner_popup_elevation="@dimen/dp_10" />
-
 
 
             <TextView

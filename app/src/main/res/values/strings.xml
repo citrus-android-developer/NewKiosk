@@ -41,6 +41,7 @@
     <string name="holdCard">Please hold your card against the card reader</string>
     <string name="creditPayFail">Transaction declined, please try again or choose other pay type</string>
     <string name="refundHint">The order establishment failed and the advance payment has been refunded.</string>
+    <string name="error_occurred">An error occurred</string>
 
 
     <string-array name="IdleTime">

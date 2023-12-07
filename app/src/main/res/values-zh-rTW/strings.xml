@@ -40,5 +40,6 @@
     <string name="holdCard">請靠卡感應支付裝置</string>
     <string name="creditPayFail">交易失敗，請重試或選擇其他付款方式</string>
     <string name="refundHint">訂單成立失敗，預收的款項已退款。</string>
+    <string name="error_occurred">發生錯誤</string>
 
 </resources>

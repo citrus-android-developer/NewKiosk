@@ -305,19 +305,36 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
 
     private fun registerUsbReceiver() {
         val filter = IntentFilter(ACTION_USB_PERMISSION)
-        registerReceiver(mUsbPermissionReceiver, filter)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(mUsbPermissionReceiver, filter, RECEIVER_EXPORTED)
+        } else {
+            registerReceiver(mUsbPermissionReceiver, filter)
+        }
         val filterAttached = IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
         val filterDetached = IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED)
         registerReceiver(mUsbDeviceAttachedDetachedReceiver, filterAttached)
         registerReceiver(mUsbDeviceAttachedDetachedReceiver, filterDetached)
 
+        mPermissionIntent = PendingIntent.getActivity(
+            this,
+            0,
+            Intent(Constants.ACTION_USB_PERMISSION),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT // setting the mutability flag
+        )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            mPermissionIntent = PendingIntent.getActivity(
+//                this,
+//                0,
+//                Intent(Constants.ACTION_USB_PERMISSION),
+//                PendingIntent.FLAG_MUTABLE
+//            )
             mPermissionIntent = PendingIntent.getActivity(
                 this,
                 0,
                 Intent(Constants.ACTION_USB_PERMISSION),
-                PendingIntent.FLAG_MUTABLE
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT // setting the mutability flag
             )
         } else {
             mPermissionIntent = PendingIntent.getBroadcast(

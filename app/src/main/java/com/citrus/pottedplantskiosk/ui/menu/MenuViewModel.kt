@@ -64,6 +64,8 @@ class MenuViewModel @Inject constructor(
     private val _showDetailEvent = MutableSharedFlow<Good>()
     val showDetailEvent: SharedFlow<Good> = _showDetailEvent
 
+    private val _showMGoodsDialogEvent = MutableSharedFlow<Good?>() //null代表不顯示
+    val showMGoodsDialogEvent: SharedFlow<Good?> = _showMGoodsDialogEvent
 
     private val _showBannerData = MutableStateFlow<List<BannerData>>(listOf())
     val showBannerData: StateFlow<List<BannerData>> = _showBannerData
@@ -181,7 +183,15 @@ class MenuViewModel @Inject constructor(
 
     fun onGoodsClick(good: Good, list: List<Good>) = viewModelScope.launch {
         currentDetailGoodsList = list
-        _showDetailEvent.emit(good)
+        if (good.gType.matches("[MG]".toRegex())) {
+            _showMGoodsDialogEvent.emit(good)
+        } else {
+            _showDetailEvent.emit(good)
+        }
+    }
+
+    fun hideMGoodsDialog() = viewModelScope.launch {
+        _showMGoodsDialogEvent.emit(null)
     }
 
     fun intentNavigateToMenu() {
@@ -325,8 +335,8 @@ class MenuViewModel @Inject constructor(
         callback: (String?) -> Unit
     ) =
         viewModelScope.launch {
-            val dataJson =   Gson().toJson(deliveryInfo)
-            Log.e("dataJson",dataJson)
+            val dataJson = Gson().toJson(deliveryInfo)
+            Log.e("dataJson", dataJson)
             repository.postOrders(
                 prefs.serverIp + Constants.SET_ORDERS,
                 Gson().toJson(deliveryInfo)

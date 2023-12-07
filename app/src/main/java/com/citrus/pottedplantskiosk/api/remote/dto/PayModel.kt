@@ -4,5 +4,5 @@ data class PayModel(
     var mPayName: String,
     var mPayPath: Int,
     var isWallet: Boolean,
-    var orderDeliveryData : OrderDeliveryData
+    var orderDeliveryData : OrderDeliveryData? = null
 )

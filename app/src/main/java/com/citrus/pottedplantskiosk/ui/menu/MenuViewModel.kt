@@ -88,8 +88,8 @@ class MenuViewModel @Inject constructor(
     private val _creditFlow = MutableSharedFlow<OrderDeliveryData>()
     val creditFlow: SharedFlow<OrderDeliveryData> = _creditFlow
 
-    private val _creditRefundFlow = MutableSharedFlow<OrderDeliveryData>()
-    val creditRefundFlow: SharedFlow<OrderDeliveryData> = _creditRefundFlow
+    private val _creditRefundFlow = MutableSharedFlow<OrderDeliveryData?>()
+    val creditRefundFlow: SharedFlow<OrderDeliveryData?> = _creditRefundFlow
 
     private val _errMsg = MutableSharedFlow<String>()
     val errMsg: SharedFlow<String> = _errMsg
@@ -370,9 +370,9 @@ class MenuViewModel @Inject constructor(
         _reLaunchActivity.emit(true)
     }
 
-    fun setCreditCardSuccess(orderDeliveryData: OrderDeliveryData) =
+    fun setCreditCardSuccess(orderDeliveryData: OrderDeliveryData?) =
         viewModelScope.launch {
-            val orderNo = orderDeliveryData.ordersItemDelivery[0].orderNO
+            val orderNo = orderDeliveryData?.ordersItemDelivery?.get(0)?.orderNO ?: ""
             val orderStatusEditRequest =
                 OrderStatusEditRequest(rsno = prefs.storeId, orderNo = orderNo, isPay = "Y")
 

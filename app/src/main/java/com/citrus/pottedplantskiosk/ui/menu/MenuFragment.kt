@@ -189,7 +189,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
             homeBtn.onSafeClick {
                 it.clickAnimation {
-                    backToMain()
+                    //backToMain()
+                    findDevices(null)
                 }
             }
 
@@ -461,7 +462,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     }
 
     private fun findDevices(
-        orderDeliveryData: OrderDeliveryData,
+        orderDeliveryData: OrderDeliveryData?,
         isRefund: Boolean = false
     ) {
 
@@ -508,7 +509,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     }
 
     private fun connectOnlyDevice(
-        orderDeliveryData: OrderDeliveryData,
+        orderDeliveryData: OrderDeliveryData?,
         isRefund: Boolean = false
     ) {
         Thread {
@@ -563,7 +564,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         task: String,
         command: String,
         walletName: String,
-        orderDeliveryData: OrderDeliveryData
+        orderDeliveryData: OrderDeliveryData?
     ) {
         //BUILD SALE OBJECT TO BE SENT TO PAYMENT APP
         binding.ProceedCons.visibility = View.VISIBLE
@@ -577,9 +578,9 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             saleTrans.data = TransBuilder().getSaleObject(
                 String.format(
                     "%.2f",
-                    orderDeliveryData.ordersDelivery.sPrice
+                    orderDeliveryData?.ordersDelivery?.sPrice ?: 0.01
                 ),
-                orderDeliveryData.ordersItemDelivery[0].orderNO
+                orderDeliveryData?.ordersItemDelivery?.get(0)?.orderNO ?: "1234"
             )
             LogUtils.d(
                 TAG,
@@ -606,7 +607,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                             binding.ProceedCons.visibility = View.GONE
                             if (responseCode == "00") {
 
-                                orderDeliveryData.creditInfo = CreditInfo(
+                                orderDeliveryData?.creditInfo = CreditInfo(
                                     saleResponse.card_number,
                                     saleResponse.transaction_amount,
                                     saleResponse.date_time,
@@ -644,7 +645,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         task: String,
         command: String,
         walletName: String,
-        orderDeliveryData: OrderDeliveryData
+        orderDeliveryData: OrderDeliveryData?
     ) {
 
         Thread {
@@ -655,9 +656,9 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             saleTrans.data = TransBuilder().getRefundObject(
                 String.format(
                     "%.2f",
-                    orderDeliveryData.ordersDelivery.sPrice
+                    orderDeliveryData?.ordersDelivery?.sPrice ?: 0.01
                 ),
-                orderDeliveryData.ordersItemDelivery[0].orderNO
+                orderDeliveryData?.ordersItemDelivery?.get(0)?.orderNO ?: "1234",
             )
             LogUtils.d(
                 TAG,

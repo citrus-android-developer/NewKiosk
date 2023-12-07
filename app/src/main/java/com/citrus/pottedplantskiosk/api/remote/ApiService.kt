@@ -16,10 +16,7 @@ interface ApiService {
         @Field("jsonData") jsonData: String
     ): ApiResponse<MenuBean>
 
-    /**取得廣告輪播資訊 */
-    @Headers("Content-Type: application/x-www-form-urlencoded")
-    @GET
-    suspend fun getBanner(@Url url: String,@Query("jsonData") jsonData: String): ApiResponse<BannerResponse>
+
 
 
     /**上傳訂單 */
@@ -30,6 +27,7 @@ interface ApiService {
         @Url url: String,
         @Field("jsonData") jsonData: String
     ): ApiResponse<UploadResponse>
+
 
 
     /**編輯付款方式、已付款狀態 */

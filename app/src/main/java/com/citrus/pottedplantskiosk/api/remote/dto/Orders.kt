@@ -4,283 +4,213 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 
-data class CreditInfo(
-    /**卡號*/
-    val cardNumber: String,
-    /**消費金額*/
-    val transactionAmount: String,
-    /**刷卡日期*/
-    val dateTime: String,
-    /**序號*/
-    val retrievalReferenceNumber: String,
-    /**授權碼*/
-    val approvalCode: String,
-    /**批次編號*/
-    val batchNumber: String,
-    /**端末機代號*/
-    val terminalId: String,
-    /**商家ID*/
-    val merchantId: String,
-    /**卡別*/
-    val cardLabel: String,
+data class OrdersRequest(
+    @SerializedName("DeviceID")
+    var deviceID: String,
+    @SerializedName("Orders")
+    var orders: Orders,
+    @SerializedName("OrdersItem")
+    var ordersItem: List<OrdersItem>,
+    @SerializedName("OrdersPayway")
+    var ordersPayway: OrdersPayway
 ) : Serializable
 
-data class OrderDeliveryData(
-    @SerializedName("RSNO")
-    val rsno: String,
-    @SerializedName("OrdersDelivery")
-    val ordersDelivery: OrdersDelivery,
-    @SerializedName("OrdersItemDelivery")
-    val ordersItemDelivery: List<OrdersItemDelivery>,
-    var creditInfo: CreditInfo? = null
-) : Serializable
-
-
-data class OrdersDelivery(
-    @SerializedName("StoreID")
-    val storeID: Int,
-
-    @SerializedName("OrderHR")
-    val orderHR: String = "",
-
-    @SerializedName("GPrice")
-    val gPrice: Double = 0.0,
-
-    @SerializedName("DisPrice")
-    val disPrice: Double = 0.0,
-
-    @SerializedName("SPrice")
-    val sPrice: Double,
-
-    @SerializedName("IsSend")
-    val isSend: String = "Y",
-
+data class Orders(
+    @SerializedName("CName")
+    var cName: String,
+    @SerializedName("CardNO")
+    var cardNO: String,
+    @SerializedName("CardType")
+    var cardType: String,
+    @SerializedName("CardUser")
+    var cardUser: String,
     @SerializedName("CloseTime")
-    val closeTime: String = "",
-
-    @SerializedName("IsClose")
-    val isClose: String = "",
-
-    @SerializedName("IsDel")
-    val isDel: String = "",
-
+    var closeTime: Any,
+    @SerializedName("commission")
+    var commission: Int,
+    @SerializedName("CustNo")
+    var custNo: String,
+    @SerializedName("cust_num")
+    var custNum: Int,
     @SerializedName("DelReason")
-    val delReason: String = "",
-
-    @SerializedName("ServiceType")
-    val serviceType: String = "",
-
+    var delReason: String,
+    @SerializedName("DelUser")
+    var delUser: String,
+    @SerializedName("Deliver")
+    var deliver: String,
+    @SerializedName("deskno")
+    var deskno: String,
+    @SerializedName("DisAMT")
+    var disAMT: String,
+    @SerializedName("DisID")
+    var disID: String,
+    @SerializedName("DisPrice")
+    var disPrice: Int,
+    @SerializedName("DisQty")
+    var disQty: Int,
+    @SerializedName("DisUnit")
+    var disUnit: String,
+    @SerializedName("DisValue")
+    var disValue: String,
+    @SerializedName("GPrice")
+    var gPrice: Int,
+    @SerializedName("Invamt")
+    var invamt: Int,
+    @SerializedName("InvoiceFail")
+    var invoiceFail: String,
+    @SerializedName("IsClose")
+    var isClose: String,
+    @SerializedName("IsDataToERP")
+    var isDataToERP: String,
+    @SerializedName("IsDel")
+    var isDel: String,
+    @SerializedName("IsSend")
+    var isSend: String,
+    @SerializedName("Memo")
+    var memo: String,
+    @SerializedName("minispend")
+    var minispend: Int,
+    @SerializedName("OrderHR")
+    var orderHR: String,
+    @SerializedName("OrderNote")
+    var orderNote: String,
+    @SerializedName("OrderState")
+    var orderState: String,
+    @SerializedName("OrderTime")
+    var orderTime: String,
     @SerializedName("PayType")
     var payType: String,
-
-    @SerializedName("WorkClass")
-    val workClass: String = "",
-
+    @SerializedName("Payee")
+    var payee: String,
     @SerializedName("Qty")
-    val qty: Int,
-
-    @SerializedName("DisID")
-    val disID: String = "",
-
-    @SerializedName("DisQty")
-    val disQty: Int = 0,
-
-    @SerializedName("CName")
-    val cName: String = "",
-
-    @SerializedName("Tel")
-    val tel: String = "",
-
-    @SerializedName("IsDataToERP")
-    val isDataToERP: String = "",
-
-    @SerializedName("UserID")
-    val userID: String = "",
-
-    @SerializedName("Status")
-    val status: String = "",
-
-    @SerializedName("Invamt")
-    val invamt: Int = 0,
-
-    @SerializedName("CustNo")
-    val custNo: String = "",
-
-    @SerializedName("ServiceOutStatus")
-    val serviceOutStatus: String = "",
-
-    @SerializedName("InvoiceFail")
-    val invoiceFail: String = "",
-
-    @SerializedName("cust_num")
-    val custNum: Int = 1,
-
-    val deskno: String = "",
-
-    @SerializedName("Deliver")
-    val deliver: String = "",
-
-    @SerializedName("CardType")
-    val cardType: String = "",
-
-    @SerializedName("CardUser")
-    val cardUser: String = "",
-
-    @SerializedName("CardNO")
-    val cardNO: String = "",
-
-    @SerializedName("ServiceCust")
-    val serviceCust: String = "",
-
-    @SerializedName("OrderState")
-    val orderState: String = "",
-
-    @SerializedName("ServicePric")
-    val servicePrice: Double = 0.0,
-
-    @SerializedName("OrderNote")
-    val orderNote: String = "",
-
+    var qty: Int,
+    @SerializedName("RVC")
+    var rVC: String,
+    @SerializedName("RandomCode")
+    var randomCode: String,
     @SerializedName("Rounding")
-    val rounding: Int = 0,
-
-    @SerializedName("Memo")
-    val memo: String = "",
-
-    @SerializedName("DelUser")
-    val delUser: String = "",
-
-    val totaltax: Double = 0.0,
-    val weight: Int = 0,
-
-    @SerializedName("IsPay")
-    var isPay: String,
-
-    val tkey: String = ""
-) : Serializable
-
-
-data class OrdersItemDelivery(
-    @SerializedName("StoreID")
-    val storeID: Int,
-
-    @SerializedName("OrderNO")
-    var orderNO: String = "",
-
-    @SerializedName("OrderSeq")
-    val orderSeq: Int,
-
-    @SerializedName("GID")
-    val gid: String,
-
-    @SerializedName("GPrice")
-    val gPrice: Double = 0.0,
-
-    @SerializedName("DisPrice")
-    val disPrice: Double = 0.0,
-
+    var rounding: Int,
     @SerializedName("SPrice")
-    val sPrice: Double,
-
-    @SerializedName("Qty")
-    val qty: Int,
-
-    @SerializedName("AddGID")
-    val addGID: String = "",
-
-    @SerializedName("AddGName")
-    val addGName: String = "",
-
-    @SerializedName("FlavorID")
-    val flavorID: String = "",
-
-    @SerializedName("FlavorDesc")
-    val flavorDesc: String = "",
-
-    @SerializedName("IsDel")
-    val isDel: String = "",
-
-    @SerializedName("DelReason")
-    val delReason: String = "",
-
-    @SerializedName("Gname")
-    val gname: String,
-
-    @SerializedName("AddPrice")
-    val addPrice: Double = 0.0,
-
-    @SerializedName("IsSend")
-    val isSend: String = "Y",
-
-    @SerializedName("GKID")
-    val gkid: String,
-
-    @SerializedName("IsPrint")
-    val isPrint: String = "",
-
-    @SerializedName("GType")
-    val gType: String,
-
-    @SerializedName("SubGKID")
-    val subGKID: String = "",
-
-    @SerializedName("MGKID")
-    val mgkid: String = "",
-
-    @SerializedName("MGID")
-    val mgid: String = "",
-
-    @SerializedName("SubCnt")
-    val subCnt: Int = 0,
-
-    @SerializedName("KindPageID")
-    val kindPageID: String = "",
-
-    @SerializedName("GoodsPageID")
-    val goodsPageID: String = "",
-
-    @SerializedName("KitStatic")
-    val kitStatic: String = "",
-
-    @SerializedName("PrintGroup")
-    val printGroup: String = "",
-
+    var sPrice: Int,
+    @SerializedName("ServiceCust")
+    var serviceCust: String,
+    @SerializedName("ServiceOutStatus")
+    var serviceOutStatus: String,
+    @SerializedName("ServicePric")
+    var servicePric: Int,
     @SerializedName("ServiceType")
-    val serviceType: String = "",
-
-    @SerializedName("ItemStatus")
-    val itemStatus: String = "",
-
-    @SerializedName("DisID")
-    val disID: String = "",
-
-    val tax: Double = 0.0,
-    val weight: Int = 0,
-
-    @SerializedName("GName2")
-    val gName2: String = "",
-
-    val kdstime: String = "",
-
-    @SerializedName("Flag")
-    val flag: String = "",
-
-    @SerializedName("CreateUser")
-    val createUser: String = "",
-
-    @SerializedName("CreateDate")
-    val createDate: String = "",
-
-    @SerializedName("UpdateUser")
-    val updateUser: String = "",
-
-    @SerializedName("UpdateDate")
-    val updateDate: String = "",
-
-    @SerializedName("AddGname2")
-    val addGname2: String = "",
-
-    @SerializedName("FlavorDesc2")
-    val flavorDesc2: String = ""
+    var serviceType: String,
+    @SerializedName("Status")
+    var status: String,
+    @SerializedName("Tel")
+    var tel: String,
+    @SerializedName("totaltax")
+    var totaltax: Int,
+    @SerializedName("UserID")
+    var userID: String,
+    @SerializedName("weight")
+    var weight: Int,
+    @SerializedName("WorkClass")
+    var workClass: String
 ) : Serializable
 
+data class OrdersItem(
+    @SerializedName("AddGID")
+    var addGID: String,
+    @SerializedName("AddGName")
+    var addGName: String,
+    @SerializedName("AddGname2")
+    var addGname2: String,
+    @SerializedName("AddPrice")
+    var addPrice: Int,
+    @SerializedName("commission")
+    var commission: Int,
+    @SerializedName("CreateDate")
+    var createDate: String,
+    @SerializedName("CreateUser")
+    var createUser: String,
+    @SerializedName("DelReason")
+    var delReason: String,
+    @SerializedName("DisID")
+    var disID: String,
+    @SerializedName("DisPrice")
+    var disPrice: Int,
+    @SerializedName("finishtime")
+    var finishtime: String,
+    @SerializedName("FlavorDesc")
+    var flavorDesc: String,
+    @SerializedName("FlavorDesc2")
+    var flavorDesc2: String,
+    @SerializedName("FlavorID")
+    var flavorID: String,
+    @SerializedName("GID")
+    var gID: String,
+    @SerializedName("GKID")
+    var gKID: String,
+    @SerializedName("GName2")
+    var gName2: String,
+    @SerializedName("GPrice")
+    var gPrice: Int,
+    @SerializedName("GType")
+    var gType: String,
+    @SerializedName("Gname")
+    var gname: String,
+    @SerializedName("GoodsPageID")
+    var goodsPageID: String,
+    @SerializedName("IsDel")
+    var isDel: String,
+    @SerializedName("IsPrint")
+    var isPrint: String,
+    @SerializedName("IsSend")
+    var isSend: String,
+    @SerializedName("ItemStatus")
+    var itemStatus: String,
+    @SerializedName("kdstime")
+    var kdstime: String,
+    @SerializedName("KindPageID")
+    var kindPageID: String,
+    @SerializedName("KitStatic")
+    var kitStatic: String,
+    @SerializedName("MGID")
+    var mGID: String,
+    @SerializedName("MGKID")
+    var mGKID: String,
+    @SerializedName("OrderSeq")
+    var orderSeq: Int,
+    @SerializedName("PrintGroup")
+    var printGroup: String,
+    @SerializedName("processtime")
+    var processtime: String,
+    @SerializedName("Qty")
+    var qty: Int,
+    @SerializedName("RVC")
+    var rVC: String,
+    @SerializedName("SPrice")
+    var sPrice: Int,
+    @SerializedName("ServiceType")
+    var serviceType: String,
+    @SerializedName("SubCnt")
+    var subCnt: Int,
+    @SerializedName("SubGKID")
+    var subGKID: String,
+    @SerializedName("tax")
+    var tax: Int,
+    @SerializedName("weight")
+    var weight: Int
+) : Serializable
+
+
+data class OrdersPayway(
+    var orderId: String,
+    var payNo: String,
+    var paydesc: String,
+    var unitCnt: String,
+    var pPrice: String,
+    var overPrice: String,
+    var overStatus: String,
+    var totaltax: String,
+    var cardNo: String,
+    var balance: String,
+    var tmlID: String,
+    var tnsdata: String
+) : Serializable

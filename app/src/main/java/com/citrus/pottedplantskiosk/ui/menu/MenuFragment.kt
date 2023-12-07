@@ -334,14 +334,14 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
         lifecycleFlow(menuViewModel.creditFlow) { deliveryInfo ->
-            deliveryInfo?.let {
+            deliveryInfo.let {
                 processingData = deliveryInfo
                 findDevices(deliveryInfo)
             }
         }
 
         lifecycleFlow(menuViewModel.creditRefundFlow) { deliveryInfo ->
-            deliveryInfo?.let {
+            deliveryInfo.let {
                 findDevices(deliveryInfo, isRefund = true)
             }
         }
@@ -394,6 +394,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
                 snackbarLayout.setPadding(0, 0, 0, 50)
                 val bGotoWebsite: Button =
+
                     customSnackView.findViewById(R.id.gotoWebsiteButton)
                 val timerHint: TextView = customSnackView.findViewById(R.id.textView2)
                 updateTimerJob = lifecycleScope.launch {

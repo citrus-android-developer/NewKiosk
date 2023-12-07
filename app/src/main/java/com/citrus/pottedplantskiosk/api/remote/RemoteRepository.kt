@@ -33,14 +33,6 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
             }
         })
 
-    override suspend fun getBanner(url: String, jsonData: String) =
-        resultFlowData(apiQuery = { apiService.getBanner(url, jsonData) }, onSuccess = { result ->
-            if (result.data.status != 1 || result.data.data.isEmpty()) {
-                Resource.Error("Banner not found", null)
-            } else {
-                Resource.Success(result.data)
-            }
-        })
 
     override suspend fun postOrders(url: String, jsonData: String) =
         resultFlowData(apiQuery = { apiService.setOrders(url, jsonData) }, onSuccess = { result ->
@@ -50,6 +42,8 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
                 Resource.Success(result.data)
             }
         })
+
+
 
     override suspend fun postOrderPayStatusEdit(
         url: String,

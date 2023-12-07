@@ -13,7 +13,6 @@ import java.lang.Exception
 
 interface Repository {
     suspend fun getMenu(url: String): Flow<Resource<MenuBean>>
-    suspend fun getBanner(url: String, jsonData: String): Flow<Resource<BannerResponse>>
     suspend fun postOrders(url: String, jsonData: String): Flow<Resource<UploadResponse>>
     suspend fun postOrderPayStatusEdit(url: String, jsonData: String): Flow<Resource<UploadResponse>>
 }

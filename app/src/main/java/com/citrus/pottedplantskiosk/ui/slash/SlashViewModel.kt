@@ -50,7 +50,7 @@ class SlashViewModel @Inject constructor(
 
     private fun getMenu() =
         viewModelScope.launch {
-            repository.getMenu("http://192.168.0.160" + Constants.POS_GET_MENU)
+            repository.getMenu("http://"+ prefs.serverIp + Constants.POS_GET_MENU)
                 .collect { result ->
                     _allMenuData.emit(result)
                 }
@@ -77,7 +77,7 @@ class SlashViewModel @Inject constructor(
     }
 
     private fun getPicUrlFromFolder(): List<BannerData> {
-        val folderUrl = "http://192.168.0.160/advImages"
+        val folderUrl = "http://" + prefs.serverIp +"/advImages"
         var data = listOf<BannerData>()
         val pattern = """<A HREF="/[^/]+/([^"]+\.(?:jpg|jpeg|png))">""".toRegex()
 

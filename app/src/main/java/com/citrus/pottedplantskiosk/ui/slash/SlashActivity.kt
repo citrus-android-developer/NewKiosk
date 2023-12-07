@@ -77,9 +77,7 @@ class SlashActivity : AppCompatActivity() {
                     }
 
                     is Resource.Error -> {
-
                         viewModel.fetchError()
-
                         delay(2000)
                         var dialog = MsgAlertDialog(this@SlashActivity, result.message!!)
                         dialog?.show()
@@ -94,17 +92,6 @@ class SlashActivity : AppCompatActivity() {
 
         lifecycleScope.launchWhenStarted {
             viewModel.allBannerData.collect { result ->
-//                when (result) {
-//                    is Resource.Loading -> Unit
-//                    is Resource.Success -> {
-//                        bannerData = result.data
-//                        checkEachFun()
-//                    }
-//                    is Resource.Error -> {
-//                        Log.e("error",result.message!!)
-//                        checkEachFun()
-//                    }
-//                }
                 bannerData = result
                 checkEachFun()
             }

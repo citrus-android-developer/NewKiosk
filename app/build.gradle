@@ -5,16 +5,16 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'androidx.navigation.safeargs.kotlin'
 }
-apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'kotlin-android-extensions'
 
 
 android {
-    compileSdk 31
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.citrus.pottedplantskiosk"
         minSdk 24
-        targetSdk 31
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -109,7 +109,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 
     /** Dagger Hilt */
-    def hilt_version = '2.38.1'
+    def hilt_version = '2.44'
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
 
@@ -184,6 +184,7 @@ dependencies {
 
     // Material Design 3
     implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.ui:ui'
 
     // Android Studio Preview support
     implementation 'androidx.compose.ui:ui-tooling-preview'

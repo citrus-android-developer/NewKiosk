@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.*
+import androidx.compose.material3.MaterialTheme
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
@@ -278,6 +279,18 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             )
         }
 
+        lifecycleFlow(menuViewModel.showMGoodsDialogEvent) { goods ->
+            menuViewModel.isIdentify = false
+            binding.composeViewMgoodsDialog.setContent {
+                MaterialTheme {
+                    if (goods != null) {
+                        MGoodsDialog(onDismiss = {
+                            menuViewModel.hideMGoodsDialog()
+                        })
+                    }
+                }
+            }
+        }
 
 //        lifecycleFlow(menuViewModel.needSetting) {
 //            if(it.isNotBlank()) {
@@ -292,7 +305,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
             binding.cartMotionLayout.clearCartGoods()
         }
 
-        lifecycleFlow(menuViewModel.errMsg) {  type ->
+        lifecycleFlow(menuViewModel.errMsg) { type ->
 
             val msg = when (type) {
                 Constants.RefundSuccess -> context?.getString(R.string.refundHint)
@@ -527,7 +540,12 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     }
 
     fun startRefund(payModel: PayModel) {
-        sendRefundRequest("refund", "C203", payModel.isWallet.toString(), payModel.orderDeliveryData)
+        sendRefundRequest(
+            "refund",
+            "C203",
+            payModel.isWallet.toString(),
+            payModel.orderDeliveryData
+        )
     }
 
 

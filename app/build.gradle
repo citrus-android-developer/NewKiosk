@@ -109,7 +109,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 
     /** Dagger Hilt */
-    def hilt_version = '2.44'
+    def hilt_version = '2.48'
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
 
@@ -184,7 +184,6 @@ dependencies {
 
     // Material Design 3
     implementation 'androidx.compose.material3:material3'
-    implementation 'androidx.compose.ui:ui'
 
     // Android Studio Preview support
     implementation 'androidx.compose.ui:ui-tooling-preview'

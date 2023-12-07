@@ -6,14 +6,19 @@ import android.animation.ValueAnimator
 import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Color
+import android.graphics.Path
+import android.graphics.PathMeasure
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.LinearInterpolator
-import android.widget.*
+import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.compose.material3.MaterialTheme
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -37,7 +42,10 @@ import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
 import com.citrus.pottedplantskiosk.api.remote.dto.UsbInfo
 import com.citrus.pottedplantskiosk.databinding.FragmentMenuBinding
 import com.citrus.pottedplantskiosk.di.prefs
-import com.citrus.pottedplantskiosk.ui.menu.adapter.*
+import com.citrus.pottedplantskiosk.ui.menu.adapter.GoodsItemAdapter
+import com.citrus.pottedplantskiosk.ui.menu.adapter.GroupItemAdapter
+import com.citrus.pottedplantskiosk.ui.menu.adapter.ImageAdapter
+import com.citrus.pottedplantskiosk.ui.menu.adapter.MainGroupItemAdapter
 import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.ACTION_USB_PERMISSION
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
@@ -64,7 +72,6 @@ import com.youth.banner.indicator.RectangleIndicator
 import com.youth.banner.transformer.AlphaPageTransformer
 import com.youth.banner.util.BannerUtils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.goods_item_view.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -129,28 +136,28 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     }
 
     private fun requestUsbPermission() {
-        usbInfo.noPermissionDevice.forEachReversedWithIndex { i, usbDevice ->
-            if (usbInfo.usbManager?.hasPermission(usbDevice) == false) {
-                val mPermissionIntent: PendingIntent
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    mPermissionIntent = PendingIntent.getActivity(
-                        requireContext(),
-                        0,
-                        Intent(ACTION_USB_PERMISSION),
-                        PendingIntent.FLAG_MUTABLE
-                    )
-                } else {
-                    mPermissionIntent = PendingIntent.getBroadcast(
-                        requireContext(),
-                        0,
-                        Intent(ACTION_USB_PERMISSION),
-                        PendingIntent.FLAG_IMMUTABLE
-                    )
-                }
-
-                usbInfo.usbManager?.requestPermission(usbDevice, mPermissionIntent)
-            } else usbInfo.noPermissionDevice.removeAt(i)
-        }
+//        usbInfo.noPermissionDevice.forEachReversedWithIndex { i, usbDevice ->
+//            if (usbInfo.usbManager?.hasPermission(usbDevice) == false) {
+//                val mPermissionIntent: PendingIntent
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//                    mPermissionIntent = PendingIntent.getActivity(
+//                        requireContext(),
+//                        0,
+//                        Intent(ACTION_USB_PERMISSION),
+//                        PendingIntent.FLAG_MUTABLE
+//                    )
+//                } else {
+//                    mPermissionIntent = PendingIntent.getBroadcast(
+//                        requireContext(),
+//                        0,
+//                        Intent(ACTION_USB_PERMISSION),
+//                        PendingIntent.FLAG_IMMUTABLE
+//                    )
+//                }
+//
+//                usbInfo.usbManager?.requestPermission(usbDevice, mPermissionIntent)
+//            } else usbInfo.noPermissionDevice.removeAt(i)
+//        }
     }
 
 
@@ -712,15 +719,21 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private fun addGoodToCarAnimation(goodView: View) {
         val mCurrentPosition = FloatArray(2)
 
+        val goodItemImageView = goodView.findViewById<ImageView>(R.id.itemImage)
+        val goodItemName = goodView.findViewById<TextView>(R.id.tvItemName)
+
         val view = View.inflate(requireContext(), R.layout.goods_item_view, null)
-        view.itemImage.setImageDrawable(goodView.itemImage.drawable)
-        view.itemImage.scaleType = ImageView.ScaleType.CENTER_CROP
-        view.itemImage.layoutParams =
+        val itemImage = view.findViewById<ImageView>(R.id.itemImage)
+        val tvItemName = view.findViewById<TextView>(R.id.tvItemName)
+        val tvPrice = view.findViewById<TextView>(R.id.tvPrice)
+        itemImage.setImageDrawable(goodItemImageView.drawable)
+        itemImage.scaleType = ImageView.ScaleType.CENTER_CROP
+        itemImage.layoutParams =
             FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 100)
-        view.tvItemName.text = goodView.tvItemName.text
-        view.tvItemName.textSize = 9f
-        view.tvItemName.setPadding(0)
-        view.tvPrice.visibility = View.GONE
+        tvItemName.text = goodItemName.text
+        tvItemName.textSize = 9f
+        tvItemName.setPadding(0)
+        tvPrice.visibility = View.GONE
 
         val layoutParams = FrameLayout.LayoutParams(150, 150)
         binding.outSideCons.addView(view, layoutParams)

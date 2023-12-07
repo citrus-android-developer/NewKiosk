@@ -163,7 +163,7 @@ var _Price: Double = 0.0
 
 /**avoid shallow copy*/
 fun deepCopy(
-    add: List<Add> = this.add.map { it?.copy() },
+    add: List<Add> = this.add.map { it.copy() },
     flavor: List<Flavor> = this.flavor.map { it.copy() },
     size: List<Size>? = this.size?.map { it.copy() } ?: null,
 ) = this.copy(add = add, flavor = flavor, size = size)

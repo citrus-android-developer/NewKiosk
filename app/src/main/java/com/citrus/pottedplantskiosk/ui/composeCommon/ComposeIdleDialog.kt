@@ -75,7 +75,7 @@ fun IdleDialog(
                     contentDescription = null,
                     colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(colorResource(R.color.lightBg)),
                     modifier = Modifier
-                        .padding(start = 8.dp,end = 8.dp)
+                        .padding(start = 8.dp,end = 12.dp)
                         .size(36.dp)
                 )
 
@@ -93,13 +93,13 @@ fun IdleDialog(
                         text = stringResource(R.string.idle),
                         color = colorResource(R.color.lightBg),
                         style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.padding(start = 4.dp, end = 8.dp, bottom = 4.dp, top = 8.dp)
+                        modifier = Modifier.padding( end = 8.dp, bottom = 4.dp, top = 8.dp)
                     )
                     Text(
                         text = stringResource(R.string.idleHint, timeLeft),
                         color = colorResource(R.color.lightBg),
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(start = 4.dp, end = 8.dp, bottom = 8.dp, top = 4.dp)
+                        modifier = Modifier.padding( end = 8.dp, bottom = 8.dp, top = 4.dp)
                     )
                 }
             }

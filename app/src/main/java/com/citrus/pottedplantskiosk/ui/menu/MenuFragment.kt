@@ -392,35 +392,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     }
                 }
             }
-
-
-//            if (timer == 100) {
-//                var temp = 100
-//                snackbar = Snackbar.make(requireView(), "", 20000)
-//                val customSnackView: View =
-//                    layoutInflater.inflate(R.layout.custom_snackbar_view, null)
-//                snackbar!!.view.setBackgroundColor(Color.TRANSPARENT)
-//                val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
-//                snackbarLayout.setPadding(0, 0, 0, 50)
-//                val timerHint: TextView = customSnackView.findViewById(R.id.textView2)
-//                val snackBarArea: CardView = customSnackView.findViewById(R.id.snackbar_view)
-//                updateTimerJob = lifecycleScope.launch {
-//                    while (temp < Constants.TWO_MINUTES) {
-//                        delay(1000)
-//                        temp++
-//                        timerHint.text = getString(R.string.idleHint, (120 - temp))
-//                    }
-//                }
-//
-//                snackBarArea.setOnClickListener {
-//                   releaseSnack()
-//                }
-//
-//                snackbarLayout.addView(customSnackView, 0)
-//                snackbar!!.show()
-//            }
-
-
         }
     }
 

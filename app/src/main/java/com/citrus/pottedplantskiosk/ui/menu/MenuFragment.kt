@@ -282,10 +282,20 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         lifecycleFlow(menuViewModel.showDetailEvent) { goods ->
             menuViewModel.isIdentify = false
             Log.e("showDetailEvent", goods.toString())
-            findNavController().navigateSafely(
-                R.id.action_menuFragment_to_zoomPageFragment,
-                args = bundleOf("goods" to goods.deepCopy())
-            )
+//            findNavController().navigateSafely(
+//                R.id.action_menuFragment_to_zoomPageFragment,
+//                args = bundleOf("goods" to goods.deepCopy())
+//            )
+            //TODO: test (上面那段要復原)
+            binding.composeViewMgoodsDialog.setContent {
+                MaterialTheme {
+                    if (goods != null) {
+                        MGoodsDialog(onDismiss = {
+                            menuViewModel.hideMGoodsDialog()
+                        })
+                    }
+                }
+            }
         }
 
         lifecycleFlow(menuViewModel.showMGoodsDialogEvent) { goods ->

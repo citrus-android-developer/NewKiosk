@@ -196,6 +196,10 @@ dependencies {
     // hilt Compose
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
+    //compose 加載圖片
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
+
 }
 
 kapt {

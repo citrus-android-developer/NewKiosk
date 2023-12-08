@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -22,6 +24,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -36,41 +39,19 @@ import com.citrus.pottedplantskiosk.R
 @Composable
 fun MGoodsDialog(
     onDismiss: () -> Unit,
-//    onTouchEvent: () -> Unit
+    onTouchEvent: () -> Unit
 ) {
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        modifier = Modifier
-            .clickable {
-                Log.d("TEST", "MGoodsDialog: click")
-            }
-            .pointerInput(null) {
-                detectTapGestures(
-                    onDoubleTap = {},
-                    onLongPress = {},
-                    onPress = {},
-                    onTap = {
-
-                        Log.d("TEST", "MGoodsDialog: onTap")
-                    }
-                )
-            }
-            .pointerInput(Unit) {
-            detectTransformGestures { centroid, pan, zoom, rotation ->
-                Log.d("TEST", "MGoodsDialog: ontouch")
-            }
-        }
     ) {
-        Content()
-//        Column {
-//            Text("Hide bottom sheet")
-//            Button(onClick = {
-//                onDismiss()
-//            }) {
-//                Text("Hide bottom sheet")
-//            }
-//        }
+        Box(modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures {
+                onTouchEvent()
+            }
+        }) {
+            Content()
+        }
     }
 }
 

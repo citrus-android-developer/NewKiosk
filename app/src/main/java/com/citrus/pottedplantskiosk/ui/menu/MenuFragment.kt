@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.Button
@@ -281,20 +282,20 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
         lifecycleFlow(menuViewModel.showDetailEvent) { goods ->
             menuViewModel.isIdentify = false
-//            findNavController().navigateSafely(
-//                R.id.action_menuFragment_to_zoomPageFragment,
-//                args = bundleOf("goods" to goods.deepCopy())
-//            )
+            findNavController().navigateSafely(
+                R.id.action_menuFragment_to_zoomPageFragment,
+                args = bundleOf("goods" to goods.deepCopy())
+            )
             //TODO: test (上面那段要復原)
-            binding.composeViewMgoodsDialog.setContent {
-                MaterialTheme {
-                    if (goods != null) {
-                        MGoodsDialog(onDismiss = {
-                            menuViewModel.hideMGoodsDialog()
-                        })
-                    }
-                }
-            }
+//            binding.composeViewMgoodsDialog.setContent {
+//                MaterialTheme {
+//                    if (goods != null) {
+//                        MGoodsDialog(onDismiss = {
+//                            menuViewModel.hideMGoodsDialog()
+//                        })
+//                    }
+//                }
+//            }
         }
 
         lifecycleFlow(menuViewModel.showMGoodsDialogEvent) { goods ->
@@ -303,7 +304,10 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 MaterialTheme {
                     if (goods != null) {
                         MGoodsDialog(onDismiss = {
+                            menuViewModel.setDispatchTouch()
                             menuViewModel.hideMGoodsDialog()
+                        }, onTouchEvent = {
+                            menuViewModel.setDispatchTouch()
                         })
                     }
                 }
@@ -424,7 +428,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 }
 
                 snackBarArea.setOnClickListener {
-                   releaseSnack()
+                    releaseSnack()
                 }
 
                 snackbarLayout.addView(customSnackView, 0)

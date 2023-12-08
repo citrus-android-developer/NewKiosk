@@ -19,6 +19,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.compose.material3.MaterialTheme
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -348,6 +349,15 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         }
 
 
+        lifecycleFlow(menuViewModel.dispatcherTouch) {
+            if (snackbar != null) {
+                updateTimerJob?.cancel()
+                updateTimerJob = null
+                snackbar?.dismiss()
+                snackbar = null
+            }
+        }
+
 
         lifecycleFlow(menuViewModel.toPrint) { transactionData ->
 
@@ -394,30 +404,24 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 snackbar!!.view.setBackgroundColor(Color.TRANSPARENT)
                 val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
                 snackbarLayout.setPadding(0, 0, 0, 50)
-                val continueBtn: Button =
-
-                    customSnackView.findViewById(R.id.continueButton)
                 val timerHint: TextView = customSnackView.findViewById(R.id.textView2)
+                val snackBarArea: CardView = customSnackView.findViewById(R.id.snackbar_view)
                 updateTimerJob = lifecycleScope.launch {
-                    while (temp < 120) {
+                    while (temp < Constants.TWO_MINUTES) {
                         delay(1000)
                         temp++
                         timerHint.text = getString(R.string.idleHint, (120 - temp))
                     }
                 }
 
-                continueBtn.setOnClickListener { v ->
-                    ElasticAnimation(v)
-                        .setScaleX(0.85f)
-                        .setScaleY(0.85f)
-                        .setDuration(100)
-                        .setOnFinishListener {
-                            releaseSnack()
-                        }
-                        .doAction()
+                snackBarArea.setOnClickListener {
+                   releaseSnack()
                 }
+
                 snackbarLayout.addView(customSnackView, 0)
                 snackbar!!.show()
+
+
             }
 
             if (timer == Constants.TWO_MINUTES) {
@@ -711,11 +715,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     }
 
     private fun releaseSnack() {
-        updateTimerJob?.cancel()
-        updateTimerJob = null
-        menuViewModel.timeCount = 0
-        snackbar?.dismiss()
-        snackbar = null
+        menuViewModel.setDispatchTouch()
     }
 
     private fun addGoodToCarAnimation(goodView: View) {

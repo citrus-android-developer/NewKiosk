@@ -901,7 +901,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        menuViewModel.timeCount = 0
+        menuViewModel.setDispatchTouch()
         return super.dispatchTouchEvent(ev)
     }
 

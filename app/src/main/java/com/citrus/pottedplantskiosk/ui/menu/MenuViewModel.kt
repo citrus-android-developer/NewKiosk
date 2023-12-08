@@ -100,6 +100,9 @@ class MenuViewModel @Inject constructor(
     private val _scanResult = MutableSharedFlow<String>()
     val scanResult: SharedFlow<String> = _scanResult
 
+    private val _dispatcherTouch = MutableSharedFlow<Boolean>()
+    val dispatcherTouch: SharedFlow<Boolean> = _dispatcherTouch
+
     fun setScanResult(result: String) = viewModelScope.launch {
         Log.e("scanResult", result)
         allGoodsForScan?.let { goodList ->
@@ -419,6 +422,11 @@ class MenuViewModel @Inject constructor(
 
     fun setCreditRefundSuccess() = viewModelScope.launch {
         _errMsg.fineEmit(RefundSuccess)
+    }
+
+    fun setDispatchTouch() = viewModelScope.launch {
+        timeCount = 0
+        _dispatcherTouch.fineEmit(true)
     }
 
 

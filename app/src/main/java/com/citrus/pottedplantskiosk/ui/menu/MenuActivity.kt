@@ -276,7 +276,6 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
 
     open fun onOpenPort() {
         for (device in mMatchDevice!!) {
-            Log.e("device", device.deviceName)
             if ("/dev/bus/usb/001/004" == device.deviceName) {
                 mUsbDevice = device
                 mPortName = device.deviceName
@@ -925,7 +924,6 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
             )
 
             if (errMsg.isEmpty()) {
-                Log.e("print", "success")
                 menuViewModel.setPrintResult(true)
             } else {
                 menuViewModel.setPrintResult(false)

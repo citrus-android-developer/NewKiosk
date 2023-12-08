@@ -104,7 +104,6 @@ class MenuViewModel @Inject constructor(
     val dispatcherTouch: SharedFlow<Boolean> = _dispatcherTouch
 
     fun setScanResult(result: String) = viewModelScope.launch {
-        Log.e("scanResult", result)
         allGoodsForScan?.let { goodList ->
             val goods = goodList.find { it.barCode == result }
             goods?.let {
@@ -339,7 +338,6 @@ class MenuViewModel @Inject constructor(
     ) =
         viewModelScope.launch {
             val dataJson = Gson().toJson(deliveryInfo)
-            Log.e("dataJson", dataJson)
             repository.postOrders(
                 prefs.serverIp + Constants.SET_ORDERS,
                 Gson().toJson(deliveryInfo)
@@ -380,8 +378,6 @@ class MenuViewModel @Inject constructor(
                 OrderStatusEditRequest(rsno = prefs.storeId, orderNo = orderNo, isPay = "Y")
 
             val request = Gson().toJson(orderStatusEditRequest)
-
-            Log.e("request", request)
 
             repository.postOrders(
                 prefs.serverIp + Constants.SET_ORDER_EDIT,
@@ -425,6 +421,7 @@ class MenuViewModel @Inject constructor(
     }
 
     fun setDispatchTouch() = viewModelScope.launch {
+        Log.d("TEST", "setDispatchTouch:")
         timeCount = 0
         _dispatcherTouch.fineEmit(true)
     }

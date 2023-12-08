@@ -281,7 +281,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
         lifecycleFlow(menuViewModel.showDetailEvent) { goods ->
             menuViewModel.isIdentify = false
-            Log.e("showDetailEvent", goods.toString())
 //            findNavController().navigateSafely(
 //                R.id.action_menuFragment_to_zoomPageFragment,
 //                args = bundleOf("goods" to goods.deepCopy())
@@ -479,16 +478,11 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         isRefund: Boolean = false
     ) {
 
-        Log.e(TAG, "onClick: current comm type:$currCommType")
         mDeviceInfoListMap.clear()
         mDeviceInfoList.clear()
         SemiLinkApi.getInstance(requireContext())
             .getDevices(currCommType, object : SearchDeviceListener {
                 override fun onDiscovered(deviceInfo: DeviceInfo) {
-                    Log.e(
-                        TAG,
-                        "onDiscovered:name: " + deviceInfo.deviceName + ", id:" + deviceInfo.identifier
-                    )
                     val map = LinkedHashMap<String, String>()
                     map["deviceName"] = deviceInfo.deviceName
                     map["identifier"] = deviceInfo.identifier
@@ -499,24 +493,15 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
                 override fun onFinished() {
 
-                    Log.e(
-                        TAG,
-                        "onFinished, device size:" + mDeviceInfoList.size
-                    )
-
 
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                         LogUtils.setDebugLevel(LogUtils.EDebugLevel.DEBUG_LEVEL_ALL)
                         Debug.setDebugLevel(Debug.EDebugLevel.DEBUG_LEVEL_ALL)
-                        Log.e(
-                            TAG,
-                            "onFinished, device size:" + mDeviceInfoList.size
-                        )
                     }
                 }
 
                 override fun onError(errorCode: Int) {
-                    Log.e("Error", "設備異常，請選擇其他付款方式")
+
                 }
             })
     }
@@ -540,10 +525,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     payModel = PayModel("VISA", 0, false, orderDeliveryData)
 
                     if (isRefund) {
-                        Log.e("isRefund", "isRefund")
                         startRefund(payModel!!)
                     } else {
-                        Log.e("notRefund", "notRefund")
                         startSale(payModel!!)
                     }
 
@@ -632,9 +615,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                                     saleResponse.card_label
                                 )
                                 menuViewModel.setCreditCardSuccess(orderDeliveryData)
-
-                                Log.e("saleResponse", saleResponse.toString())
-                                Log.e("custom_data_2", saleResponse.custom_data_2)
                             } else {
                                 requireActivity().runOnUiThread {
                                     binding.ProceedCons.visibility = View.GONE
@@ -699,8 +679,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
                                 menuViewModel.setCreditRefundSuccess()
 
-                                Log.e("saleResponse", saleResponse.toString())
-                                Log.e("custom_data_2", saleResponse.custom_data_2)
                             } else {
                                 requireActivity().runOnUiThread {
                                     binding.ProceedCons.visibility = View.GONE

@@ -42,24 +42,25 @@ fun MGoodsDialog(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         modifier = Modifier
-//            .clickable {
-//                Log.d("TEST", "MGoodsDialog: click")
-//            }
-//            .pointerInput(null) {
-//                detectTapGestures(
-//                    onDoubleTap = {},
-//                    onLongPress = {},
-//                    onPress = {},
-//                    onTap = {
-//                        Log.d("TEST", "MGoodsDialog: onTap")
-//                    }
-//                )
-//            }
-//            .pointerInput(Unit) {
-//            detectTransformGestures { centroid, pan, zoom, rotation ->
-//                Log.d("TEST", "MGoodsDialog: ontouch")
-//            }
-//        }
+            .clickable {
+                Log.d("TEST", "MGoodsDialog: click")
+            }
+            .pointerInput(null) {
+                detectTapGestures(
+                    onDoubleTap = {},
+                    onLongPress = {},
+                    onPress = {},
+                    onTap = {
+
+                        Log.d("TEST", "MGoodsDialog: onTap")
+                    }
+                )
+            }
+            .pointerInput(Unit) {
+            detectTransformGestures { centroid, pan, zoom, rotation ->
+                Log.d("TEST", "MGoodsDialog: ontouch")
+            }
+        }
     ) {
         Content()
 //        Column {

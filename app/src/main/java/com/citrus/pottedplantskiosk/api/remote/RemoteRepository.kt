@@ -22,13 +22,11 @@ class RemoteRepository @Inject constructor(private val apiService: ApiService) :
                         if (result.data.mainGroup.isEmpty()) {
                             Resource.Error("MainGroup is Empty", null)
                         } else {
-                            Log.e("Test", "getMenu: ${result.data.mainGroup}))")
                             Resource.Success(result.data)
                         }
                     }
                 }
             } catch (e: Exception) {
-                Log.e("Test", "getMenu: ${e.message}")
                 Resource.Error("${e.message}", null)
             }
         })

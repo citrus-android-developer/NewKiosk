@@ -3,23 +3,16 @@ package com.citrus.pottedplantskiosk.ui.menu
 
 import android.animation.Animator
 import android.animation.ValueAnimator
-import android.app.PendingIntent
 import android.app.ProgressDialog
-import android.content.Intent
-import android.graphics.Color
 import android.graphics.Path
 import android.graphics.PathMeasure
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.LinearInterpolator
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.compose.material3.MaterialTheme
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -43,14 +36,13 @@ import com.citrus.pottedplantskiosk.api.remote.dto.TransactionData
 import com.citrus.pottedplantskiosk.api.remote.dto.UsbInfo
 import com.citrus.pottedplantskiosk.databinding.FragmentMenuBinding
 import com.citrus.pottedplantskiosk.di.prefs
+import com.citrus.pottedplantskiosk.ui.composeCommon.IdleDialog
 import com.citrus.pottedplantskiosk.ui.menu.adapter.GoodsItemAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.GroupItemAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.ImageAdapter
 import com.citrus.pottedplantskiosk.ui.menu.adapter.MainGroupItemAdapter
 import com.citrus.pottedplantskiosk.util.Constants
-import com.citrus.pottedplantskiosk.util.Constants.ACTION_USB_PERMISSION
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
-import com.citrus.pottedplantskiosk.util.Constants.forEachReversedWithIndex
 import com.citrus.pottedplantskiosk.util.CustomAlertDialog
 import com.citrus.pottedplantskiosk.util.UsbUtil
 import com.citrus.pottedplantskiosk.util.base.BindingFragment
@@ -67,7 +59,6 @@ import com.pax.paxsemilinklibrary.listener.SearchDeviceListener
 import com.pax.paxsemilinklibrary.model.BaseSemiRequest
 import com.pax.paxsemilinklibrary.model.DeviceInfo
 import com.pax.paxsemilinklibrary.util.LogUtils
-import com.skydoves.elasticviews.ElasticAnimation
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import com.youth.banner.indicator.RectangleIndicator
 import com.youth.banner.transformer.AlphaPageTransformer
@@ -75,7 +66,6 @@ import com.youth.banner.util.BannerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pax.comm.protocol.api.Debug
 import javax.inject.Inject
@@ -190,8 +180,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
             homeBtn.onSafeClick {
                 it.clickAnimation {
-                    //backToMain()
-                    findDevices(null)
+                    backToMain()
+                    //findDevices(null)
                 }
             }
 
@@ -281,7 +271,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
         lifecycleFlow(menuViewModel.showDetailEvent) { goods ->
             menuViewModel.isIdentify = false
-            Log.e("showDetailEvent", goods.toString())
             findNavController().navigateSafely(
                 R.id.action_menuFragment_to_zoomPageFragment,
                 args = bundleOf("goods" to goods.deepCopy())
@@ -294,6 +283,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 MaterialTheme {
                     if (goods != null) {
                         MGoodsDialog(onDismiss = {
+                            menuViewModel.resetTimeCount()
                             menuViewModel.hideMGoodsDialog()
                         })
                     }
@@ -349,16 +339,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         }
 
 
-        lifecycleFlow(menuViewModel.dispatcherTouch) {
-            if (snackbar != null) {
-                updateTimerJob?.cancel()
-                updateTimerJob = null
-                snackbar?.dismiss()
-                snackbar = null
-            }
-        }
-
-
         lifecycleFlow(menuViewModel.toPrint) { transactionData ->
 
 //            if (usbInfo.deviceList.isEmpty()) {
@@ -392,41 +372,55 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
 
         lifecycleFlow(menuViewModel.tikTok) { timer ->
-            if (timer == 0) {
-                releaseSnack()
+
+            if(timer.second) {
+                binding.composeViewIdleDialog.setContent {}
+                return@lifecycleFlow
             }
 
-            if (timer == 100) {
-                var temp = 100
-                snackbar = Snackbar.make(requireView(), "", 20000)
-                val customSnackView: View =
-                    layoutInflater.inflate(R.layout.custom_snackbar_view, null)
-                snackbar!!.view.setBackgroundColor(Color.TRANSPARENT)
-                val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
-                snackbarLayout.setPadding(0, 0, 0, 50)
-                val timerHint: TextView = customSnackView.findViewById(R.id.textView2)
-                val snackBarArea: CardView = customSnackView.findViewById(R.id.snackbar_view)
-                updateTimerJob = lifecycleScope.launch {
-                    while (temp < Constants.TWO_MINUTES) {
-                        delay(1000)
-                        temp++
-                        timerHint.text = getString(R.string.idleHint, (120 - temp))
+
+            if (timer.first == 100 ) {
+                binding.composeViewIdleDialog.setContent {
+                    MaterialTheme {
+                        IdleDialog(
+                            onDismiss = {
+                                menuViewModel.resetTimeCount()
+                                menuViewModel.hideIdleDialog()
+                            }, onCountDownFinish = {
+                                backToMain()
+                            })
                     }
                 }
-
-                snackBarArea.setOnClickListener {
-                   releaseSnack()
-                }
-
-                snackbarLayout.addView(customSnackView, 0)
-                snackbar!!.show()
-
-
             }
 
-            if (timer == Constants.TWO_MINUTES) {
-                backToMain()
-            }
+
+//            if (timer == 100) {
+//                var temp = 100
+//                snackbar = Snackbar.make(requireView(), "", 20000)
+//                val customSnackView: View =
+//                    layoutInflater.inflate(R.layout.custom_snackbar_view, null)
+//                snackbar!!.view.setBackgroundColor(Color.TRANSPARENT)
+//                val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
+//                snackbarLayout.setPadding(0, 0, 0, 50)
+//                val timerHint: TextView = customSnackView.findViewById(R.id.textView2)
+//                val snackBarArea: CardView = customSnackView.findViewById(R.id.snackbar_view)
+//                updateTimerJob = lifecycleScope.launch {
+//                    while (temp < Constants.TWO_MINUTES) {
+//                        delay(1000)
+//                        temp++
+//                        timerHint.text = getString(R.string.idleHint, (120 - temp))
+//                    }
+//                }
+//
+//                snackBarArea.setOnClickListener {
+//                   releaseSnack()
+//                }
+//
+//                snackbarLayout.addView(customSnackView, 0)
+//                snackbar!!.show()
+//            }
+
+
         }
     }
 
@@ -468,17 +462,11 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         orderDeliveryData: OrderDeliveryData?,
         isRefund: Boolean = false
     ) {
-
-        Log.e(TAG, "onClick: current comm type:$currCommType")
         mDeviceInfoListMap.clear()
         mDeviceInfoList.clear()
         SemiLinkApi.getInstance(requireContext())
             .getDevices(currCommType, object : SearchDeviceListener {
                 override fun onDiscovered(deviceInfo: DeviceInfo) {
-                    Log.e(
-                        TAG,
-                        "onDiscovered:name: " + deviceInfo.deviceName + ", id:" + deviceInfo.identifier
-                    )
                     val map = LinkedHashMap<String, String>()
                     map["deviceName"] = deviceInfo.deviceName
                     map["identifier"] = deviceInfo.identifier
@@ -488,25 +476,13 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 }
 
                 override fun onFinished() {
-
-                    Log.e(
-                        TAG,
-                        "onFinished, device size:" + mDeviceInfoList.size
-                    )
-
-
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                         LogUtils.setDebugLevel(LogUtils.EDebugLevel.DEBUG_LEVEL_ALL)
                         Debug.setDebugLevel(Debug.EDebugLevel.DEBUG_LEVEL_ALL)
-                        Log.e(
-                            TAG,
-                            "onFinished, device size:" + mDeviceInfoList.size
-                        )
                     }
                 }
 
                 override fun onError(errorCode: Int) {
-                    Log.e("Error", "設備異常，請選擇其他付款方式")
                 }
             })
     }
@@ -530,10 +506,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     payModel = PayModel("VISA", 0, false, orderDeliveryData)
 
                     if (isRefund) {
-                        Log.e("isRefund", "isRefund")
                         startRefund(payModel!!)
                     } else {
-                        Log.e("notRefund", "notRefund")
                         startSale(payModel!!)
                     }
 
@@ -623,8 +597,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                                 )
                                 menuViewModel.setCreditCardSuccess(orderDeliveryData)
 
-                                Log.e("saleResponse", saleResponse.toString())
-                                Log.e("custom_data_2", saleResponse.custom_data_2)
                             } else {
                                 requireActivity().runOnUiThread {
                                     binding.ProceedCons.visibility = View.GONE
@@ -689,8 +661,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
                                 menuViewModel.setCreditRefundSuccess()
 
-                                Log.e("saleResponse", saleResponse.toString())
-                                Log.e("custom_data_2", saleResponse.custom_data_2)
                             } else {
                                 requireActivity().runOnUiThread {
                                     binding.ProceedCons.visibility = View.GONE
@@ -714,9 +684,6 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
         findNavController().popBackStack(R.id.mainFragment, false)
     }
 
-    private fun releaseSnack() {
-        menuViewModel.setDispatchTouch()
-    }
 
     private fun addGoodToCarAnimation(goodView: View) {
         val mCurrentPosition = FloatArray(2)

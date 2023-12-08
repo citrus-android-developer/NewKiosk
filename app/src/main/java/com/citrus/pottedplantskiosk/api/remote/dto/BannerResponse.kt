@@ -45,11 +45,9 @@ class  StatusCodeDeserializer<T> : JsonDeserializer<StatusCode<T>> {
         val jsonObject = json.asJsonObject
 
         if(typeOfT.toString() == object :TypeToken<StatusCode<Int>>() {}.type.toString()){
-            Log.e("int", "!!!!!!!")
         }
 
         if(typeOfT.toString() == object :TypeToken<StatusCode<ResultMock>>() {}.type.toString()){
-            Log.e("ResultMock", "!!!!!!!")
         }
 
         return Gson().fromJson(jsonObject, typeOfT)

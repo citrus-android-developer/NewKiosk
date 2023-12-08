@@ -9,16 +9,17 @@ import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcel
 import android.os.Parcelable
-import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.citrus.pottedplantskiosk.R
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerResponse
 import com.citrus.pottedplantskiosk.api.remote.dto.MenuBean
@@ -29,9 +30,8 @@ import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.getGstStr
 import com.citrus.pottedplantskiosk.util.PrintUtils
 import com.citrus.pottedplantskiosk.util.i18n.LocaleHelper
-import com.citrus.pottedplantskiosk.util.print.b
+import com.citrus.pottedplantskiosk.util.navigateSafely
 import com.citrus.pottedplantskiosk.util.print.twoColumn
-import com.citrus.pottedplantskiosk.util.print.twoColumnBig
 import com.pos.poslibusb.MCS7840Driver
 import com.pos.poslibusb.PosLibUsb
 import com.pos.poslibusb.UsbDeviceFilter
@@ -41,7 +41,6 @@ import com.pos.printersdk.PrinterManager
 import com.pos.printersdk.PrinterNetworkReceiveListener
 import com.pos.printersdk.PrinterReceiveListener
 import com.pos.printersdk.PrinterStatusInfo
-
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -49,6 +48,7 @@ import kotlinx.coroutines.launch
 import java.io.UnsupportedEncodingException
 import java.text.SimpleDateFormat
 import java.util.Date
+
 
 @AndroidEntryPoint
 class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, PrinterReceiveListener {
@@ -75,7 +75,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
         Manifest.permission.ACCESS_NETWORK_STATE
     )
 
-
+    val MAX_BUNDLE_SIZE = 300
     var mPortSettings = 115200
     var mUnderline = 0
     var mInvertColor = 0
@@ -163,6 +163,28 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
         onScanListener = listener
     }
 
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val bundleSize: Long = getBundleSize(outState)
+        if (bundleSize > MAX_BUNDLE_SIZE * 1024) {
+            outState.clear()
+        }
+    }
+
+    private fun getBundleSize(bundle: Bundle): Long {
+        val dataSize: Long
+        val obtain = Parcel.obtain()
+        dataSize = try {
+            obtain.writeBundle(bundle)
+            obtain.dataSize().toLong()
+        } finally {
+            obtain.recycle()
+        }
+        return dataSize
+    }
+
+
     override fun onResume() {
         super.onResume()
         setFullScreen()
@@ -225,16 +247,20 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
         }
 
         lifecycleScope.launchWhenStarted {
-            menuViewModel.reLaunchActivity.collect {
-                prefs.isNavigate = true
-                val intent = Intent()
-                intent.setClass(this@MenuActivity, MenuActivity::class.java)
-                val bundle = Bundle()
-                bundle.putSerializable("data", data)
-                bundle.putSerializable("banner", banner)
-                intent.putExtras(bundle)
-                this@MenuActivity.startActivity(intent)
-                finish()
+            menuViewModel.reLaunchActivity.collect { isDifferent ->
+                if (isDifferent) {
+                    prefs.isNavigate = true
+                    val intent = Intent()
+                    intent.setClass(this@MenuActivity, MenuActivity::class.java)
+                    val bundle = Bundle()
+                    bundle.putSerializable("data", data)
+                    bundle.putSerializable("banner", banner)
+                    intent.putExtras(bundle)
+                    this@MenuActivity.startActivity(intent)
+                    finish()
+                }else {
+                    menuViewModel.setToNavigate()
+                }
             }
         }
 
@@ -276,7 +302,6 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
 
     open fun onOpenPort() {
         for (device in mMatchDevice!!) {
-            Log.e("device", device.deviceName)
             if ("/dev/bus/usb/001/004" == device.deviceName) {
                 mUsbDevice = device
                 mPortName = device.deviceName
@@ -901,7 +926,7 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        menuViewModel.setDispatchTouch()
+        menuViewModel.resetTimeCount()
         return super.dispatchTouchEvent(ev)
     }
 
@@ -925,7 +950,6 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
             )
 
             if (errMsg.isEmpty()) {
-                Log.e("print", "success")
                 menuViewModel.setPrintResult(true)
             } else {
                 menuViewModel.setPrintResult(false)

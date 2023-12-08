@@ -2,7 +2,6 @@ package com.citrus.pottedplantskiosk.ui.menu
 
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.citrus.pottedplantskiosk.api.remote.RemoteRepository
@@ -31,8 +30,8 @@ class MenuViewModel @Inject constructor(
 
     private var timerJob: Job? = null
     var timeCount = 0
-    private val _tikTok = MutableStateFlow(0)
-    val tikTok: StateFlow<Int> = _tikTok
+    private val _tikTok = MutableStateFlow(Pair(0, false))
+    val tikTok: StateFlow<Pair<Int, Boolean>> = _tikTok
 
     private val _reLaunchActivity = MutableSharedFlow<Boolean>()
     val reLaunchActivity: SharedFlow<Boolean> = _reLaunchActivity
@@ -100,11 +99,11 @@ class MenuViewModel @Inject constructor(
     private val _scanResult = MutableSharedFlow<String>()
     val scanResult: SharedFlow<String> = _scanResult
 
-    private val _dispatcherTouch = MutableSharedFlow<Boolean>()
-    val dispatcherTouch: SharedFlow<Boolean> = _dispatcherTouch
+    private val _navigateToMenu = MutableSharedFlow<Unit>()
+    val navigateToMenu: SharedFlow<Unit> = _navigateToMenu
+
 
     fun setScanResult(result: String) = viewModelScope.launch {
-        Log.e("scanResult", result)
         allGoodsForScan?.let { goodList ->
             val goods = goodList.find { it.barCode == result }
             goods?.let {
@@ -124,7 +123,7 @@ class MenuViewModel @Inject constructor(
     private fun startTimer() {
         timerJob = viewModelScope.launch(Default) {
             tickerFlow().collect {
-                _tikTok.emit(it)
+                _tikTok.emit(Pair(it, false))
             }
         }
     }
@@ -170,7 +169,7 @@ class MenuViewModel @Inject constructor(
             val list = mainGroup.kind.filter { it.goods.isNotEmpty() }.map { it.desc }
             _groupDescName.emit(list)
             if (mainGroup.kind.isNotEmpty()) {
-                 (mainGroup.kind.first().desc)
+                (mainGroup.kind.first().desc)
                 val goods = mainGroup.kind.find { it.desc == mainGroup.kind.first().desc }?.goods!!
                 _allGoods.emit(goods)
             }
@@ -339,7 +338,6 @@ class MenuViewModel @Inject constructor(
     ) =
         viewModelScope.launch {
             val dataJson = Gson().toJson(deliveryInfo)
-            Log.e("dataJson", dataJson)
             repository.postOrders(
                 prefs.serverIp + Constants.SET_ORDERS,
                 Gson().toJson(deliveryInfo)
@@ -369,8 +367,8 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    fun chosenLanComplete() = viewModelScope.launch {
-        _reLaunchActivity.emit(true)
+    fun chosenLanComplete(isChange: Boolean) = viewModelScope.launch {
+        _reLaunchActivity.emit(isChange)
     }
 
     fun setCreditCardSuccess(orderDeliveryData: OrderDeliveryData?) =
@@ -381,7 +379,6 @@ class MenuViewModel @Inject constructor(
 
             val request = Gson().toJson(orderStatusEditRequest)
 
-            Log.e("request", request)
 
             repository.postOrders(
                 prefs.serverIp + Constants.SET_ORDER_EDIT,
@@ -424,9 +421,16 @@ class MenuViewModel @Inject constructor(
         _errMsg.fineEmit(RefundSuccess)
     }
 
-    fun setDispatchTouch() = viewModelScope.launch {
+    fun resetTimeCount() = viewModelScope.launch {
         timeCount = 0
-        _dispatcherTouch.fineEmit(true)
+    }
+
+    fun hideIdleDialog() = viewModelScope.launch {
+       _tikTok.fineEmit(Pair(0, true))
+    }
+
+    fun setToNavigate()  = viewModelScope.launch {
+        _navigateToMenu.fineEmit(Unit)
     }
 
 

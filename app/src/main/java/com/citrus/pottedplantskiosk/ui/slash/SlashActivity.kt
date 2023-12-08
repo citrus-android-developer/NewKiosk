@@ -62,7 +62,6 @@ class SlashActivity : AppCompatActivity() {
         msg?.let {
             prefs.orderStr = "true"
             Toast.makeText(this, it, Toast.LENGTH_LONG).show()
-            Log.e("onNewIntent msg from symLink", msg.toString())
         } ?: Log.e("onNewIntent msg from symLink", "null")
     }
 

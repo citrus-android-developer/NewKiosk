@@ -65,7 +65,7 @@ class ZoomPageFragment : BottomSheetDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): BottomSheetDialog {
         return object : BottomSheetDialog(requireContext(), theme) {
             override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-                menuViewModel.setDispatchTouch()
+                menuViewModel.resetTimeCount()
                 return super.dispatchTouchEvent(ev)
             }
         }

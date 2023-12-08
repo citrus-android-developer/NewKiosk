@@ -27,7 +27,6 @@ import androidx.navigation.fragment.findNavController
 import com.citrus.pottedplantskiosk.api.remote.dto.BannerData
 import com.citrus.pottedplantskiosk.di.prefs
 import com.citrus.pottedplantskiosk.ui.setting.SettingFragment
-import com.citrus.pottedplantskiosk.util.Constants
 import com.citrus.pottedplantskiosk.util.Constants.clickAnimation
 import com.citrus.pottedplantskiosk.util.base.lifecycleFlow
 import com.citrus.pottedplantskiosk.util.base.onSevenClick
@@ -92,6 +91,10 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
                 banners
             )
         }
+
+        lifecycleFlow(menuViewModel.navigateToMenu) {
+            findNavController().navigateSafely(R.id.action_mainFragment_to_menuFragment)
+        }
     }
 
     override fun initAction() = Unit
@@ -120,20 +123,30 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
         val btnEN = balloon.getContentView().findViewById<Button>(R.id.btnEN)
         val btnTW = balloon.getContentView().findViewById<Button>(R.id.btnTW)
         btnEN?.setOnClickListener {
-            prefs.languagePos = 2
+            val preLan = prefs.languagePos
+            val isChange = preLan != 2
+            if (isChange) {
+                prefs.languagePos = 2
+            }
+
             balloon.dismiss()
-            intentToMenu()
+            intentToMenu(isChange)
         }
         btnTW?.setOnClickListener {
-            prefs.languagePos = 1
+            val preLan = prefs.languagePos
+            val isChange = preLan != 1
+            if (isChange) {
+                prefs.languagePos = 1
+            }
+
             balloon.dismiss()
-            intentToMenu()
+            intentToMenu(isChange)
         }
 
     }
 
-    private fun intentToMenu() {
-        menuViewModel.chosenLanComplete()
+    private fun intentToMenu(isChange: Boolean) {
+        menuViewModel.chosenLanComplete(isChange)
     }
 
     private fun showBanner(

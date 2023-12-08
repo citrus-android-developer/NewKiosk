@@ -30,7 +30,6 @@ fun <T> resultFlowData(
     onSuccess: (ApiResponse.Success<T>) -> Resource<T>
 ) = flow {
     apiQuery.invoke().suspendOnSuccess {
-        Log.e("Test", "resultFlowData: ${this.data}")
         emit(onSuccess(this))
     }.suspendOnError {
         throw RetryCondition(this.statusCode.name)
@@ -46,7 +45,6 @@ fun <T> resultFlowData(
         return@retryWhen false
     }
 }.catch {
-    Log.e("Test", "resultFlowData: ${it.message}")
     emit(Resource.Error("unexpected error", null))
 }.onStart { emit(Resource.Loading(null,true)) }
     .onCompletion { emit(Resource.Loading(null,false)) }

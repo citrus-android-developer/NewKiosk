@@ -39,7 +39,6 @@ fun MGoodsDialog(
         }) {
             Text("Hide bottom sheet")
         }
-
 //        Surface(
 //            shape = RoundedCornerShape(16.dp),
 //            color = colorResource(R.color.lightBg),

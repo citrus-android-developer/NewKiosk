@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
@@ -897,6 +898,11 @@ class MenuActivity : AppCompatActivity(), PrinterNetworkReceiveListener, Printer
             return true
         }
         return super.dispatchKeyEvent(event)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        menuViewModel.timeCount = 0
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun onPrinterNetworkDisconnectReceive(portName: String?) {

@@ -394,9 +394,9 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                 snackbar!!.view.setBackgroundColor(Color.TRANSPARENT)
                 val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
                 snackbarLayout.setPadding(0, 0, 0, 50)
-                val bGotoWebsite: Button =
+                val continueBtn: Button =
 
-                    customSnackView.findViewById(R.id.gotoWebsiteButton)
+                    customSnackView.findViewById(R.id.continueButton)
                 val timerHint: TextView = customSnackView.findViewById(R.id.textView2)
                 updateTimerJob = lifecycleScope.launch {
                     while (temp < 120) {
@@ -406,9 +406,8 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
                     }
                 }
 
-                bGotoWebsite.setOnClickListener { v ->
+                continueBtn.setOnClickListener { v ->
                     ElasticAnimation(v)
-
                         .setScaleX(0.85f)
                         .setScaleY(0.85f)
                         .setDuration(100)
@@ -714,6 +713,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
     private fun releaseSnack() {
         updateTimerJob?.cancel()
         updateTimerJob = null
+        menuViewModel.timeCount = 0
         snackbar?.dismiss()
         snackbar = null
     }

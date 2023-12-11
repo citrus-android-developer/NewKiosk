@@ -421,7 +421,7 @@ class MenuViewModel @Inject constructor(
     }
 
     fun setDispatchTouch() = viewModelScope.launch {
-        Log.d("TEST", "setDispatchTouch:")
+        Log.d("TOUCH", "setDispatchTouch:")
         timeCount = 0
         _dispatcherTouch.fineEmit(true)
     }

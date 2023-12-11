@@ -119,8 +119,8 @@ class CartItemAdapter @Inject constructor(val context: Context) :
 
             Glide.with(holder.itemView)
                 .load(Constants.IMG_URL + item.picname)
-                .placeholder(R.drawable.ic_image_gallery__2_)
-                .fallback(R.drawable.ic_image_gallery__2_)
+                .placeholder(R.drawable.ic_default_image)
+                .fallback(R.drawable.ic_default_image)
                 .into(goodsImg)
 
             tvPrice.text = "$" + Constants.getValByMathWay(item.sPrice)

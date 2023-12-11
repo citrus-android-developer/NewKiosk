@@ -191,8 +191,7 @@ class MenuFragment : BindingFragment<FragmentMenuBinding>() {
 
             homeBtn.onSafeClick {
                 it.clickAnimation {
-                    //backToMain()
-                    findDevices(null)
+                    backToMain()
                 }
             }
 

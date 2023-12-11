@@ -29,8 +29,9 @@
 
     <uses-feature android:name="android.hardware.usb.host" />
 
+    <!--hardwareAccelerated 設成true才能正常讀取網路圖片(coil)-->
     <application
-        android:hardwareAccelerated="false"
+        android:hardwareAccelerated="true"
         android:usesCleartextTraffic="true"
         android:name=".di.MyApplication"
         android:allowBackup="true"

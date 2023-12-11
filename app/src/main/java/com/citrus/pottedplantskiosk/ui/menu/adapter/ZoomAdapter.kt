@@ -2,7 +2,6 @@ package com.citrus.pottedplantskiosk.ui.menu.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
@@ -112,8 +111,8 @@ class ZoomAdapter(val context: Context, private val lifecycle: LifecycleCoroutin
 
             Glide.with(root)
                 .load(Constants.IMG_URL + item.picname)
-                .fallback(R.drawable.ic_image_gallery__2_)
-                .error(R.drawable.ic_image_gallery__2_)
+                .fallback(R.drawable.ic_default_image)
+                .error(R.drawable.ic_default_image)
                 .into(photo)
 
             addCart.setOnClickListener {
